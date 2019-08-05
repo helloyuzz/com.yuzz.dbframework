@@ -1,0 +1,8 @@
+﻿makefile.txt
+
+
+Class Dept{
+	public const string sechmaName = "";	
+}
+bool saveResult = DBToolkit.Save(getItem);
+
