@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 
 namespace com.yuzz.dbframework.util {
-    class AjUtil {
+    class Ajutil {
         /// <summary>
         /// 将对象的方法转换为List对象
         /// </summary>
@@ -23,14 +23,35 @@ namespace com.yuzz.dbframework.util {
         /// <summary>
         /// 解析object主键字段名称
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="obj"></param>
         /// <returns></returns>
-        public static string GetPkFieldName(object item) {
-            List<MethodInfo> execMethods = AjUtil.GetMethodList(item.GetType());
+        public static string GetPkFieldName(object obj) {
+            List<MethodInfo> execMethods = Ajutil.GetMethodList(obj.GetType());
             MethodInfo mdh_GetTableName = execMethods.Find(t => t.Name.Equals("get_PkFieldName",StringComparison.CurrentCultureIgnoreCase));
-            string pkFieldName = (string)mdh_GetTableName.Invoke(item,null);
+            string pkFieldName = (string)mdh_GetTableName.Invoke(obj,null);
             return pkFieldName;
         }
-
+        /// <summary>
+        /// 解析object数据库表名
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string GetDbName(object obj) {
+            List<MethodInfo> execMethods = Ajutil.GetMethodList(obj.GetType());
+            MethodInfo mdh_GetTableName = execMethods.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));
+            string dbname = (string)mdh_GetTableName.Invoke(obj,null);
+            return dbname;
+        }
+        /// <summary>
+        /// 解析object所有字段
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static List<SQLField> GetAllFieldList(object obj) {
+            List<MethodInfo> execMethods = Ajutil.GetMethodList(obj.GetType());
+            MethodInfo mdh_GetFields = execMethods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
+            List<SQLField> sqlFields = (List<SQLField>)mdh_GetFields.Invoke(obj,null);
+            return sqlFields;
+        }
     }
 }

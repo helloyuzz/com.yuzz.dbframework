@@ -22,7 +22,7 @@ namespace com.yuzz.dbframework {
             }
             StringBuilder tmp = new StringBuilder();
 
-            List<MethodInfo> ary_Methods = dbframework.util.AjUtil.GetMethodList(htmlType);
+            List<MethodInfo> ary_Methods = dbframework.util.Ajutil.GetMethodList(htmlType);
 
             MethodInfo mdh_GetFields = ary_Methods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));        // 获取表格所有字段的方法
 

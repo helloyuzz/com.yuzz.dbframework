@@ -39,6 +39,7 @@ public class SysDept {
                 _Fields.Add(new SQLField("EmpNumber",MySqlDbType.Int32,false,""));
                 _Fields.Add(new SQLField("Money",MySqlDbType.Float,false,""));
                 _Fields.Add(new SQLField("Comment",MySqlDbType.VarChar,false,""));
+                _Fields.Add(new SQLField("ModifyTime",MySqlDbType.DateTime,false,""));
             }
             return _Fields;
         }
@@ -111,6 +112,19 @@ public class SysDept {
                 UpdateFields.Add("Comment");
             }
             _Comment = value;
+        }
+    }
+
+    DateTime _ModifyTime;
+    public virtual DateTime ModifyTime {
+        get {
+            return _ModifyTime;
+        }
+        set {
+            if(value != this._ModifyTime) {
+                UpdateFields.Add("ModifyTime");
+            }
+            _ModifyTime = value;
         }
     }
 }

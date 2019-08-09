@@ -552,7 +552,7 @@ namespace com.yuzz.dbframework {
         public static string ParsePkFieldName(Type type) {
             string pkFieldName = string.Empty;
 
-            List<MethodInfo> ary_Methods = AjUtil.GetMethodList(type);
+            List<MethodInfo> ary_Methods = Ajutil.GetMethodList(type);
             MethodInfo mdh_GetUUID = ary_Methods.Find(t => t.Name.Equals("get_pkfieldname",StringComparison.CurrentCultureIgnoreCase));
 
             if(mdh_GetUUID != null) {
@@ -582,7 +582,7 @@ namespace com.yuzz.dbframework {
             StringBuilder sql = new StringBuilder();
             string typeString = "com.cgWorkstudio.BIMP.Client.vo." + dbname + ",bimp_CloudPro";
             Type getType = Type.GetType(typeString);
-            List<MethodInfo> ary_Methods = AjUtil.GetMethodList(getType);
+            List<MethodInfo> ary_Methods = Ajutil.GetMethodList(getType);
 
             MethodInfo mdh_GetFields = ary_Methods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
 

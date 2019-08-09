@@ -103,43 +103,41 @@ namespace com.yuzz.dbframework {
             SaveResult saveResult = new SaveResult();
 
             object pk_Value = 0;
-            bool isIntPk = false;
-            bool pkIsNull = false;
+            bool isIntPK = false;
+            //bool pkIsNull = false;
             string sechma_Name = string.Empty;
             List<SQLField> sqlFields = null;
 
             Type getType = valueObject.GetType();
 
-            List<MethodInfo> ary_Methods = AjUtil.GetMethodList(valueObject.GetType());
+            List<MethodInfo> methodList = Ajutil.GetMethodList(valueObject.GetType());
 
-            MethodInfo mdh_GetPkFiledName = ary_Methods.Find(t => t.Name.Equals("get_pkfieldname",StringComparison.CurrentCultureIgnoreCase));
+            MethodInfo mdh_GetPkFiledName = methodList.Find(t => t.Name.Equals("get_pkfieldname",StringComparison.CurrentCultureIgnoreCase));
             string pk_FieldName = (string)mdh_GetPkFiledName.Invoke(valueObject,null);
 
             // 查找最常用的UUID的get、set方法
-            MethodInfo mdh_GetPkFieldValue = ary_Methods.Find(t => t.Name.Equals("get_" + pk_FieldName,StringComparison.CurrentCultureIgnoreCase));            // Get方法是为了获取修改时的UUID
-            MethodInfo mdh_SetUUID = ary_Methods.Find(t => t.Name.Equals("set_uuid",StringComparison.CurrentCultureIgnoreCase));            // Set方法是为了在添加时设置UUID
-            MethodInfo mdh_GetTableName = ary_Methods.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));  // 获取表格名称的方法
-            MethodInfo mdh_GetFields = ary_Methods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));        // 获取表格所有字段的方法
+            MethodInfo mdh_GetTableName = methodList.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));          // 获取表格名称的方法
+            MethodInfo mdh_GetFields = methodList.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));                // 获取表格所有字段的方法
+            MethodInfo mdh_UpdateFields = methodList.Find(t => t.Name.Equals("get_updatefields",StringComparison.CurrentCultureIgnoreCase));       // 获取UpdateFields
+            MethodInfo mdh_GetPkFieldValue = methodList.Find(t => t.Name.Equals("get_" + pk_FieldName,StringComparison.CurrentCultureIgnoreCase)); // Get方法是为了获取修改时的UUID
+            MethodInfo mdh_SetUUID = methodList.Find(t => t.Name.Equals("set_uuid",StringComparison.CurrentCultureIgnoreCase));                    // Set方法是为了在添加时设置UUID
 
-            // 取得表名
-            if(mdh_GetTableName != null) {
+            if(mdh_GetTableName != null) {   // 取得表名   
                 sechma_Name = (string)mdh_GetTableName.Invoke(valueObject,null);
             }
-            // 取得字段列表
-            if(mdh_GetFields != null) {
+            
+            if(mdh_GetFields != null) {     // 取得字段列表
                 sqlFields = (List<SQLField>)mdh_GetFields.Invoke(valueObject,null);
             }
-
-            // 是否为int型主键
-            isIntPk = mdh_GetPkFieldValue.ReturnType.Equals(typeof(int)) ? true : false;
-
-            // 取得pkValue            
-            if(isIntPk == true) {
+            
+            isIntPK = mdh_GetPkFieldValue.ReturnType.Equals(typeof(int)) ? true : false;    // 是否为int型主键
+                 
+            if(isIntPK == true) {    // 取得pkValue
                 pk_Value = (int)mdh_GetPkFieldValue.Invoke(valueObject,null);
-                pkIsNull = (int)pk_Value <= 0 ? true : false;
+                //pkIsNull = (int)pk_Value <= 0 ? true : false;
             } else {
                 pk_Value = (string)mdh_GetPkFieldValue.Invoke(valueObject,null);
-                pkIsNull = string.IsNullOrEmpty(AdobeUtil.IngoreNull(pk_Value));
+                //pkIsNull = string.IsNullOrEmpty(AdobeUtil.IngoreNull(pk_Value));
             }
 
             string execSQLString = string.Empty;
@@ -152,7 +150,7 @@ namespace com.yuzz.dbframework {
                         dbConn.Open();
                         SqlCommand mssqlCmd = new SqlCommand();
                         mssqlCmd.Connection = dbConn;
-                        mssqlCmd.CommandText = ParseSaveSQLString(sechma_Name,pk_FieldName,sqlFields,ary_Methods,valueObject,pkIsNull,saveAction);
+                        mssqlCmd.CommandText = BuildSQLCommandText(sechma_Name,pk_FieldName,sqlFields,saveAction);
                         Ajdb.CommandText = mssqlCmd.CommandText;
 
                         // 构造实际的参数
@@ -163,32 +161,32 @@ namespace com.yuzz.dbframework {
                                 continue;
                             }
                             string getMethodName = "get_" + sqlField.Name;
-                            MethodInfo sqlMethod = ary_Methods.Find(t => t.Name.Equals(getMethodName,StringComparison.CurrentCultureIgnoreCase));
+                            MethodInfo sqlMethod = methodList.Find(t => t.Name.Equals(getMethodName,StringComparison.CurrentCultureIgnoreCase));
                             object getValue = sqlMethod.Invoke(valueObject,null);
 
                             mssqlCmd.Parameters.Add("@Arg" + index,sqlField.MsDbType).Value = ParseSQLFiledValues(sqlField,getValue);
                             index++;
                         }
-                        if(pkIsNull == false) {
-                            if(isIntPk == true) {
-                                mssqlCmd.Parameters.Add("@Arg" + index,SqlDbType.Int).Value = pk_Value;
-                            } else {
-                                mssqlCmd.Parameters.Add("@Arg" + index,SqlDbType.VarChar).Value = pk_Value;
-                            }
-                        }
+                        //if(pkIsNull == false) {
+                        //    if(isIntPK == true) {
+                        //        mssqlCmd.Parameters.Add("@Arg" + index,SqlDbType.Int).Value = pk_Value;
+                        //    } else {
+                        //        mssqlCmd.Parameters.Add("@Arg" + index,SqlDbType.VarChar).Value = pk_Value;
+                        //    }
+                        //}
 
-                        if(mssqlCmd.ExecuteNonQuery() > 0) {
-                            if(isIntPk == true) {
-                                if(pkIsNull == false) {   // 修改
-                                    saveResult.Pk_Int = (int)pk_Value;
-                                } else {
-                                    mssqlCmd.CommandText = "select max(" + pk_FieldName + ") from " + sechma_Name;
-                                    saveResult.Pk_Int = AdobeUtil.ParseInt(mssqlCmd.ExecuteScalar());
-                                }
-                            } else {
-                                saveResult.Pk_UUID = pk_Value.ToString();
-                            }
-                        }
+                        //if(mssqlCmd.ExecuteNonQuery() > 0) {
+                        //    if(isIntPK == true) {
+                        //        if(pkIsNull == false) {   // 修改
+                        //            saveResult.Pk_Int = (int)pk_Value;
+                        //        } else {
+                        //            mssqlCmd.CommandText = "select max(" + pk_FieldName + ") from " + sechma_Name;
+                        //            saveResult.Pk_Int = AdobeUtil.ParseInt(mssqlCmd.ExecuteScalar());
+                        //        }
+                        //    } else {
+                        //        saveResult.Pk_UUID = pk_Value.ToString();
+                        //    }
+                        //}
                         dbConn.Close();
                         mssqlCmd = null;
                     }
@@ -197,7 +195,7 @@ namespace com.yuzz.dbframework {
                         dbConn.Open();
                         MySqlCommand mysqlCmd = new MySqlCommand();
                         mysqlCmd.Connection = dbConn;
-                        mysqlCmd.CommandText = ParseSaveSQLString(sechma_Name,pk_FieldName,sqlFields,ary_Methods,valueObject,pkIsNull,saveAction);
+                        mysqlCmd.CommandText = BuildSQLCommandText(sechma_Name,pk_FieldName,sqlFields,saveAction);
                         Ajdb.CommandText = mysqlCmd.CommandText;
 
                         // 构造实际的参数
@@ -208,17 +206,17 @@ namespace com.yuzz.dbframework {
                              * insert主键自动增长
                              * update xxx={xxx} where pk={pk}
                             */
-                            if(sqlField.Identity == true && saveAction != SaveAction.Insert) { // 主键，非强制更新
+                            if(sqlField.Identity == true && saveAction != SaveAction.Insert) { // 主键，非强制更新不设置主键的值
                                 continue;
                             }
                             string getMethodName = "get_" + sqlField.Name;
-                            MethodInfo sqlMethod = ary_Methods.Find(t => t.Name.Equals(getMethodName,StringComparison.CurrentCultureIgnoreCase));
+                            MethodInfo sqlMethod = methodList.Find(t => t.Name.Equals(getMethodName,StringComparison.CurrentCultureIgnoreCase));
                             object getValue = sqlMethod.Invoke(valueObject,null);
 
                             mysqlCmd.Parameters.Add("@Arg" + index,sqlField.MyDbType).Value = ParseSQLFiledValues(sqlField,getValue);
                             index++;
                         }
-                        /*
+                        /* -------------------------------------------------------------------------------------
                          * 自动：
                          *      无PK-》新增
                          *              ingore
@@ -234,28 +232,24 @@ namespace com.yuzz.dbframework {
                          *              set
                          */
 
+                        // ------------------------------------------------------------------------------------
+                        // 更新update操作，前面是设置参数值，也就是set xxx=xxx
+                        // 需设置where id=xxx，也就是设置主键
+                        // ------------------------------------------------------------------------------------
                         if(saveAction == SaveAction.UpdateChangeField) {
-                            if(isIntPk == true) {
+                            if(isIntPK == true) {
                                 mysqlCmd.Parameters.Add("@Arg" + index,MySqlDbType.Int32).Value = pk_Value;
                             } else {
                                 mysqlCmd.Parameters.Add("@Arg" + index,MySqlDbType.VarChar).Value = pk_Value;
                             }
                         }
 
-                        if(mysqlCmd.ExecuteNonQuery() > 0) {                        // 执行sql
-                            if(isIntPk == true) {                                   // int主键
-                                if(pkIsNull == false) {                             // 主键不为空，修改操作
-                                    saveResult.Pk_Int = (int)pk_Value;              // 返回最新的主键值
-                                } else {                                            // 主键为空，一般为新增操作，返回max(int)主键
-                                    mysqlCmd.CommandText = "select max(" + pk_FieldName + ") from " + sechma_Name;
-                                    saveResult.Pk_Int = AdobeUtil.ParseInt(mysqlCmd.ExecuteScalar());
-                                }
-                            } else {                    // varchar类型主键
-                                if(pkIsNull == true) {  // 主键为空，一般为新增操作
-
-                                } else {                // 主键不为空，一般为修改操作
-                                    saveResult.Pk_UUID = pk_Value.ToString();
-                                }
+                        // --------------------------------执行sql写入数据库中----------------------------------
+                        if(mysqlCmd.ExecuteNonQuery() > 0) {                            
+                            // 新增操作且为int主键（自增长类型），返回max(int)主键
+                            if(saveAction == SaveAction.Insert && isIntPK == true) {    
+                                mysqlCmd.CommandText = "select max(" + pk_FieldName + ") from " + sechma_Name;
+                                saveResult.Pk_Int = AdobeUtil.ParseInt(mysqlCmd.ExecuteScalar());
                             }
                         }
                         mysqlCmd = null;
@@ -271,65 +265,68 @@ namespace com.yuzz.dbframework {
             return saveResult;
         }
 
-        private static string ParseSaveSQLString(string sechma_Name,string pk_FieldName,List<SQLField> sqlFields,List<MethodInfo> ary_Methods,object valueObject,bool pkIsNull,SaveAction saveAction) {
+        /// <summary>
+        /// 构造SQL insert或则update字符串，也就是构造insert into xxx(field1,field2,filed...) values(value1,value2,value...)        /// 或者update xxx set field1=value1,field2=value2,... where id=xxx
+        /// </summary>
+        /// <param name="sechma_Name"></param>
+        /// <param name="pk_FieldName"></param>
+        /// <param name="sqlFields"></param>
+        /// <param name="saveAction"></param>
+        /// <returns></returns>
+        private static string BuildSQLCommandText(string sechma_Name,string pk_FieldName,List<SQLField> sqlFields,SaveAction saveAction) {
             string execSQLString = "";
             string getCondFields = string.Empty;
             string getCondValues = string.Empty;
-            switch(saveAction) {
-                case SaveAction.Insert:
-                    pkIsNull = true;
-                    break;
-                case SaveAction.UpdateChangeField:
-                    pkIsNull = false;
-                    break;
-            }
+
             // 构造Fields
             int index = 0;
-            if(pkIsNull == true) {
-                foreach(SQLField sqlField in sqlFields) {
-                    if(sqlField.Identity == true && saveAction != SaveAction.Insert) { // 主键
-                        continue;
-                    }
-                    if(string.IsNullOrEmpty(getCondFields)) {
-                        getCondFields = dbPrefix_Left + sqlField.Name + dbPrefix_Right;
-                        getCondValues = "@Arg" + index;
-                    } else {
-                        getCondFields += "," + dbPrefix_Left + sqlField.Name + dbPrefix_Right;
-                        getCondValues += ",@Arg" + index;
-                    }
-                    index++;
-                }
-
-                // 构造SQL代码，格式为：insert into [DBName](Fields) values(@ArgList,@ArgList,@ArgList);
-                execSQLString = "insert into " + dbPrefix_Left + sechma_Name + dbPrefix_Right + "(" + getCondFields + ") values(" + getCondValues + ")";
-
-            } else {
-                List<SQLField> checkRepeat = new List<SQLField>();  // 过滤重复
-                // 构造Update代码
-                foreach(SQLField sqlField in sqlFields) {
-                    // 不更新主键
-                    if(sqlField.Identity == true) {
-                        continue;
+            switch(saveAction) {
+                case SaveAction.Insert:
+                    foreach(SQLField sqlField in sqlFields) {
+                        if(sqlField.Identity == true && saveAction != SaveAction.Insert) { // 主键
+                            continue;
+                        }
+                        if(string.IsNullOrEmpty(getCondFields)) {
+                            getCondFields = dbPrefix_Left + sqlField.Name + dbPrefix_Right;
+                            getCondValues = "@Arg" + index;
+                        } else {
+                            getCondFields += "," + dbPrefix_Left + sqlField.Name + dbPrefix_Right;
+                            getCondValues += ",@Arg" + index;
+                        }
+                        index++;
                     }
 
-                    // 过滤重复
-                    if(checkRepeat.Find(t => t.Name.Equals(sqlField.Name)) != null) {
-                        continue;
-                    } else {
-                        checkRepeat.Add(sqlField);
+                    // 构造SQL代码，格式为：insert into [DBName](Fields) values(@ArgList,@ArgList,@ArgList);
+                    execSQLString = "insert into " + dbPrefix_Left + sechma_Name + dbPrefix_Right + "(" + getCondFields + ") values(" + getCondValues + ")";
+                    break;
+                case SaveAction.UpdateChangeField:
+                    List<SQLField> checkRepeat = new List<SQLField>();  // 过滤重复
+                                                                        
+                    foreach(SQLField sqlField in sqlFields) {   // 构造Update代码
+                        // 不更新主键
+                        if(sqlField.Identity == true) {
+                            continue;
+                        }
+
+                        // 过滤重复
+                        if(checkRepeat.Find(t => t.Name.Equals(sqlField.Name)) != null) {
+                            continue;
+                        } else {
+                            checkRepeat.Add(sqlField);
+                        }
+
+                        // 组装Update SQL String
+                        if(string.IsNullOrEmpty(execSQLString)) {
+                            execSQLString = dbPrefix_Left + sqlField.Name + dbPrefix_Right + "=@Arg" + index;
+                        } else {
+                            execSQLString += "," + dbPrefix_Left + sqlField.Name + dbPrefix_Right + "=@Arg" + index;
+                        }
+
+                        index++;
                     }
 
-                    // 组装Update SQL String
-                    if(string.IsNullOrEmpty(execSQLString)) {
-                        execSQLString = dbPrefix_Left + sqlField.Name + dbPrefix_Right + "=@Arg" + index;
-                    } else {
-                        execSQLString += "," + dbPrefix_Left + sqlField.Name + dbPrefix_Right + "=@Arg" + index;
-                    }
-
-                    index++;
-                }
-
-                execSQLString = "update " + dbPrefix_Left + sechma_Name + dbPrefix_Right + " set " + execSQLString + " where " + pk_FieldName + " = @Arg" + index;
+                    execSQLString = "update " + dbPrefix_Left + sechma_Name + dbPrefix_Right + " set " + execSQLString + " where " + pk_FieldName + " = @Arg" + index;
+                    break;
             }
             return execSQLString;
         }
@@ -431,36 +428,36 @@ namespace com.yuzz.dbframework {
         /// <param name="pageSize">分页大小</param>
         /// <param name="currentPage">当前页码</param>
         /// <returns></returns>
-        private static DataTable ExecuteSP(SqlConnection dbConn,string spName,int shopid,string sqlCondition,int pageSize,int currentPage) {
-            DataTable dt = new DataTable();
-            SqlCommand dbCmd = new SqlCommand();
-            try {
-                dbCmd.Connection = dbConn;
-                dbCmd.CommandType = CommandType.StoredProcedure;
-                dbCmd.CommandText = spName;
-                dbCmd.Parameters.Add("@shopid",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@sqlCondition",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@currentPage",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@pageSize",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@isCount",SqlDbType.NVarChar);
+        //private static DataTable ExecuteSP(SqlConnection dbConn,string spName,int shopid,string sqlCondition,int pageSize,int currentPage) {
+        //    DataTable dt = new DataTable();
+        //    SqlCommand dbCmd = new SqlCommand();
+        //    try {
+        //        dbCmd.Connection = dbConn;
+        //        dbCmd.CommandType = CommandType.StoredProcedure;
+        //        dbCmd.CommandText = spName;
+        //        dbCmd.Parameters.Add("@shopid",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@sqlCondition",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@currentPage",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@pageSize",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@isCount",SqlDbType.NVarChar);
 
-                dbCmd.Parameters["@shopid"].Value = shopid;
-                dbCmd.Parameters["@sqlCondition"].Value = sqlCondition;
-                dbCmd.Parameters["@currentPage"].Value = currentPage;
-                dbCmd.Parameters["@pageSize"].Value = pageSize;
-                dbCmd.Parameters["@isCount"].Value = 0;
+        //        dbCmd.Parameters["@shopid"].Value = shopid;
+        //        dbCmd.Parameters["@sqlCondition"].Value = sqlCondition;
+        //        dbCmd.Parameters["@currentPage"].Value = currentPage;
+        //        dbCmd.Parameters["@pageSize"].Value = pageSize;
+        //        dbCmd.Parameters["@isCount"].Value = 0;
 
-                SqlDataAdapter dbAdapter = new SqlDataAdapter();
-                dbAdapter.SelectCommand = dbCmd;
+        //        SqlDataAdapter dbAdapter = new SqlDataAdapter();
+        //        dbAdapter.SelectCommand = dbCmd;
 
-                dbAdapter.Fill(dt);
-                dt.TableName = spName;
-            } catch {
-            } finally {
-                dbCmd = null;
-            }
-            return dt;
-        }
+        //        dbAdapter.Fill(dt);
+        //        dt.TableName = spName;
+        //    } catch {
+        //    } finally {
+        //        dbCmd = null;
+        //    }
+        //    return dt;
+        //}
 
         /// <summary>
         /// 执行存储过程，返回执行结果
@@ -470,36 +467,36 @@ namespace com.yuzz.dbframework {
         /// <param name="shopid"></param>
         /// <param name="sqlConditions"></param>
         /// <returns></returns>
-        private static DataTable ExecuteSP(SqlConnection dbConn,string spName,int shopid,List<SpCondition> spConditions) {
-            // DataTable dt = null;
-            DataTable dt = new DataTable();
-            SqlCommand dbCmd = new SqlCommand();
-            try {
-                dbCmd.Connection = dbConn;
-                dbCmd.CommandType = CommandType.StoredProcedure;
-                dbCmd.CommandText = spName;
+        //private static DataTable ExecuteSP(SqlConnection dbConn,string spName,int shopid,List<SpCondition> spConditions) {
+        //    // DataTable dt = null;
+        //    DataTable dt = new DataTable();
+        //    SqlCommand dbCmd = new SqlCommand();
+        //    try {
+        //        dbCmd.Connection = dbConn;
+        //        dbCmd.CommandType = CommandType.StoredProcedure;
+        //        dbCmd.CommandText = spName;
 
-                dbCmd.Parameters.Add("@shopid",SqlDbType.NVarChar);
-                dbCmd.Parameters["@shopid"].Value = shopid;
+        //        dbCmd.Parameters.Add("@shopid",SqlDbType.NVarChar);
+        //        dbCmd.Parameters["@shopid"].Value = shopid;
 
-                foreach(SpCondition spCondition in spConditions) {
-                    dbCmd.Parameters.Add("@" + spCondition.Key,SqlDbType.NVarChar);
-                    dbCmd.Parameters["@" + spCondition.Key].Value = spCondition.Value;
-                }
+        //        foreach(SpCondition spCondition in spConditions) {
+        //            dbCmd.Parameters.Add("@" + spCondition.Key,SqlDbType.NVarChar);
+        //            dbCmd.Parameters["@" + spCondition.Key].Value = spCondition.Value;
+        //        }
 
-                SqlDataAdapter dbAdapter = new SqlDataAdapter();
-                dbAdapter.SelectCommand = dbCmd;
+        //        SqlDataAdapter dbAdapter = new SqlDataAdapter();
+        //        dbAdapter.SelectCommand = dbCmd;
 
-                dbAdapter.Fill(dt);
-                dt.TableName = spName;
-            } catch(Exception exc) {
-                Ajdb.LastError = exc;
-                dt = new DataTable();
-            } finally {
-                dbCmd = null;
-            }
-            return dt;
-        }
+        //        dbAdapter.Fill(dt);
+        //        dt.TableName = spName;
+        //    } catch(Exception exc) {
+        //        Ajdb.LastError = exc;
+        //        dt = new DataTable();
+        //    } finally {
+        //        dbCmd = null;
+        //    }
+        //    return dt;
+        //}
         /// <summary>
         /// 执行存储过程，返回统计数量
         /// </summary>
@@ -508,38 +505,38 @@ namespace com.yuzz.dbframework {
         /// <param name="shopid">shopid</param>
         /// <param name="isCount"></param>
         /// <returns></returns>
-        private static int ExecuteSP(SqlConnection dbConn,string spName,int shopid,int isCount) {
-            int recordCount = 0;
-            SqlCommand dbCmd = new SqlCommand();
-            try {
-                dbCmd.Connection = dbConn;
-                dbCmd.CommandType = CommandType.StoredProcedure;
-                dbCmd.CommandText = spName;
-                dbCmd.Parameters.Add("@shopid",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@sqlCondition",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@currentPage",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@pageSize",SqlDbType.NVarChar);
-                dbCmd.Parameters.Add("@isCount",SqlDbType.NVarChar);
+        //private static int ExecuteSP(SqlConnection dbConn,string spName,int shopid,int isCount) {
+        //    int recordCount = 0;
+        //    SqlCommand dbCmd = new SqlCommand();
+        //    try {
+        //        dbCmd.Connection = dbConn;
+        //        dbCmd.CommandType = CommandType.StoredProcedure;
+        //        dbCmd.CommandText = spName;
+        //        dbCmd.Parameters.Add("@shopid",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@sqlCondition",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@currentPage",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@pageSize",SqlDbType.NVarChar);
+        //        dbCmd.Parameters.Add("@isCount",SqlDbType.NVarChar);
 
-                dbCmd.Parameters["@shopid"].Value = shopid;
-                dbCmd.Parameters["@sqlCondition"].Value = "";
-                dbCmd.Parameters["@currentPage"].Value = 1;
-                dbCmd.Parameters["@pageSize"].Value = 1;
-                dbCmd.Parameters["@isCount"].Value = 1; // 返回统计数量
+        //        dbCmd.Parameters["@shopid"].Value = shopid;
+        //        dbCmd.Parameters["@sqlCondition"].Value = "";
+        //        dbCmd.Parameters["@currentPage"].Value = 1;
+        //        dbCmd.Parameters["@pageSize"].Value = 1;
+        //        dbCmd.Parameters["@isCount"].Value = 1; // 返回统计数量
 
-                recordCount = AdobeUtil.ParseInt(dbCmd.ExecuteScalar());
-            } catch(Exception exc) {
-                Ajdb.LastError = exc;
-                recordCount = -1;
-            } finally {
-                dbCmd = null;
-            }
-            return recordCount;
-        }
+        //        recordCount = AdobeUtil.ParseInt(dbCmd.ExecuteScalar());
+        //    } catch(Exception exc) {
+        //        Ajdb.LastError = exc;
+        //        recordCount = -1;
+        //    } finally {
+        //        dbCmd = null;
+        //    }
+        //    return recordCount;
+        //}
 
         public static T GetItem<T>(string sqlWhere) where T : new() {
             Console.WriteLine($"{nameof(GetItem)} {typeof(T).Name} by sql {sqlWhere}");
-            List<T> getList = List<T>(sqlWhere,"");
+            List<T> getList = GetList<T>(sqlWhere,"");
             if(getList.Count > 0) {
                 return getList[0];
             } else {
@@ -549,17 +546,17 @@ namespace com.yuzz.dbframework {
         }
         public static T GetItem<T>(int pkValue) where T : new() {
             T item = new T();
-            string pkFieldName = AjUtil.GetPkFieldName(item);
+            string pkFieldName = Ajutil.GetPkFieldName(item);
             return GetItem<T>(" where " + pkFieldName + "=" + pkValue);
         }
 
-        public static List<T> List<T>(string sqlWhere,string sqlOrder) where T : new() {
+        public static List<T> GetList<T>(string sqlWhere,string sqlOrder) where T : new() {
             bool getVoContent = false;
             List<T> getList = new List<T>();
             T item = new T();
             Type voType = item.GetType();
             
-            List<MethodInfo> execMethods = AjUtil.GetMethodList(voType);// SmartHtml.ParseTypeMethods(voType);
+            List<MethodInfo> execMethods = Ajutil.GetMethodList(voType);// SmartHtml.ParseTypeMethods(voType);
 
             // MethodInfo mdh_UUID = execMethods.Find(t => t.Name.Equals("set_uuid",StringComparison.CurrentCultureIgnoreCase));
             MethodInfo mdh_GetFields = execMethods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
@@ -633,7 +630,7 @@ namespace com.yuzz.dbframework {
                             T getValue = new T();
 
                             foreach(SQLField sqlField in getSQLFields) {
-                                Ajdb.CurrentFiled = sqlField.Name;
+                                Console.WriteLine($"GetList()-----------CurrentFiled={sqlField.Name}");
                                 object dbValue = dbReader[sqlField.Name];
                                 MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + sqlField.Name,StringComparison.CurrentCultureIgnoreCase));
                                 if(dbValue == null || dbValue == DBNull.Value) {
@@ -641,7 +638,6 @@ namespace com.yuzz.dbframework {
                                     setMethod.Invoke(getValue,new object[] { dbValue });
                                 }
                             }
-
                             getList.Add(getValue);
                         }
                         dbReader.Close();
@@ -658,47 +654,47 @@ namespace com.yuzz.dbframework {
             return getList;
         }
 
-        public static List<T> GetListBySql<T>(string sql) where T : new() {
-            List<T> result = new List<T>();
-            List<PropertyInfo> properties = typeof(T).GetProperties().ToList();
-            switch(_DbType) {
-                case DbType.Mssql:
-                    break;
-                case DbType.Mysql:
-                    MySqlDataReader dbReader = null;
-                    using(MySqlConnection dbConn = new MySqlConnection(_DbConnectionString)) {
-                        dbConn.Open();
+        //public static List<T> GetListBySql<T>(string sql) where T : new() {
+        //    List<T> result = new List<T>();
+        //    List<PropertyInfo> properties = typeof(T).GetProperties().ToList();
+        //    switch(_DbType) {
+        //        case DbType.Mssql:
+        //            break;
+        //        case DbType.Mysql:
+        //            MySqlDataReader dbReader = null;
+        //            using(MySqlConnection dbConn = new MySqlConnection(_DbConnectionString)) {
+        //                dbConn.Open();
 
-                        MySqlCommand dbCmd = new MySqlCommand(sql,dbConn);
-                        dbCmd.CommandText = sql;
+        //                MySqlCommand dbCmd = new MySqlCommand(sql,dbConn);
+        //                dbCmd.CommandText = sql;
 
-                        Ajdb.CommandText = dbCmd.CommandText;
-                        dbReader = dbCmd.ExecuteReader();
-                        while(dbReader.Read()) {
-                            T getValue = new T();
+        //                Ajdb.CommandText = dbCmd.CommandText;
+        //                dbReader = dbCmd.ExecuteReader();
+        //                while(dbReader.Read()) {
+        //                    T getValue = new T();
 
-                            foreach(PropertyInfo i in properties) {
-                                try {
-                                    object dbValue = dbReader[i.Name];
-                                    if(dbValue != null && dbValue != DBNull.Value) {
-                                        i.SetValue(getValue,dbValue,null);
-                                    }
-                                } catch(Exception ex) { UseException(ex); }
-                            }
-                            result.Add(getValue);
-                        }
-                        dbReader.Close();
-                        dbReader = null;
+        //                    foreach(PropertyInfo i in properties) {
+        //                        try {
+        //                            object dbValue = dbReader[i.Name];
+        //                            if(dbValue != null && dbValue != DBNull.Value) {
+        //                                i.SetValue(getValue,dbValue,null);
+        //                            }
+        //                        } catch(Exception ex) { UseException(ex); }
+        //                    }
+        //                    result.Add(getValue);
+        //                }
+        //                dbReader.Close();
+        //                dbReader = null;
 
-                        dbConn.Close();
-                    }
+        //                dbConn.Close();
+        //            }
 
-                    break;
-                default:
-                    break;
-            }
-            return result;
-        }
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //    return result;
+        //}
 
         /// <summary>
         /// 删除(int类型id)
@@ -709,7 +705,7 @@ namespace com.yuzz.dbframework {
         public static bool Delete<T>(int id) where T : new() {
             bool delResult = false;
             T item = new T();
-            string pkFieldName = AjUtil.GetPkFieldName(item);
+            string pkFieldName = Ajutil.GetPkFieldName(item);
 
             delResult = Delete<T>(" where " + pkFieldName + "=" + id);
             return delResult;
@@ -725,7 +721,7 @@ namespace com.yuzz.dbframework {
             //hanjq update
             int queryInt = 0;
             T item = new T();
-            string dbname = InvokeDbName(item);
+            string dbname = Ajutil.GetDbName(item);
 
             switch(_DbType) {
                 case DbType.Mssql:
@@ -786,8 +782,8 @@ namespace com.yuzz.dbframework {
         public static int Update<T>(string setCondition,string whereCondition) where T : new() {
             int result = 0;
 
-            T item = new T();
-            string dbname = InvokeDbName(item);
+            T dbclass = new T();
+            string dbname = Ajutil.GetDbName(dbclass);
 
             switch(_DbType) {
                 case DbType.Mssql:
@@ -828,248 +824,228 @@ namespace com.yuzz.dbframework {
 
             return result;
         }
-        /// <summary>
-        /// SQLUpdate
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="setCondition"></param>
-        /// <param name="whereCondition"></param>
-        /// <returns></returns>
-        public static int Update(string dbname,string setCondition,string whereCondition) {
-            int result = 0;
-            MySqlCommand myCmd = new MySqlCommand();
-            try {
-                using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
-                    myConn.Open();
-                    myCmd.Connection = myConn;
-                    myCmd.CommandText = "update " + dbname + setCondition + whereCondition;
+        ///// <summary>
+        ///// SQLUpdate
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="setCondition"></param>
+        ///// <param name="whereCondition"></param>
+        ///// <returns></returns>
+        //public static int Update(string dbname,string setCondition,string whereCondition) {
+        //    int result = 0;
+        //    MySqlCommand myCmd = new MySqlCommand();
+        //    try {
+        //        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
+        //            myConn.Open();
+        //            myCmd.Connection = myConn;
+        //            myCmd.CommandText = "update " + dbname + setCondition + whereCondition;
 
-                    result = myCmd.ExecuteNonQuery();
-                    myConn.Close();
-                }
-            } catch(Exception exc) {
-                Ajdb.LastError = exc;
-            } finally {
-                myCmd = null;
-            }
+        //            result = myCmd.ExecuteNonQuery();
+        //            myConn.Close();
+        //        }
+        //    } catch(Exception exc) {
+        //        Ajdb.LastError = exc;
+        //    } finally {
+        //        myCmd = null;
+        //    }
 
-            return result;
-        }
-        /// <summary>
-        /// 解析object数据库表名
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        private static string InvokeDbName(object item) {
-            List<MethodInfo> execMethods = AjUtil.GetMethodList(item.GetType());
-            MethodInfo mdh_GetTableName = execMethods.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));
-            string dbname = (string)mdh_GetTableName.Invoke(item,null);
-            return dbname;
-        }
+        //    return result;
+        //}
 
-        /// <summary>
-        /// 解析object所有字段
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        private static List<SQLField> InvokeFieldList(object item) {
-            List<MethodInfo> execMethods = AjUtil.GetMethodList(item.GetType());
-            MethodInfo mdh_GetFields = execMethods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
-            List<SQLField> sqlFields = (List<SQLField>)mdh_GetFields.Invoke(item,null);
-            return sqlFields;
-        }
+
+
         /// <summary>
         /// 获取查询总数
         /// </summary>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public static int CountBySql(string sql) {
-#if DEBUG
-            Debug.Print("=====================CountBySql====================");
-            Debug.Print(sql);
-            Debug.Print("---------------------------------------------------");
-#endif
-            int recordCount = 0;
-            switch(_DbType) {
-                case DbType.Mssql:    // Mssql
-                    break;
-                case DbType.Mysql:
-                    MySqlCommand myCmd = new MySqlCommand();
-                    try {
-                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
-                            myConn.Open();
-                            myCmd.CommandTimeout = 60;
-                            myCmd.Connection = myConn;
-                            myCmd.CommandText = sql;
-                            recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
-                            myConn.Close();
-                        }
-                    } catch(Exception exc) {
-                        recordCount = -1;
-                        LastError = exc;
-                    } finally {
-                        myCmd = null;
-                    }
-                    break;
-            }
-            return recordCount;
-        }
+//        public static int CountBySql(string sql) {
+//#if DEBUG
+//            Debug.Print("=====================CountBySql====================");
+//            Debug.Print(sql);
+//            Debug.Print("---------------------------------------------------");
+//#endif
+//            int recordCount = 0;
+//            switch(_DbType) {
+//                case DbType.Mssql:    // Mssql
+//                    break;
+//                case DbType.Mysql:
+//                    MySqlCommand myCmd = new MySqlCommand();
+//                    try {
+//                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
+//                            myConn.Open();
+//                            myCmd.CommandTimeout = 60;
+//                            myCmd.Connection = myConn;
+//                            myCmd.CommandText = sql;
+//                            recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
+//                            myConn.Close();
+//                        }
+//                    } catch(Exception exc) {
+//                        recordCount = -1;
+//                        LastError = exc;
+//                    } finally {
+//                        myCmd = null;
+//                    }
+//                    break;
+//            }
+//            return recordCount;
+//        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="dbname">分库名，必须与主库登录用户密码相同</param>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public static int CountBySql(string dbname,string sql) {
-            int recordCount = 0;
-            string connStr = "";
-            string oldDbName = _DbSchema;
-            _DbSchema = dbname;
-            switch(_DbType) {
-                case DbType.Mssql:    // Mssql
-                    connStr = String.Format("Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}",_DbIP,_DbSchema,_DbAccount,_DbPwd);
-                    _DbSchema = oldDbName;
-                    break;
-                case DbType.Mysql:
-                    connStr = string.Format("Server={0};User Id={1};Password={2};Persist Security Info=True;Database={3};charset=utf8;Allow User Variables=True;",_DbIP,_DbAccount,_DbPwd,_DbSchema);
-                    _DbSchema = oldDbName;
-                    MySqlCommand myCmd = new MySqlCommand();
-                    try {
-                        using(MySqlConnection myConn = new MySqlConnection(connStr)) {
-                            myConn.Open();
-                            myCmd.CommandTimeout = 60;
-                            myCmd.Connection = myConn;
-                            myCmd.CommandText = sql;
-                            recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
-                            myConn.Close();
-                        }
-                    } catch(Exception exc) {
-                        recordCount = -1;
-                        LastError = exc;
-                    } finally {
-                        myCmd = null;
-                    }
-                    break;
-            }
+        //public static int CountBySql(string dbname,string sql) {
+        //    int recordCount = 0;
+        //    string connStr = "";
+        //    string oldDbName = _DbSchema;
+        //    _DbSchema = dbname;
+        //    switch(_DbType) {
+        //        case DbType.Mssql:    // Mssql
+        //            connStr = String.Format("Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}",_DbIP,_DbSchema,_DbAccount,_DbPwd);
+        //            _DbSchema = oldDbName;
+        //            break;
+        //        case DbType.Mysql:
+        //            connStr = string.Format("Server={0};User Id={1};Password={2};Persist Security Info=True;Database={3};charset=utf8;Allow User Variables=True;",_DbIP,_DbAccount,_DbPwd,_DbSchema);
+        //            _DbSchema = oldDbName;
+        //            MySqlCommand myCmd = new MySqlCommand();
+        //            try {
+        //                using(MySqlConnection myConn = new MySqlConnection(connStr)) {
+        //                    myConn.Open();
+        //                    myCmd.CommandTimeout = 60;
+        //                    myCmd.Connection = myConn;
+        //                    myCmd.CommandText = sql;
+        //                    recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
+        //                    myConn.Close();
+        //                }
+        //            } catch(Exception exc) {
+        //                recordCount = -1;
+        //                LastError = exc;
+        //            } finally {
+        //                myCmd = null;
+        //            }
+        //            break;
+        //    }
 
-            return recordCount;
-        }
+        //    return recordCount;
+        //}
         /// <summary>
         /// 执行非查询SQL
         /// </summary>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public static int ExcuteSql(string sql) {
-            int recordCount = 0;
-            switch(_DbType) {
-                case DbType.Mssql:    // Mssql
-                    break;
-                case DbType.Mysql:
-                    MySqlCommand myCmd = new MySqlCommand();
-                    try {
-                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
-                            myConn.Open();
-                            myCmd.CommandTimeout = 60;
-                            myCmd.Connection = myConn;
-                            myCmd.CommandText = sql;
-                            recordCount = myCmd.ExecuteNonQuery();
-                            myConn.Close();
-                        }
-                    } catch(Exception exc) {
-                        recordCount = -1;
-                        LastError = exc;
-                    } finally {
-                        myCmd = null;
-                    }
-                    break;
-            }
-            return recordCount;
-        }
-        public static DataTable GetDataTableBySql(string sql) {
-#if DEBUG
-            if(!sql.StartsWith("select username as 'UserAccount',name as 'CnName',role as 'RoleId',lockkey as 'LockKey',activate as 'Active'")) {
-                Debug.Print("=================GetDataTableBySql=================");
-                Debug.Print(sql);
-                Debug.Print("---------------------------------------------------");
-            }
-#endif
-            DataTable dt = new DataTable();
-            switch(_DbType) {
-                case DbType.Mssql:    // Mssql
+        //public static int ExcuteSql(string sql) {
+        //    int recordCount = 0;
+        //    switch(_DbType) {
+        //        case DbType.Mssql:    // Mssql
+        //            break;
+        //        case DbType.Mysql:
+        //            MySqlCommand myCmd = new MySqlCommand();
+        //            try {
+        //                using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
+        //                    myConn.Open();
+        //                    myCmd.CommandTimeout = 60;
+        //                    myCmd.Connection = myConn;
+        //                    myCmd.CommandText = sql;
+        //                    recordCount = myCmd.ExecuteNonQuery();
+        //                    myConn.Close();
+        //                }
+        //            } catch(Exception exc) {
+        //                recordCount = -1;
+        //                LastError = exc;
+        //            } finally {
+        //                myCmd = null;
+        //            }
+        //            break;
+        //    }
+        //    return recordCount;
+        //}
+//        public static DataTable GetDataTableBySql(string sql) {
+//#if DEBUG
+//            if(!sql.StartsWith("select username as 'UserAccount',name as 'CnName',role as 'RoleId',lockkey as 'LockKey',activate as 'Active'")) {
+//                Debug.Print("=================GetDataTableBySql=================");
+//                Debug.Print(sql);
+//                Debug.Print("---------------------------------------------------");
+//            }
+//#endif
+//            DataTable dt = new DataTable();
+//            switch(_DbType) {
+//                case DbType.Mssql:    // Mssql
 
-                    break;
-                case DbType.Mysql:    // Mysql                    
-                    MySqlCommand myCmd = new MySqlCommand();
-                    myCmd.CommandTimeout = 600;
-                    try {
-                        LastError = null;
-                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
-                            myConn.Open();
-                            myCmd.Connection = myConn;
-                            myCmd.CommandText = sql;
-                            myCmd.CommandType = CommandType.Text;
+//                    break;
+//                case DbType.Mysql:    // Mysql                    
+//                    MySqlCommand myCmd = new MySqlCommand();
+//                    myCmd.CommandTimeout = 600;
+//                    try {
+//                        LastError = null;
+//                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
+//                            myConn.Open();
+//                            myCmd.Connection = myConn;
+//                            myCmd.CommandText = sql;
+//                            myCmd.CommandType = CommandType.Text;
 
-                            MySqlDataAdapter dbAdapter = new MySqlDataAdapter();
-                            dbAdapter.SelectCommand = myCmd;
-                            dbAdapter.Fill(dt);
+//                            MySqlDataAdapter dbAdapter = new MySqlDataAdapter();
+//                            dbAdapter.SelectCommand = myCmd;
+//                            dbAdapter.Fill(dt);
 
-                            dt.TableName = AdobeUtil.CreateUUID();
-                            myConn.Close();
-                        }
-                    } catch(Exception exc) {
-                        LastError = exc;
-                    } finally {
-                        myCmd = null;
-                    }
-                    break;
-            }
-            return dt;
-        }
+//                            dt.TableName = AdobeUtil.CreateUUID();
+//                            myConn.Close();
+//                        }
+//                    } catch(Exception exc) {
+//                        LastError = exc;
+//                    } finally {
+//                        myCmd = null;
+//                    }
+//                    break;
+//            }
+//            return dt;
+//        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="dbname">分为名，分库与主库必须使用相同用户密码</param>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public static DataTable GetDataTableBySql(string dbname,string sql) {
-            DataTable dt = new DataTable();
-            string connStr = "";
-            string oldDbName = _DbSchema;
-            _DbSchema = dbname;
-            switch(_DbType) {
-                case DbType.Mssql:    // Mssql
-                    connStr = String.Format("Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}",_DbIP,_DbSchema,_DbAccount,_DbPwd);
-                    _DbSchema = oldDbName;
-                    break;
-                case DbType.Mysql:    // Mysql  
-                    connStr = string.Format("Server={0};User Id={1};Password={2};Persist Security Info=True;Database={3};charset=utf8;Allow User Variables=True;",_DbIP,_DbAccount,_DbPwd,_DbSchema);
-                    _DbSchema = oldDbName;
-                    MySqlCommand myCmd = new MySqlCommand();
-                    myCmd.CommandTimeout = 600;
-                    try {
-                        using(MySqlConnection myConn = new MySqlConnection(connStr)) {
-                            myConn.Open();
-                            myCmd.Connection = myConn;
-                            myCmd.CommandText = sql;
-                            myCmd.CommandType = CommandType.Text;
+        //public static DataTable GetDataTableBySql(string dbname,string sql) {
+        //    DataTable dt = new DataTable();
+        //    string connStr = "";
+        //    string oldDbName = _DbSchema;
+        //    _DbSchema = dbname;
+        //    switch(_DbType) {
+        //        case DbType.Mssql:    // Mssql
+        //            connStr = String.Format("Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}",_DbIP,_DbSchema,_DbAccount,_DbPwd);
+        //            _DbSchema = oldDbName;
+        //            break;
+        //        case DbType.Mysql:    // Mysql  
+        //            connStr = string.Format("Server={0};User Id={1};Password={2};Persist Security Info=True;Database={3};charset=utf8;Allow User Variables=True;",_DbIP,_DbAccount,_DbPwd,_DbSchema);
+        //            _DbSchema = oldDbName;
+        //            MySqlCommand myCmd = new MySqlCommand();
+        //            myCmd.CommandTimeout = 600;
+        //            try {
+        //                using(MySqlConnection myConn = new MySqlConnection(connStr)) {
+        //                    myConn.Open();
+        //                    myCmd.Connection = myConn;
+        //                    myCmd.CommandText = sql;
+        //                    myCmd.CommandType = CommandType.Text;
 
-                            MySqlDataAdapter dbAdapter = new MySqlDataAdapter();
-                            dbAdapter.SelectCommand = myCmd;
-                            dbAdapter.Fill(dt);
+        //                    MySqlDataAdapter dbAdapter = new MySqlDataAdapter();
+        //                    dbAdapter.SelectCommand = myCmd;
+        //                    dbAdapter.Fill(dt);
 
-                            dt.TableName = AdobeUtil.CreateUUID();
-                            myConn.Close();
-                        }
-                    } catch(Exception exc) {
-                        LastError = exc;
-                    } finally {
-                        myCmd = null;
-                    }
-                    break;
-            }
+        //                    dt.TableName = AdobeUtil.CreateUUID();
+        //                    myConn.Close();
+        //                }
+        //            } catch(Exception exc) {
+        //                LastError = exc;
+        //            } finally {
+        //                myCmd = null;
+        //            }
+        //            break;
+        //    }
 
-            return dt;
-        }
+        //    return dt;
+        //}
         /// <summary>
         /// GetDataTable
         /// </summary>
@@ -1095,7 +1071,7 @@ namespace com.yuzz.dbframework {
         public static int GetCount<T>(string sqlWhere) where T : new() {
             int recordCount = -1;
             T item = new T();
-            string dbname = InvokeDbName(item);
+            string dbname = Ajutil.GetDbName(item);
             switch(_DbType) {
                 case DbType.Mssql:    // Mssql
                     SqlCommand msCmd = new SqlCommand();
@@ -1150,7 +1126,7 @@ namespace com.yuzz.dbframework {
         public static DataTable GetDataTable<T>(string whereCondition,string orderCondition,SQLAction sqlAction,int pageNumber,int pageSize,params string[] sqlFields) where T : new() {
             DataTable dt = new DataTable();
             T item = new T();
-            string dbname = InvokeDbName(item);
+            string dbname = Ajutil.GetDbName(item);
             string selectSQLFields = "";
             if(sqlFields == null) {
                 sqlFields = new string[] { };
@@ -1165,7 +1141,7 @@ namespace com.yuzz.dbframework {
                     }
                     break;
                 case SQLAction.NotInclude:  // 不包括字段
-                    List<SQLField> invokeFields = InvokeFieldList(item);
+                    List<SQLField> invokeFields = Ajutil.GetAllFieldList(item);
                     foreach(SQLField invokeField in invokeFields) {
                         bool exist = false; // 是否是不包括的字段
                         foreach(string pField in sqlFields) {
@@ -1248,22 +1224,22 @@ namespace com.yuzz.dbframework {
 
             return dt;
         }
-        public static DataTable AddColumn(DataTable dt,params DbCellTypes[] columnList) {
-            return AddColumn(dt,false,columnList);
-        }
-        public static DataTable InsertNullRow(DataTable dt,string valueField,string textField) {
-            DataRow row = dt.NewRow();
+        //public static DataTable AddColumn(DataTable dt,params DbCellTypes[] columnList) {
+        //    return AddColumn(dt,false,columnList);
+        //}
+        //public static DataTable InsertNullRow(DataTable dt,string valueField,string textField) {
+        //    DataRow row = dt.NewRow();
 
-            dt.Rows.InsertAt(row,0);
-            foreach(DataColumn col in dt.Columns) {
-                if(col.ColumnName.Equals(valueField)) {
-                    row[col.ColumnName] = -1;
-                } else if(col.ColumnName.Equals(textField)) {
-                    row[col.ColumnName] = "请选择";
-                }
-            }
-            return dt;
-        }
+        //    dt.Rows.InsertAt(row,0);
+        //    foreach(DataColumn col in dt.Columns) {
+        //        if(col.ColumnName.Equals(valueField)) {
+        //            row[col.ColumnName] = -1;
+        //        } else if(col.ColumnName.Equals(textField)) {
+        //            row[col.ColumnName] = "请选择";
+        //        }
+        //    }
+        //    return dt;
+        //}
         /// <summary>
         /// 添加LinkColumn
         /// </summary>
@@ -1271,61 +1247,61 @@ namespace com.yuzz.dbframework {
         /// <param name="includeEditColumn">是否包括编辑、删除列</param>
         /// <param name="columnList"></param>
         /// <returns></returns>
-        public static DataTable AddColumn(DataTable dt,bool includeEditColumn,params DbCellTypes[] columnList) {
-            List<KeyValuePair<string,string>> columns = new List<KeyValuePair<string,string>>();
-            foreach(DbCellTypes colType in columnList) {
-                switch(colType) {
-                    case DbCellTypes.Edit_Column:
-                        columns.Add(new KeyValuePair<string,string>("edit_column","编辑"));
-                        break;
-                    case DbCellTypes.Del_Column:
-                        columns.Add(new KeyValuePair<string,string>("del_column","删除"));
-                        break;
-                    case DbCellTypes.Publish_column:
-                        columns.Add(new KeyValuePair<string,string>("publish_column","同步商城"));
-                        break;
-                    case DbCellTypes.ViewDetail_Column:
-                        columns.Add(new KeyValuePair<string,string>("viewDetail","详情"));
-                        break;
-                    case DbCellTypes.ResetPassword_Column:
-                        columns.Add(new KeyValuePair<string,string>("resetPassword_Column","重置密码"));
-                        break;
-                    case DbCellTypes.Disable_Column:
-                        columns.Add(new KeyValuePair<string,string>("disable_Column","禁用"));
-                        break;
-                    case DbCellTypes.Select_Column:
-                        columns.Add(new KeyValuePair<string,string>("select_Column","选择"));
-                        break;
-                }
-            }
+        //public static DataTable AddColumn(DataTable dt,bool includeEditColumn,params DbCellTypes[] columnList) {
+        //    List<KeyValuePair<string,string>> columns = new List<KeyValuePair<string,string>>();
+        //    foreach(DbCellTypes colType in columnList) {
+        //        switch(colType) {
+        //            case DbCellTypes.Edit_Column:
+        //                columns.Add(new KeyValuePair<string,string>("edit_column","编辑"));
+        //                break;
+        //            case DbCellTypes.Del_Column:
+        //                columns.Add(new KeyValuePair<string,string>("del_column","删除"));
+        //                break;
+        //            case DbCellTypes.Publish_column:
+        //                columns.Add(new KeyValuePair<string,string>("publish_column","同步商城"));
+        //                break;
+        //            case DbCellTypes.ViewDetail_Column:
+        //                columns.Add(new KeyValuePair<string,string>("viewDetail","详情"));
+        //                break;
+        //            case DbCellTypes.ResetPassword_Column:
+        //                columns.Add(new KeyValuePair<string,string>("resetPassword_Column","重置密码"));
+        //                break;
+        //            case DbCellTypes.Disable_Column:
+        //                columns.Add(new KeyValuePair<string,string>("disable_Column","禁用"));
+        //                break;
+        //            case DbCellTypes.Select_Column:
+        //                columns.Add(new KeyValuePair<string,string>("select_Column","选择"));
+        //                break;
+        //        }
+        //    }
 
-            if(includeEditColumn == true) {
-                dt = AddEditColumn(dt);
-            }
-            foreach(KeyValuePair<string,string> key in columns) {   // 添加列标题
-                dt.Columns.Add(key.Key);
-            }
+        //    if(includeEditColumn == true) {
+        //        dt = AddEditColumn(dt);
+        //    }
+        //    foreach(KeyValuePair<string,string> key in columns) {   // 添加列标题
+        //        dt.Columns.Add(key.Key);
+        //    }
 
-            foreach(DataRow row in dt.Rows) {   // 添加列数据
-                foreach(KeyValuePair<string,string> key in columns) {
-                    row[key.Key] = key.Value;
-                }
+        //    foreach(DataRow row in dt.Rows) {   // 添加列数据
+        //        foreach(KeyValuePair<string,string> key in columns) {
+        //            row[key.Key] = key.Value;
+        //        }
 
-            }
-            return dt;
-        }
+        //    }
+        //    return dt;
+        //}
 
-        public static DataTable AddEditColumn(DataTable dt) {
-            dt.Columns.Add("edit_column");
-            dt.Columns.Add("del_column");
+        //public static DataTable AddEditColumn(DataTable dt) {
+        //    dt.Columns.Add("edit_column");
+        //    dt.Columns.Add("del_column");
 
-            foreach(DataRow row in dt.Rows) {
-                row["edit_column"] = "修改";
-                row["del_column"] = "删除";
-            }
+        //    foreach(DataRow row in dt.Rows) {
+        //        row["edit_column"] = "修改";
+        //        row["del_column"] = "删除";
+        //    }
 
-            return dt;
-        }
+        //    return dt;
+        //}
 
         public static Exception LastError {
             get;
@@ -1336,14 +1312,14 @@ namespace com.yuzz.dbframework {
             get;
             set;
         }
-        public static string AjaxDataTable() {
-            return "";
-        }
+        //public static string AjaxDataTable() {
+        //    return "";
+        //}
        
 
-        public static string CurrentFiled {
-            get;
-            set;
-        }
+        //public static string CurrentFiled {
+        //    get;
+        //    set;
+        //}
     }
 }

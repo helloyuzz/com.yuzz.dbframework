@@ -16,6 +16,11 @@ namespace com.yuzz.demo.app {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Form_Demo_Load
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form_Demo_Load(object sender,EventArgs e) {
             Ajdb.Init(DbType.Mysql,"127.0.0.1",3306,"root","jlkj111111","guangjuqili");
 
@@ -23,13 +28,23 @@ namespace com.yuzz.demo.app {
             dept.Name = "aaa" + Guid.NewGuid().ToString();
             
             SaveResult result = Ajdb.Insert(dept);
-            
-            result = Ajdb.Update(dept);
 
             if(result.Pk_Int > 0) {
                 MessageBox.Show("OK");
 
                 SysDept getDept = Ajdb.GetItem<SysDept>(result.Pk_Int);
+                getDept.UpdateFields.Clear();
+
+                getDept.Name += DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                getDept.ModifyTime = DateTime.Now;
+                result = Ajdb.Update(getDept);
+
+
+                List<SysDept> getList = Ajdb.GetList<SysDept>("","");
+                foreach(SysDept getItem in getList) {
+                    Console.WriteLine(getItem.Name);
+                }
+
                 MessageBox.Show(getDept.Name);
             }
         }
