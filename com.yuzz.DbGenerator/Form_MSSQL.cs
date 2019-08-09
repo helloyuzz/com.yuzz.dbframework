@@ -4,18 +4,16 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using DBFramework.vo;
 using System.IO;
 using System.Data.SqlClient;
-using com.cgWorkstudio.BIMP.Client.db.vo;
 using System.Diagnostics;
-using com.cgWorkstudio.BIMP.MySQL;
+using com.yuzz.DbGenerator.vo;
 
-namespace DBFramework {
-    public partial class Form_Main:Form {
+namespace com.yuzz.DbGenerator {
+    public partial class Form_MSSQL:Form {
         delegate void OnSaveFileCallback(string filePath);
 
-        public Form_Main() {
+        public Form_MSSQL() {
             InitializeComponent();
         }
 

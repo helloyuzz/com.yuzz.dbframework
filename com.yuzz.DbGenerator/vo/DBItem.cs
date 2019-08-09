@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace com.cgWorkstudio.BIMP.vo {
+namespace com.yuzz.DbGenerator.vo {
     [Serializable]
     public class DBItem {
     }

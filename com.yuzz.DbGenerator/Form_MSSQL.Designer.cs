@@ -1,5 +1,5 @@
-﻿namespace DBFramework {
-    partial class Form_Main {
+﻿namespace com.yuzz.DbGenerator {
+    partial class Form_MSSQL {
         /// <summary>
         /// 必需的设计器变量。
         /// </summary>
@@ -24,7 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Main));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_MSSQL));
             this.showLeftPanel = new System.Windows.Forms.Panel();
             this.showDBPage = new System.Windows.Forms.TabControl();
             this.tp_表 = new System.Windows.Forms.TabPage();
@@ -765,7 +765,7 @@
             this.menuItem_MySQL.Text = "MySQL Util";
             this.menuItem_MySQL.Click += new System.EventHandler(this.menuItem_MySQL_Click);
             // 
-            // Form_Main
+            // Form_MSSQL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -777,7 +777,7 @@
             this.Controls.Add(this.showTopPanel);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form_Main";
+            this.Name = "Form_MSSQL";
             this.Text = "Form_Main";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form_Main_Load);

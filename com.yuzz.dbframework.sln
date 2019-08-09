@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.yuzz.dbframework", "com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.yuzz.DbGenerator", "com.yuzz.DbGenerator\com.yuzz.DbGenerator.csproj", "{02368FD1-1D86-4EC3-9FC6-E72A09180E23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.yuzz.demo.app", "com.yuzz.demo.app\com.yuzz.demo.app.csproj", "{52279D00-EEE2-47C4-97B3-DD601AECBF83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{02368FD1-1D86-4EC3-9FC6-E72A09180E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02368FD1-1D86-4EC3-9FC6-E72A09180E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02368FD1-1D86-4EC3-9FC6-E72A09180E23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52279D00-EEE2-47C4-97B3-DD601AECBF83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52279D00-EEE2-47C4-97B3-DD601AECBF83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52279D00-EEE2-47C4-97B3-DD601AECBF83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52279D00-EEE2-47C4-97B3-DD601AECBF83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

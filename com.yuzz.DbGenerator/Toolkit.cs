@@ -7,9 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.OleDb;
-using DBFramework.vo;
 
-namespace DBFramework {
+namespace com.yuzz.DbGenerator {
     public class Toolkit {
         public Toolkit() {
 

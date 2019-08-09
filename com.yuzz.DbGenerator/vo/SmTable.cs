@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DBFramework.vo {
+namespace com.yuzz.DbGenerator.vo {
     class SmTable {
         public virtual string Name {
             get;

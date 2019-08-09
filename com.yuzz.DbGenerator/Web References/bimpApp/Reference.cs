@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace com.yuzz.dbgenerator.bimpApp {
+namespace com.yuzz.DbGenerator.bimpApp {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -317,7 +317,7 @@ namespace com.yuzz.dbgenerator.bimpApp {
         
         /// <remarks/>
         public Service1() {
-            this.Url = global::com.yuzz.dbgenerator.Properties.Settings.Default.DBFramework_bimpApp_Service1;
+            this.Url = global::com.yuzz.DbGenerator.Properties.Settings.Default.DBFramework_bimpApp_Service1;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

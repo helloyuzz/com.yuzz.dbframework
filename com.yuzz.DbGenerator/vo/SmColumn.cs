@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.OleDb;
 using System.Data;
-namespace DBFramework.vo {
+namespace com.yuzz.DbGenerator.vo {
     [Serializable]
     public class SmColumn {
         public virtual string Name {

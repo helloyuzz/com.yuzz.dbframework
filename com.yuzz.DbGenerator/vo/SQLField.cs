@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace com.cgWorkstudio.BIMP.Client.db.vo {
+namespace com.yuzz.DbGenerator.vo {
     [Serializable]
     public class SQLField {
         public SQLField() {

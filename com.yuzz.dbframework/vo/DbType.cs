@@ -4,7 +4,7 @@ using System.Text;
 
 namespace com.yuzz.dbframework
 {
-    public enum InitType
+    public enum DbType
     {
         Mssql, Mysql
     }

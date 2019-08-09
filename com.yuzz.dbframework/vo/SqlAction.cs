@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace com.yuzz.dbframework
-{
-    public enum SqlAction
-    {
+namespace com.yuzz.dbframework {
+    public enum SQLAction {
         /// <summary>
         /// 默认查询
         /// </summary>

@@ -8,11 +8,11 @@
     <ProjectGuid>{02368FD1-1D86-4EC3-9FC6-E72A09180E23}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>com.yuzz.dbgenerator</RootNamespace>
-    <AssemblyName>DbGenerator</AssemblyName>
+    <RootNamespace>com.yuzz.DbGenerator</RootNamespace>
+    <AssemblyName>com.yuzz.DbGenerator</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>DBFramework.Program</StartupObject>
+    <StartupObject>com.yuzz.DbGenerator.Program</StartupObject>
     <SccProjectName>Svn</SccProjectName>
     <SccLocalPath>Svn</SccLocalPath>
     <SccAuxPath>Svn</SccAuxPath>
@@ -86,12 +86,34 @@
     <ApplicationIcon>icons\mysql.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.0.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.3.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.3.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.6.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=6.9.12.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.12\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -107,36 +129,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BIMP_Test.cs" />
-    <Compile Include="Form_Default.cs">
+    <Compile Include="Form_MSSQL.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Default.Designer.cs">
-      <DependentUpon>Form_Default.cs</DependentUpon>
+    <Compile Include="Form_MSSQL.Designer.cs">
+      <DependentUpon>Form_MSSQL.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form_Main.cs">
+    <Compile Include="Form_Startup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form_Main.Designer.cs">
-      <DependentUpon>Form_Main.cs</DependentUpon>
+    <Compile Include="Form_Startup.Designer.cs">
+      <DependentUpon>Form_Startup.cs</DependentUpon>
     </Compile>
-    <Compile Include="MySQL\Form_MySQL.cs">
+    <Compile Include="Form_MySQL.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MySQL\Form_MySQL.Designer.cs">
+    <Compile Include="Form_MySQL.Designer.cs">
       <DependentUpon>Form_MySQL.cs</DependentUpon>
     </Compile>
-    <Compile Include="MySQL\MySqlField.cs" />
+    <Compile Include="vo\MySQLField.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form_Default.resx">
-      <DependentUpon>Form_Default.cs</DependentUpon>
+    <EmbeddedResource Include="Form_MSSQL.resx">
+      <DependentUpon>Form_MSSQL.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form_Main.resx">
-      <DependentUpon>Form_Main.cs</DependentUpon>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="Form_Startup.resx">
+      <DependentUpon>Form_Startup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MySQL\Form_MySQL.resx">
+    <EmbeddedResource Include="Form_MySQL.resx">
       <DependentUpon>Form_MySQL.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -150,6 +171,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="com.yuzz.dbgenerator.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -160,9 +182,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Toolkit.cs" />
-    <Compile Include="util\DBUtil.cs" />
     <Compile Include="vo\DBClass.cs" />
     <Compile Include="vo\DBItem.cs" />
+    <Compile Include="vo\MySQLXmlFile.cs" />
     <Compile Include="vo\SmColumn.cs" />
     <Compile Include="vo\SmField.cs" />
     <Compile Include="vo\SmTable.cs" />
@@ -172,10 +194,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <None Include="Web References\bimpApp\GetPaged_DataTable1.datasource">
+    <None Include="Web References\bimpApp\GetPaged_DataTable.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
-    <None Include="Web References\bimpApp\SaveResult1.datasource">
+    <None Include="Web References\bimpApp\SaveResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
   </ItemGroup>
@@ -228,6 +250,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="xml\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace com.yuzz.dbframework
 {
-    public enum ColumnTypes
+    public enum DbCellTypes
     {
         /// <summary>
         /// 编辑
