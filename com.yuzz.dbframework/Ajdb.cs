@@ -721,7 +721,7 @@ namespace com.yuzz.dbframework {
             //hanjq update
             int queryInt = 0;
             T item = new T();
-            string dbname = Ajutil.GetDbName(item);
+            string dbname = Ajutil.GetSechemaName(item);
 
             switch(_DbType) {
                 case DbType.Mssql:
@@ -783,7 +783,7 @@ namespace com.yuzz.dbframework {
             int result = 0;
 
             T dbclass = new T();
-            string dbname = Ajutil.GetDbName(dbclass);
+            string dbname = Ajutil.GetSechemaName(dbclass);
 
             switch(_DbType) {
                 case DbType.Mssql:
@@ -1071,7 +1071,7 @@ namespace com.yuzz.dbframework {
         public static int GetCount<T>(string sqlWhere) where T : new() {
             int recordCount = -1;
             T item = new T();
-            string dbname = Ajutil.GetDbName(item);
+            string dbname = Ajutil.GetSechemaName(item);
             switch(_DbType) {
                 case DbType.Mssql:    // Mssql
                     SqlCommand msCmd = new SqlCommand();
@@ -1126,7 +1126,7 @@ namespace com.yuzz.dbframework {
         public static DataTable GetDataTable<T>(string whereCondition,string orderCondition,SQLAction sqlAction,int pageNumber,int pageSize,params string[] sqlFields) where T : new() {
             DataTable dt = new DataTable();
             T item = new T();
-            string dbname = Ajutil.GetDbName(item);
+            string dbname = Ajutil.GetSechemaName(item);
             string selectSQLFields = "";
             if(sqlFields == null) {
                 sqlFields = new string[] { };
@@ -1141,7 +1141,7 @@ namespace com.yuzz.dbframework {
                     }
                     break;
                 case SQLAction.NotInclude:  // 不包括字段
-                    List<SQLField> invokeFields = Ajutil.GetAllFieldList(item);
+                    List<SQLField> invokeFields = Ajutil.GetAllFields(item);
                     foreach(SQLField invokeField in invokeFields) {
                         bool exist = false; // 是否是不包括的字段
                         foreach(string pField in sqlFields) {

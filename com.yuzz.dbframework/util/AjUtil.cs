@@ -36,7 +36,7 @@ namespace com.yuzz.dbframework.util {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string GetDbName(object obj) {
+        public static string GetSechemaName(object obj) {
             List<MethodInfo> execMethods = Ajutil.GetMethodList(obj.GetType());
             MethodInfo mdh_GetTableName = execMethods.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));
             string dbname = (string)mdh_GetTableName.Invoke(obj,null);
@@ -47,7 +47,7 @@ namespace com.yuzz.dbframework.util {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static List<SQLField> GetAllFieldList(object obj) {
+        public static List<SQLField> GetAllFields(object obj) {
             List<MethodInfo> execMethods = Ajutil.GetMethodList(obj.GetType());
             MethodInfo mdh_GetFields = execMethods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
             List<SQLField> sqlFields = (List<SQLField>)mdh_GetFields.Invoke(obj,null);
