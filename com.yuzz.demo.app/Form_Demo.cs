@@ -22,32 +22,35 @@ namespace com.yuzz.demo.app {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Form_Demo_Load(object sender,EventArgs e) {
+            // -----------------demo----------------------
+            // 1、init 操作
+            // -------------------------------------------
             Ajdb.Init(DbType.Mysql,"127.0.0.1",3306,"root","jlkj111111","guangjuqili");
 
             SysDept dept = new SysDept();
             dept.Name = "aaa" + Guid.NewGuid().ToString();
             
             // -----------------demo----------------------
-            // insert 操作
+            // 2、insert 操作
             // -------------------------------------------
-            SaveResult result = Ajdb.Insert(dept);
+            SaveResult saveResult = Ajdb.Insert(dept);
 
-            if(result.Pk_Int > 0) {
+            if(saveResult.PK_Int > 0) {
                 MessageBox.Show("OK");
 
                 // -----------------demo----------------------
-                // select 单行操作
+                // 3、select 单行操作
                 // -------------------------------------------
-                SysDept getDept = Ajdb.GetItem<SysDept>(result.Pk_Int);
-                getDept.UpdateFields.Clear();
+                SysDept getDept = Ajdb.GetItem<SysDept>(saveResult.PK_Int);
+
 
                 getDept.Name += DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                getDept.ModifyTime = DateTime.Now;
+                getDept.modifytime = DateTime.Now;
 
                 // -----------------demo----------------------
-                // update 操作
+                // 4、update 操作
                 // -------------------------------------------
-                result = Ajdb.Update(getDept);
+                saveResult = Ajdb.Update(getDept);
 
 
                 // -----------------demo----------------------

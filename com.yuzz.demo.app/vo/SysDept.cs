@@ -5,14 +5,11 @@ using com.yuzz.dbframework;
 using MySql.Data.MySqlClient;
 [Serializable]
 public class SysDept {
-    public List<string> UpdateFields = new List<string>();
-
-    /// <summary>
-    /// 默认构造函数
-    /// </summary>
-    public SysDept() {
+    List<string> _UpdateFields = new List<string>();
+    public virtual List<string> UpdateFields {
+        get { return _UpdateFields; }
+        set { _UpdateFields = value; }
     }
-
     public static Type Type {
         get {
             return typeof(SysDept);
@@ -39,7 +36,7 @@ public class SysDept {
                 _Fields.Add(new SQLField("EmpNumber",MySqlDbType.Int32,false,""));
                 _Fields.Add(new SQLField("Money",MySqlDbType.Float,false,""));
                 _Fields.Add(new SQLField("Comment",MySqlDbType.VarChar,false,""));
-                _Fields.Add(new SQLField("ModifyTime",MySqlDbType.DateTime,false,""));
+                _Fields.Add(new SQLField("modifytime",MySqlDbType.DateTime,false,""));
             }
             return _Fields;
         }
@@ -102,7 +99,6 @@ public class SysDept {
         }
     }
     string _Comment;
-
     public virtual string Comment {
         get {
             return _Comment;
@@ -114,17 +110,16 @@ public class SysDept {
             _Comment = value;
         }
     }
-
-    DateTime _ModifyTime;
-    public virtual DateTime ModifyTime {
+    DateTime _modifytime;
+    public virtual DateTime modifytime {
         get {
-            return _ModifyTime;
+            return _modifytime;
         }
         set {
-            if(value != this._ModifyTime) {
-                UpdateFields.Add("ModifyTime");
+            if(value != this._modifytime) {
+                UpdateFields.Add("modifytime");
             }
-            _ModifyTime = value;
+            _modifytime = value;
         }
     }
 }

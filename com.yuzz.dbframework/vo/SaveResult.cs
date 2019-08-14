@@ -5,11 +5,11 @@ using System.Text;
 namespace com.yuzz.dbframework {
     [Serializable]
     public class SaveResult {
-        public virtual int Pk_Int {
+        public virtual int PK_Int {
             get;
             set;
         } = -1;
-        public virtual string Pk_UUID {
+        public virtual string PK_UUID {
             get;
             set;
         }

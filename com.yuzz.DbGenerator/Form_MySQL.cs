@@ -35,7 +35,13 @@ namespace com.yuzz.DbGenerator {
             sql.Append("public class ").Append(tbx_TableName.Text).Append(" {\r\n");
 
             // 更新字段
-            sql.Append("\tpublic List<string> UpdateFields = new List<string>();").Append(Environment.NewLine);
+            //sql.Append("\tpublic List<string> UpdateFields = new List<string>();").Append(Environment.NewLine);
+            sql.Append("\tList<string> _UpdateFields = new List<string>();\r\n");
+            sql.Append("\tpublic virtual List<string> UpdateFields {\r\n");
+            sql.Append("\t\tget { return _UpdateFields; }\r\n");
+            sql.Append("\t\tset { _UpdateFields = value; }\r\n");
+            sql.Append("\t}\r\n");
+
             sql.Append("\tpublic static Type Type {").Append(Environment.NewLine);
             sql.Append("\t\tget {").Append(Environment.NewLine);
       
@@ -66,6 +72,9 @@ namespace com.yuzz.DbGenerator {
             sql.Append("\t\tget{\r\n");
             sql.Append("\t\t\tif(_Fields == null){\r\n");
             sql.Append("\t\t\t_Fields = new List<SQLField>();\r\n");
+
+
+
 
             foreach(MySQLField field in mysqlFields) {
                 string isPRI = field.Key.Equals("PRI") ? "true" : "false";

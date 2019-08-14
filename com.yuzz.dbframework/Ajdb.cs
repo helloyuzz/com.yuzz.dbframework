@@ -53,12 +53,12 @@ namespace com.yuzz.dbframework {
             get; set;
         }
         static int _Port { get; set; }
-        static string dbPrefix_Left {
+        static string dbPrefix {
             get {
                 return _DbType == DbType.Mssql ? "[" : "`";
             }
         }
-        static string dbPrefix_Right {
+        static string dbSuffix {
             get {
                 return _DbType == DbType.Mssql ? "]" : "`";
             }
@@ -102,61 +102,65 @@ namespace com.yuzz.dbframework {
         public static SaveResult Save(object valueObject,SaveAction saveAction) {
             SaveResult saveResult = new SaveResult();
 
-            object pk_Value = 0;
-            bool isIntPK = false;
-            //bool pkIsNull = false;
-            string sechma_Name = string.Empty;
-            List<SQLField> sqlFields = null;
+            object getPKValue = 0;                  // 主键Primary Key实际的变量值
+            string getPKFieldName = "";             // 主键Primary Key字段名称
+            bool intTypePK = false;                 // 是否int整形Primary Key主键
+            string getTableName = string.Empty;     // 表格的名称
+
+            List<SQLField> getAllFields = null;     // 表格所有的字段 
+            List<string> getUpdatedFields = null; // 仅仅对象值发生变化或更新的字段
 
             Type getType = valueObject.GetType();
 
             List<MethodInfo> methodList = Ajutil.GetMethodList(valueObject.GetType());
 
             MethodInfo mdh_GetPkFiledName = methodList.Find(t => t.Name.Equals("get_pkfieldname",StringComparison.CurrentCultureIgnoreCase));
-            string pk_FieldName = (string)mdh_GetPkFiledName.Invoke(valueObject,null);
+            MethodInfo mdh_GetTableName = methodList.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));               // 获取表格名称的方法
+            MethodInfo mdh_GetAllFields = methodList.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));                  // 获取表格所有字段的方法
+            MethodInfo mdh_GetUpdateFields = methodList.Find(t => t.Name.Equals("get_updatefields",StringComparison.CurrentCultureIgnoreCase));         // 获取UpdateFields
+            MethodInfo mdh_SetUUID = methodList.Find(t => t.Name.Equals("set_uuid",StringComparison.CurrentCultureIgnoreCase));                         // Set方法是为了在添加时设置UUID
 
-            // 查找最常用的UUID的get、set方法
-            MethodInfo mdh_GetTableName = methodList.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));          // 获取表格名称的方法
-            MethodInfo mdh_GetFields = methodList.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));                // 获取表格所有字段的方法
-            MethodInfo mdh_UpdateFields = methodList.Find(t => t.Name.Equals("get_updatefields",StringComparison.CurrentCultureIgnoreCase));       // 获取UpdateFields
-            MethodInfo mdh_GetPkFieldValue = methodList.Find(t => t.Name.Equals("get_" + pk_FieldName,StringComparison.CurrentCultureIgnoreCase)); // Get方法是为了获取修改时的UUID
-            MethodInfo mdh_SetUUID = methodList.Find(t => t.Name.Equals("set_uuid",StringComparison.CurrentCultureIgnoreCase));                    // Set方法是为了在添加时设置UUID
+            getPKFieldName = (string)mdh_GetPkFiledName.Invoke(valueObject,null);               // 主键名称，不同表的主键名称不一定相同，但推荐设计表时主键统一设置为“id”
+            MethodInfo mdh_GetPkFieldValue = methodList.Find(t => t.Name.Equals("get_" + getPKFieldName,StringComparison.CurrentCultureIgnoreCase)); // Get方法是为了获取修改时的UUID
 
-            if(mdh_GetTableName != null) {   // 取得表名   
-                sechma_Name = (string)mdh_GetTableName.Invoke(valueObject,null);
-            }
+            getTableName = (string)mdh_GetTableName.Invoke(valueObject,null);                   // 取得表名   
+            getAllFields = (List<SQLField>)mdh_GetAllFields.Invoke(valueObject,null);           // 取得表格中所有的字段列表
+            getUpdatedFields = (List<string>)mdh_GetUpdateFields.Invoke(valueObject,null);    // 取得仅仅对象值发生变化的字段列表，目的是构造update tb set xxx=xxx，时仅仅只更新值发生变化的字段，无需所有更新
             
-            if(mdh_GetFields != null) {     // 取得字段列表
-                sqlFields = (List<SQLField>)mdh_GetFields.Invoke(valueObject,null);
-            }
             
-            isIntPK = mdh_GetPkFieldValue.ReturnType.Equals(typeof(int)) ? true : false;    // 是否为int型主键
+            intTypePK = mdh_GetPkFieldValue.ReturnType.Equals(typeof(int)) ? true : false;      // 是否为int型主键
                  
-            if(isIntPK == true) {    // 取得pkValue
-                pk_Value = (int)mdh_GetPkFieldValue.Invoke(valueObject,null);
-                //pkIsNull = (int)pk_Value <= 0 ? true : false;
-            } else {
-                pk_Value = (string)mdh_GetPkFieldValue.Invoke(valueObject,null);
-                //pkIsNull = string.IsNullOrEmpty(AdobeUtil.IngoreNull(pk_Value));
+            // 本框架仅支持int类型、varchar类型作为表格的主键，暂不支持其它数据类型作为表格的主键
+            // table.pk(type=int,type=varchar)
+            if(intTypePK == true) {                                                             // 取得int类型的pkValue
+                getPKValue = (int)mdh_GetPkFieldValue.Invoke(valueObject,null);
+            } else {                                                                            // 取得varchar类型的pkValue
+                getPKValue = (string)mdh_GetPkFieldValue.Invoke(valueObject,null);
             }
 
-            string execSQLString = string.Empty;
+            // ------------------------------------------------------------------------------------------------------------------------
+            // 整套框架最为重要的代码，也就是根据不同的操作类型，构造真实的SQL代码
+            // 会自适应操作类型
+            // 返回结果：insert tb(filed1,field2,fieldxxx) values(@arg1,@arg2,@argxxx)
+            // 或者：update tb set filed1=@arg1,field2=@arg2,fieldxxx=@argxxx where pk=@argid
+            // ------------------------------------------------------------------------------------------------------------------------
+            string execSQLString = BuildSQLCommandText(getTableName,getPKFieldName,getAllFields,getUpdatedFields,saveAction);
+            Ajdb.CommandText = execSQLString;
 
-            saveResult.SchemaName = sechma_Name;
+            saveResult.SchemaName = getTableName;
             try {
-                int index = 0;
+                int arguIndex = 0;
                 if(_DbType == DbType.Mssql) {
                     using(SqlConnection dbConn = new SqlConnection(_DbConnectionString)) {
                         dbConn.Open();
                         SqlCommand mssqlCmd = new SqlCommand();
                         mssqlCmd.Connection = dbConn;
-                        mssqlCmd.CommandText = BuildSQLCommandText(sechma_Name,pk_FieldName,sqlFields,saveAction);
-                        Ajdb.CommandText = mssqlCmd.CommandText;
+                        mssqlCmd.CommandText = execSQLString;
 
                         // 构造实际的参数
                         mssqlCmd.Parameters.Clear();
-                        index = 0;
-                        foreach(SQLField sqlField in sqlFields) {
+                        arguIndex = 0;
+                        foreach(SQLField sqlField in getAllFields) {
                             if(sqlField.Identity == true) { // 主键
                                 continue;
                             }
@@ -164,8 +168,8 @@ namespace com.yuzz.dbframework {
                             MethodInfo sqlMethod = methodList.Find(t => t.Name.Equals(getMethodName,StringComparison.CurrentCultureIgnoreCase));
                             object getValue = sqlMethod.Invoke(valueObject,null);
 
-                            mssqlCmd.Parameters.Add("@Arg" + index,sqlField.MsDbType).Value = ParseSQLFiledValues(sqlField,getValue);
-                            index++;
+                            mssqlCmd.Parameters.Add("@Arg" + arguIndex,sqlField.MsDbType).Value = ParseSQLFiledValues(sqlField,getValue);
+                            arguIndex++;
                         }
                         //if(pkIsNull == false) {
                         //    if(isIntPK == true) {
@@ -195,61 +199,48 @@ namespace com.yuzz.dbframework {
                         dbConn.Open();
                         MySqlCommand mysqlCmd = new MySqlCommand();
                         mysqlCmd.Connection = dbConn;
-                        mysqlCmd.CommandText = BuildSQLCommandText(sechma_Name,pk_FieldName,sqlFields,saveAction);
-                        Ajdb.CommandText = mysqlCmd.CommandText;
+                        mysqlCmd.CommandText = execSQLString;
 
                         // 构造实际的参数
                         mysqlCmd.Parameters.Clear();
-                        index = 0;
-                        foreach(SQLField sqlField in sqlFields) {
-                            /* 在非强制更新主键时，忽略对主键的处理，譬如：
-                             * insert主键自动增长
-                             * update xxx={xxx} where pk={pk}
-                            */
-                            if(sqlField.Identity == true && saveAction != SaveAction.Insert) { // 主键，非强制更新不设置主键的值
+                        arguIndex = 0;
+                        foreach(SQLField sqlField in getAllFields) {
+                            // 新增或者修改操作时，忽略对主键的操作，也就是不更新主键的值
+                            if(sqlField.Identity == true && saveAction != SaveAction.Insert) { 
                                 continue;
                             }
+
+                            // 如果是更新操作，则检查是否是值发生变化的字段
+                            if(saveAction == SaveAction.UpdateChangeField && getUpdatedFields.Contains(sqlField.Name)==false) {    
+                                continue;
+                            }
+
                             string getMethodName = "get_" + sqlField.Name;
                             MethodInfo sqlMethod = methodList.Find(t => t.Name.Equals(getMethodName,StringComparison.CurrentCultureIgnoreCase));
                             object getValue = sqlMethod.Invoke(valueObject,null);
 
-                            mysqlCmd.Parameters.Add("@Arg" + index,sqlField.MyDbType).Value = ParseSQLFiledValues(sqlField,getValue);
-                            index++;
+                            mysqlCmd.Parameters.Add("@Arg" + arguIndex,sqlField.MyDbType).Value = ParseSQLFiledValues(sqlField,getValue);
+                            arguIndex++;
                         }
-                        /* -------------------------------------------------------------------------------------
-                         * 自动：
-                         *      无PK-》新增
-                         *              ingore
-                         *      有PK-》修改
-                         *              set
-                         * 新增：
-                         *      带PK-》强制新增
-                         *              set
-                         *      不带PK-》默认新增
-                         *              ingore
-                         * 修改：
-                         *      带PK-》修改
-                         *              set
-                         */
 
                         // ------------------------------------------------------------------------------------
                         // 更新update操作，前面是设置参数值，也就是set xxx=xxx
                         // 需设置where id=xxx，也就是设置主键
                         // ------------------------------------------------------------------------------------
                         if(saveAction == SaveAction.UpdateChangeField) {
-                            if(isIntPK == true) {
-                                mysqlCmd.Parameters.Add("@Arg" + index,MySqlDbType.Int32).Value = pk_Value;
+                            if(intTypePK == true) {
+                                mysqlCmd.Parameters.Add("@Arg" + arguIndex,MySqlDbType.Int32).Value = getPKValue;
                             } else {
-                                mysqlCmd.Parameters.Add("@Arg" + index,MySqlDbType.VarChar).Value = pk_Value;
+                                mysqlCmd.Parameters.Add("@Arg" + arguIndex,MySqlDbType.VarChar).Value = getPKValue;
                             }
                         }
 
                         // --------------------------------执行sql写入数据库中----------------------------------
                         if(mysqlCmd.ExecuteNonQuery() > 0) {                            
                             // 新增操作且为int主键（自增长类型），返回max(int)主键
-                            if(saveAction == SaveAction.Insert && isIntPK == true) {    
-                                mysqlCmd.CommandText = "select max(" + pk_FieldName + ") from " + sechma_Name;
-                                saveResult.Pk_Int = AdobeUtil.ParseInt(mysqlCmd.ExecuteScalar());
+                            if(saveAction == SaveAction.Insert && intTypePK == true) {    
+                                mysqlCmd.CommandText = "select max(" + getPKFieldName + ") from " + getTableName;
+                                saveResult.PK_Int = AdobeUtil.ParseInt(mysqlCmd.ExecuteScalar());
                             }
                         }
                         mysqlCmd = null;
@@ -257,7 +248,7 @@ namespace com.yuzz.dbframework {
                 }
             } catch(Exception exc) {
                 Ajdb.LastError = exc;
-                saveResult.Pk_Int = -1;
+                saveResult.PK_Int = -1;
                 saveResult.Msg = exc.Message;
             } finally {
             }
@@ -270,39 +261,39 @@ namespace com.yuzz.dbframework {
         /// </summary>
         /// <param name="sechma_Name"></param>
         /// <param name="pk_FieldName"></param>
-        /// <param name="sqlFields"></param>
+        /// <param name="allSQLFields"></param>
         /// <param name="saveAction"></param>
         /// <returns></returns>
-        private static string BuildSQLCommandText(string sechma_Name,string pk_FieldName,List<SQLField> sqlFields,SaveAction saveAction) {
+        private static string BuildSQLCommandText(string sechma_Name,string pk_FieldName,List<SQLField> getAllFields,List<string> getUpdatedFields,SaveAction saveAction) {
             string execSQLString = "";
             string getCondFields = string.Empty;
             string getCondValues = string.Empty;
 
             // 构造Fields
-            int index = 0;
+            int arguIndex = 0;  // 参数索引
             switch(saveAction) {
                 case SaveAction.Insert:
-                    foreach(SQLField sqlField in sqlFields) {
+                    foreach(SQLField sqlField in getAllFields) {
                         if(sqlField.Identity == true && saveAction != SaveAction.Insert) { // 主键
                             continue;
                         }
                         if(string.IsNullOrEmpty(getCondFields)) {
-                            getCondFields = dbPrefix_Left + sqlField.Name + dbPrefix_Right;
-                            getCondValues = "@Arg" + index;
+                            getCondFields = dbPrefix + sqlField.Name + dbSuffix;
+                            getCondValues = "@Arg" + arguIndex;
                         } else {
-                            getCondFields += "," + dbPrefix_Left + sqlField.Name + dbPrefix_Right;
-                            getCondValues += ",@Arg" + index;
+                            getCondFields += "," + dbPrefix + sqlField.Name + dbSuffix;
+                            getCondValues += ",@Arg" + arguIndex;
                         }
-                        index++;
+                        arguIndex++;
                     }
 
                     // 构造SQL代码，格式为：insert into [DBName](Fields) values(@ArgList,@ArgList,@ArgList);
-                    execSQLString = "insert into " + dbPrefix_Left + sechma_Name + dbPrefix_Right + "(" + getCondFields + ") values(" + getCondValues + ")";
+                    execSQLString = "insert into " + dbPrefix + sechma_Name + dbSuffix + "(" + getCondFields + ") values(" + getCondValues + ")";
                     break;
                 case SaveAction.UpdateChangeField:
                     List<SQLField> checkRepeat = new List<SQLField>();  // 过滤重复
-                                                                        
-                    foreach(SQLField sqlField in sqlFields) {   // 构造Update代码
+
+                    foreach(SQLField sqlField in getAllFields) {   // 构造Update代码
                         // 不更新主键
                         if(sqlField.Identity == true) {
                             continue;
@@ -317,15 +308,13 @@ namespace com.yuzz.dbframework {
 
                         // 组装Update SQL String
                         if(string.IsNullOrEmpty(execSQLString)) {
-                            execSQLString = dbPrefix_Left + sqlField.Name + dbPrefix_Right + "=@Arg" + index;
-                        } else {
-                            execSQLString += "," + dbPrefix_Left + sqlField.Name + dbPrefix_Right + "=@Arg" + index;
+                            execSQLString = dbPrefix + sqlField.Name + dbSuffix + "=@Arg" + arguIndex++;
+                        } else if(getUpdatedFields.Contains(sqlField.Name)) {   // 仅仅更新字段值发生变化的字段
+                            execSQLString += "," + dbPrefix + sqlField.Name + dbSuffix + "=@Arg" + arguIndex++;
                         }
-
-                        index++;
                     }
 
-                    execSQLString = "update " + dbPrefix_Left + sechma_Name + dbPrefix_Right + " set " + execSQLString + " where " + pk_FieldName + " = @Arg" + index;
+                    execSQLString = "update " + dbPrefix + sechma_Name + dbSuffix + " set " + execSQLString + " where " + pk_FieldName + " = @Arg" + arguIndex;
                     break;
             }
             return execSQLString;
@@ -572,7 +561,7 @@ namespace com.yuzz.dbframework {
 
             int fieldCount = 1;
             foreach(SQLField sqlField in getSQLFields) {
-                selectFields.Append(dbPrefix_Left).Append(sqlField.Name).Append(dbPrefix_Right);
+                selectFields.Append(dbPrefix).Append(sqlField.Name).Append(dbSuffix);
                 if(fieldCount < getSQLFields.Count) {
                     selectFields.Append(",");
                     fieldCount++;
@@ -587,7 +576,7 @@ namespace com.yuzz.dbframework {
                         dbConn.Open();
 
                         dbCmd.Connection = dbConn;
-                        selectFields.Append(" from ").Append(dbPrefix_Left).Append(sechma_Name).Append(dbPrefix_Right).Append(sqlWhere).Append(sqlOrder);
+                        selectFields.Append(" from ").Append(dbPrefix).Append(sechma_Name).Append(dbSuffix).Append(sqlWhere).Append(sqlOrder);
                         dbCmd.CommandText = selectFields.ToString();
 
                         Ajdb.CommandText = dbCmd.CommandText;
@@ -618,27 +607,33 @@ namespace com.yuzz.dbframework {
                     MySqlCommand dbCmd = new MySqlCommand();
                     MySqlDataReader dbReader = null;
                     using(MySqlConnection dbConn = new MySqlConnection(_DbConnectionString)) {
-                        dbConn.Open();
+                        dbConn.Open();  // 打开数据库连接
 
                         dbCmd.Connection = dbConn;
-                        selectFields.Append(" from ").Append(dbPrefix_Left).Append(sechma_Name).Append(dbPrefix_Right).Append(sqlWhere).Append(sqlOrder);
+
+                        // 构造select xxx from xxx where xxx order by xxx
+                        // 暂时只支持以上格式的sql语句，不支持group by等高级查询关键字
+                        selectFields.Append(" from ").Append(dbPrefix).Append(sechma_Name).Append(dbSuffix).Append(sqlWhere).Append(sqlOrder); 
                         dbCmd.CommandText = selectFields.ToString();
-
                         Ajdb.CommandText = dbCmd.CommandText;
-                        dbReader = dbCmd.ExecuteReader();
-                        while(dbReader.Read()) {
-                            T getValue = new T();
 
+                        // 执行sql查询
+                        dbReader = dbCmd.ExecuteReader();
+                        while(dbReader.Read()) {    // 遍历查询结果
+                            T newDBItem = new T();
+
+                            MethodInfo clearUpdateFields = execMethods.Find(t => t.Name.Equals("set_UpdateFields",StringComparison.CurrentCultureIgnoreCase));
                             foreach(SQLField sqlField in getSQLFields) {
                                 Console.WriteLine($"GetList()-----------CurrentFiled={sqlField.Name}");
-                                object dbValue = dbReader[sqlField.Name];
-                                MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + sqlField.Name,StringComparison.CurrentCultureIgnoreCase));
-                                if(dbValue == null || dbValue == DBNull.Value) {
-                                } else {
-                                    setMethod.Invoke(getValue,new object[] { dbValue });
+                                object dbValue = dbReader[sqlField.Name];   // 数据库值
+                                MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + sqlField.Name,StringComparison.CurrentCultureIgnoreCase));      // 对应的set方法
+                                if(dbValue == null || dbValue == DBNull.Value) {    //  判断是否为空
+                                } else {    // 不为空
+                                    setMethod.Invoke(newDBItem,new object[] { dbValue });    // 执行set方法对对象的属性进行赋值
                                 }
                             }
-                            getList.Add(getValue);
+                            clearUpdateFields.Invoke(newDBItem,new object[] { new List<string>() });
+                            getList.Add(newDBItem);  // 添加到返回值的List
                         }
                         dbReader.Close();
                         dbReader = null;
