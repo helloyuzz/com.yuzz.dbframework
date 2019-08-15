@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.Linq;
 using DbType = com.yuzz.dbframework.DbType;
 using com.yuzz.dbframework.util;
+using com.yuzz.dbframework.vo;
 
 namespace com.yuzz.dbframework {
     public static class Ajdb {
@@ -73,7 +74,6 @@ namespace com.yuzz.dbframework {
                 }
             }
         }
-
         public static void Init(DbType dbType,string dbip,int port,string dbaccount,string dbpwd,string dbschema) {
             _DbType = dbType;
             _DbIP = dbip;
@@ -147,6 +147,7 @@ namespace com.yuzz.dbframework {
             string execSQLString = BuildSQLCommandText(getTableName,getPKFieldName,getAllFields,getUpdatedFields,saveAction);
             Ajdb.CommandText = execSQLString;
 
+            Console.WriteLine("\n\nSQL:\t" + execSQLString);
             saveResult.SchemaName = getTableName;
             try {
                 int arguIndex = 0;
@@ -205,12 +206,12 @@ namespace com.yuzz.dbframework {
                         mysqlCmd.Parameters.Clear();
                         arguIndex = 0;
                         foreach(SQLField sqlField in getAllFields) {
-                            // 新增或者修改操作时，忽略对主键的操作，也就是不更新主键的值
-                            if(sqlField.Identity == true && saveAction != SaveAction.Insert) { 
+                            // 新增操作时，如果是int类型的主键（且为自增类型），泽忽略对主键的操作，也就是不插入主键的值（由数据库自动生成主键，Auto increasement）
+                            if(sqlField.Identity == true && sqlField.MyDbType.Equals(MySqlDbType.Int32)) {
                                 continue;
                             }
 
-                            // 如果是更新操作，则检查是否是值发生变化的字段
+                            // 修改操作时，仅更新值发生变化的字段
                             if(saveAction == SaveAction.UpdateChangeField && getUpdatedFields.Contains(sqlField.Name)==false) {    
                                 continue;
                             }
@@ -236,18 +237,32 @@ namespace com.yuzz.dbframework {
                         }
 
                         // --------------------------------执行sql写入数据库中----------------------------------
-                        if(mysqlCmd.ExecuteNonQuery() > 0) {                            
-                            // 新增操作且为int主键（自增长类型），返回max(int)主键
-                            if(saveAction == SaveAction.Insert && intTypePK == true) {    
-                                mysqlCmd.CommandText = "select max(" + getPKFieldName + ") from " + getTableName;
-                                saveResult.PK_Int = AdobeUtil.ParseInt(mysqlCmd.ExecuteScalar());
+                        if(mysqlCmd.ExecuteNonQuery() > 0) {
+                            saveResult.OK = true;   // 操作成功
+
+                            switch(saveAction) {
+                                case SaveAction.Insert:
+                                    if(intTypePK == true) { // 新增操作且为int主键（自增长类型），返回max(int)主键
+                                        mysqlCmd.CommandText = "select max(" + getPKFieldName + ") from " + getTableName;
+                                        saveResult.PK_Int = AdobeUtil.ParseInt(mysqlCmd.ExecuteScalar());
+                                    } else {
+                                        saveResult.PK_Varchar = getPKValue.ToString();
+                                    }
+                                    break;
+                                case SaveAction.UpdateChangeField:
+                                    if(intTypePK == true) {
+                                        saveResult.PK_Int = AdobeUtil.ParseInt(getPKValue);
+                                    } else {
+                                        saveResult.PK_Varchar = getPKValue.ToString();
+                                    }
+                                    break;
                             }
                         }
                         mysqlCmd = null;
                     }
                 }
             } catch(Exception exc) {
-                Ajdb.LastError = exc;
+                Ajdb.ExcString = exc;
                 saveResult.PK_Int = -1;
                 saveResult.Msg = exc.Message;
             } finally {
@@ -274,7 +289,8 @@ namespace com.yuzz.dbframework {
             switch(saveAction) {
                 case SaveAction.Insert:
                     foreach(SQLField sqlField in getAllFields) {
-                        if(sqlField.Identity == true && saveAction != SaveAction.Insert) { // 主键
+                        // 新增操作时，如果是int类型的主键（且为自增类型），泽忽略对主键的操作，也就是不插入主键的值（由数据库自动生成主键，Auto increasement）
+                        if(sqlField.Identity == true && sqlField.MyDbType.Equals(MySqlDbType.Int32)) { // 主键
                             continue;
                         }
                         if(string.IsNullOrEmpty(getCondFields)) {
@@ -539,7 +555,12 @@ namespace com.yuzz.dbframework {
             return GetItem<T>(" where " + pkFieldName + "=" + pkValue);
         }
 
+
         public static List<T> GetList<T>(string sqlWhere,string sqlOrder) where T : new() {
+            return GetList<T>(sqlWhere,sqlOrder,1,1000);
+        }
+
+        public static List<T> GetList<T>(string sqlWhere,string sqlOrder,int pageNumber,int pageCount) where T : new() {
             bool getVoContent = false;
             List<T> getList = new List<T>();
             T item = new T();
@@ -642,54 +663,12 @@ namespace com.yuzz.dbframework {
                     }
                 }
             } catch(Exception exc) {
-                Ajdb.LastError = exc;
+                Ajdb.ExcString = exc;
             } finally {
             }
 
             return getList;
         }
-
-        //public static List<T> GetListBySql<T>(string sql) where T : new() {
-        //    List<T> result = new List<T>();
-        //    List<PropertyInfo> properties = typeof(T).GetProperties().ToList();
-        //    switch(_DbType) {
-        //        case DbType.Mssql:
-        //            break;
-        //        case DbType.Mysql:
-        //            MySqlDataReader dbReader = null;
-        //            using(MySqlConnection dbConn = new MySqlConnection(_DbConnectionString)) {
-        //                dbConn.Open();
-
-        //                MySqlCommand dbCmd = new MySqlCommand(sql,dbConn);
-        //                dbCmd.CommandText = sql;
-
-        //                Ajdb.CommandText = dbCmd.CommandText;
-        //                dbReader = dbCmd.ExecuteReader();
-        //                while(dbReader.Read()) {
-        //                    T getValue = new T();
-
-        //                    foreach(PropertyInfo i in properties) {
-        //                        try {
-        //                            object dbValue = dbReader[i.Name];
-        //                            if(dbValue != null && dbValue != DBNull.Value) {
-        //                                i.SetValue(getValue,dbValue,null);
-        //                            }
-        //                        } catch(Exception ex) { UseException(ex); }
-        //                    }
-        //                    result.Add(getValue);
-        //                }
-        //                dbReader.Close();
-        //                dbReader = null;
-
-        //                dbConn.Close();
-        //            }
-
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //    return result;
-        //}
 
         /// <summary>
         /// 删除(int类型id)
@@ -736,7 +715,7 @@ namespace com.yuzz.dbframework {
                         }
                     } catch(Exception exc) {
                         delResult = false;
-                        Ajdb.LastError = exc;
+                        Ajdb.ExcString = exc;
                     } finally {
                         mscmd = null;
                     }
@@ -757,7 +736,7 @@ namespace com.yuzz.dbframework {
                         }
                     } catch(Exception exc) {
                         delResult = false;
-                        Ajdb.LastError = exc;
+                        Ajdb.ExcString = exc;
                     } finally {
                         mycmd = null;
                     }
@@ -793,7 +772,7 @@ namespace com.yuzz.dbframework {
                             dbConn.Close();
                         }
                     } catch(Exception exc) {
-                        Ajdb.LastError = exc;
+                        Ajdb.ExcString = exc;
                     } finally {
                         dbCmd = null;
                     }
@@ -810,7 +789,7 @@ namespace com.yuzz.dbframework {
                             myConn.Close();
                         }
                     } catch(Exception exc) {
-                        Ajdb.LastError = exc;
+                        Ajdb.ExcString = exc;
                     } finally {
                         myCmd = null;
                     }
@@ -849,82 +828,7 @@ namespace com.yuzz.dbframework {
 
 
 
-        /// <summary>
-        /// 获取查询总数
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-//        public static int CountBySql(string sql) {
-//#if DEBUG
-//            Debug.Print("=====================CountBySql====================");
-//            Debug.Print(sql);
-//            Debug.Print("---------------------------------------------------");
-//#endif
-//            int recordCount = 0;
-//            switch(_DbType) {
-//                case DbType.Mssql:    // Mssql
-//                    break;
-//                case DbType.Mysql:
-//                    MySqlCommand myCmd = new MySqlCommand();
-//                    try {
-//                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
-//                            myConn.Open();
-//                            myCmd.CommandTimeout = 60;
-//                            myCmd.Connection = myConn;
-//                            myCmd.CommandText = sql;
-//                            recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
-//                            myConn.Close();
-//                        }
-//                    } catch(Exception exc) {
-//                        recordCount = -1;
-//                        LastError = exc;
-//                    } finally {
-//                        myCmd = null;
-//                    }
-//                    break;
-//            }
-//            return recordCount;
-//        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dbname">分库名，必须与主库登录用户密码相同</param>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        //public static int CountBySql(string dbname,string sql) {
-        //    int recordCount = 0;
-        //    string connStr = "";
-        //    string oldDbName = _DbSchema;
-        //    _DbSchema = dbname;
-        //    switch(_DbType) {
-        //        case DbType.Mssql:    // Mssql
-        //            connStr = String.Format("Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}",_DbIP,_DbSchema,_DbAccount,_DbPwd);
-        //            _DbSchema = oldDbName;
-        //            break;
-        //        case DbType.Mysql:
-        //            connStr = string.Format("Server={0};User Id={1};Password={2};Persist Security Info=True;Database={3};charset=utf8;Allow User Variables=True;",_DbIP,_DbAccount,_DbPwd,_DbSchema);
-        //            _DbSchema = oldDbName;
-        //            MySqlCommand myCmd = new MySqlCommand();
-        //            try {
-        //                using(MySqlConnection myConn = new MySqlConnection(connStr)) {
-        //                    myConn.Open();
-        //                    myCmd.CommandTimeout = 60;
-        //                    myCmd.Connection = myConn;
-        //                    myCmd.CommandText = sql;
-        //                    recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
-        //                    myConn.Close();
-        //                }
-        //            } catch(Exception exc) {
-        //                recordCount = -1;
-        //                LastError = exc;
-        //            } finally {
-        //                myCmd = null;
-        //            }
-        //            break;
-        //    }
-
-        //    return recordCount;
-        //}
+     
         /// <summary>
         /// 执行非查询SQL
         /// </summary>
@@ -956,46 +860,7 @@ namespace com.yuzz.dbframework {
         //    }
         //    return recordCount;
         //}
-//        public static DataTable GetDataTableBySql(string sql) {
-//#if DEBUG
-//            if(!sql.StartsWith("select username as 'UserAccount',name as 'CnName',role as 'RoleId',lockkey as 'LockKey',activate as 'Active'")) {
-//                Debug.Print("=================GetDataTableBySql=================");
-//                Debug.Print(sql);
-//                Debug.Print("---------------------------------------------------");
-//            }
-//#endif
-//            DataTable dt = new DataTable();
-//            switch(_DbType) {
-//                case DbType.Mssql:    // Mssql
 
-//                    break;
-//                case DbType.Mysql:    // Mysql                    
-//                    MySqlCommand myCmd = new MySqlCommand();
-//                    myCmd.CommandTimeout = 600;
-//                    try {
-//                        LastError = null;
-//                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
-//                            myConn.Open();
-//                            myCmd.Connection = myConn;
-//                            myCmd.CommandText = sql;
-//                            myCmd.CommandType = CommandType.Text;
-
-//                            MySqlDataAdapter dbAdapter = new MySqlDataAdapter();
-//                            dbAdapter.SelectCommand = myCmd;
-//                            dbAdapter.Fill(dt);
-
-//                            dt.TableName = AdobeUtil.CreateUUID();
-//                            myConn.Close();
-//                        }
-//                    } catch(Exception exc) {
-//                        LastError = exc;
-//                    } finally {
-//                        myCmd = null;
-//                    }
-//                    break;
-//            }
-//            return dt;
-//        }
         /// <summary>
         /// 
         /// </summary>
@@ -1042,92 +907,59 @@ namespace com.yuzz.dbframework {
         //    return dt;
         //}
         /// <summary>
-        /// GetDataTable
+        /// GetDataTable，执行默认表格查询操作，默认返回所有字段，数量1000条以内的记录（不分页）
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sqlWhere"></param>
-        /// <param name="sqlOrder"></param>
+        /// <typeparam name="T">表格vo对象</typeparam>
+        /// <param name="sqlWhere">where条件，格式：" where xxx=xxx"</param>
+        /// <param name="sqlOrder">order by关键字，格式：" order by xxx asc/desc"</param>
         /// <returns></returns>
-        public static DataTable GetDataTable<T>(string sqlWhere,string sqlOrder) where T : new() {
-            return GetDataTable<T>(sqlWhere,sqlOrder,SQLAction.Default,"*");
-        }
-
-        public static DataTable GetDataTable<T>(string sqlWhere,string sqlOrder,SQLAction sqlAction,params string[] sqlFields) where T : new() {
-            return GetDataTable<T>(sqlWhere,sqlOrder,sqlAction,-1,-1,sqlFields);
-        }
-
-        public static DataTable GetDataTable<T>(string sqlWhere,string sqlOrder,int pageNumber,int pageSize) where T : new() {
-            return GetDataTable<T>(sqlWhere,sqlOrder,SQLAction.Default,pageNumber,pageSize,null);
-        }
-
-        public static DataTable GetDataTable<T>(string sqlWhere,string sqlOrder,int pageNumber,int pageSize,params string[] sqlFields) where T : new() {
-            return GetDataTable<T>(sqlWhere,sqlOrder,SQLAction.Default,pageNumber,pageSize,sqlFields);
-        }
-        public static int GetCount<T>(string sqlWhere) where T : new() {
-            int recordCount = -1;
-            T item = new T();
-            string dbname = Ajutil.GetSechemaName(item);
-            switch(_DbType) {
-                case DbType.Mssql:    // Mssql
-                    SqlCommand msCmd = new SqlCommand();
-                    try {
-                        LastError = null;
-                        using(SqlConnection msConn = new SqlConnection(_DbConnectionString)) {
-                            msConn.Open();
-                            msCmd.Connection = msConn;
-                            msCmd.CommandText = "select count(*) from " + dbname + sqlWhere;
-                            recordCount = AdobeUtil.ParseInt(msCmd.ExecuteScalar());
-                            msConn.Close();
-                        }
-                    } catch(Exception exc) {
-                        recordCount = -1;
-                        LastError = exc;
-                    } finally {
-                        msCmd = null;
-                    }
-                    break;
-                case DbType.Mysql:
-                    MySqlCommand myCmd = new MySqlCommand();
-                    try {
-                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
-                            myConn.Open();
-                            myCmd.Connection = myConn;
-                            myCmd.CommandText = "select count(*) from " + dbname + sqlWhere;
-                            recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
-                            myConn.Close();
-                        }
-                    } catch(Exception exc) {
-                        Console.WriteLine(exc.ToString());
-                        recordCount = -1;
-                        LastError = exc;
-                    } finally {
-                        myCmd = null;
-                    }
-                    break;
-            }
-            return recordCount;
+        public static AjQuery Query<T>(string sqlWhere,string sqlOrder) where T : new() {
+            return Query<T>(sqlWhere,sqlOrder,1,1000,AjQueryType.Query_Include,null);
         }
         /// <summary>
-        /// GetDataTable，支持分页
+        /// 不分页查询返回Datatable，仅仅查询指定的字段（不查询所有字段），通过AjQueryType+sqlFields参数确定查询哪些字段（部分）
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="whereCondition"></param>
-        /// <param name="orderCondition"></param>
-        /// <param name="sqlAction"></param>
-        /// <param name="pageSize">-1：表示查询所有</param>
-        /// <param name="pageNumber">-1：表示查询所有</param>
-        /// <param name="sqlFields"></param>
+        /// <typeparam name="T">表格vo对象</typeparam>
+        /// <param name="sqlWhere">where条件，格式：" where xxx=xxx"</param>
+        /// <param name="sqlOrder">order by关键字，格式：" order by xxx asc/desc"</param>
+        /// <param name="sqlAction">查询类型，标识后续的sqlFields字段是查询（或者不查询）</param>
+        /// <param name="sqlFields">指定的字段，其作用由AjQueryType决定，如果sqlFields==null，则表示查询所有字段</param>
         /// <returns></returns>
-        public static DataTable GetDataTable<T>(string whereCondition,string orderCondition,SQLAction sqlAction,int pageNumber,int pageSize,params string[] sqlFields) where T : new() {
-            DataTable dt = new DataTable();
+        public static AjQuery Query<T>(string sqlWhere,string sqlOrder,AjQueryType ajQueryType,params string[] sqlFields) where T : new() {
+            return Query<T>(sqlWhere,sqlOrder,1,1000,ajQueryType,sqlFields);
+        }
+
+        /// <summary>
+        /// 分页查询返回Datatable，仅仅查询指定的字段（不查询所有字段），通过AjQueryType+sqlFields参数确定查询哪些字段（部分）
+        /// </summary>
+        /// <typeparam name="T">表格vo对象</typeparam>
+        /// <param name="sqlWhere">where条件，格式：" where xxx=xxx"</param>
+        /// <param name="sqlOrder">order by关键字，格式：" order by xxx asc/desc"</param>
+        /// <param name="pageNumber">当前页面，Int类型</param>
+        /// <param name="pageSize">每页显示记录数，Int类型</param>
+        /// <param name="ajQueryType">查询类型，标识后续的sqlFields字段是查询（或者不查询）</param>
+        /// <param name="sqlFields">指定的字段，其作用由AjQueryType决定，如果sqlFields==null，则表示查询所有字段</param>
+        /// <returns></returns>
+        public static AjQuery Query<T>(string sqlWhere,string sqlOrder,int pageNumber,int pageSize,AjQueryType ajQueryType,params string[] sqlFields) where T : new() {
+            AjQuery ajQuery = new AjQuery();
+            ajQuery.DataTable = new DataTable();
+
             T item = new T();
             string dbname = Ajutil.GetSechemaName(item);
             string selectSQLFields = "";
             if(sqlFields == null) {
                 sqlFields = new string[] { };
             }
-            switch(sqlAction) {
-                case SQLAction.Default: // 包括字段
+
+            ajQuery.RecordCount = GetCount<T>(" where 1=1");
+            ajQuery.PageIndex = pageNumber;
+            ajQuery.PageSize = pageSize;
+            ajQuery.PageCount = ajQuery.RecordCount / pageSize;
+            if(ajQuery.RecordCount % pageSize > 0) {
+                ajQuery.PageCount++;
+            }
+            switch(ajQueryType) {
+                case AjQueryType.Query_Include: // 包括字段
                     foreach(string field in sqlFields) {
                         if(string.IsNullOrEmpty(selectSQLFields) == false) {
                             selectSQLFields += ",";
@@ -1135,7 +967,7 @@ namespace com.yuzz.dbframework {
                         selectSQLFields += field;
                     }
                     break;
-                case SQLAction.NotInclude:  // 不包括字段
+                case AjQueryType.Query_Exclude:  // 不包括字段
                     List<SQLField> invokeFields = Ajutil.GetAllFields(item);
                     foreach(SQLField invokeField in invokeFields) {
                         bool exist = false; // 是否是不包括的字段
@@ -1169,26 +1001,26 @@ namespace com.yuzz.dbframework {
                         using(SqlConnection msConn = new SqlConnection(_DbConnectionString)) {
                             msConn.Open();
                             msCmd.Connection = msConn;
-                            msCmd.CommandText = "select " + selectSQLFields + " from " + dbname + whereCondition + orderCondition;
+                            msCmd.CommandText = "select " + selectSQLFields + " from " + dbname + sqlWhere + sqlOrder;
                             Debug.Print(msCmd.CommandText);
                             SqlDataAdapter msAdapter = new SqlDataAdapter();
                             msAdapter.SelectCommand = msCmd;
-                            msAdapter.Fill(dt);
+                            msAdapter.Fill(ajQuery.DataTable);
 
-                            dt.TableName = dbname;
+                            ajQuery.DataTable.TableName = dbname;
                             msConn.Close();
                         }
                     } catch(Exception exc) {
-                        LastError = exc;
+                        ExcString = exc;
                     } finally {
                         msCmd = null;
                     }
                     break;
                 case DbType.Mysql:    // Mysql                    
-                    sqlCommandText = "select " + selectSQLFields + " from " + dbname + whereCondition + orderCondition;
+                    sqlCommandText = "select " + selectSQLFields + " from " + dbname + sqlWhere + sqlOrder;
                     if(pageSize > 0 && pageNumber > 0) {    // 分页
-                        if(string.IsNullOrEmpty(orderCondition)) {
-                            LastError = new Exception("警告：排序条件=null");
+                        if(string.IsNullOrEmpty(sqlOrder)) {
+                            ExcString = new Exception("警告：排序条件=null");
                         }
                         int startRow = (pageNumber - 1) * pageSize;
                         sqlCommandText += " limit " + startRow + "," + pageSize;
@@ -1204,20 +1036,64 @@ namespace com.yuzz.dbframework {
 
                             MySqlDataAdapter dbAdapter = new MySqlDataAdapter();
                             dbAdapter.SelectCommand = myCmd;
-                            dbAdapter.Fill(dt);
+                            dbAdapter.Fill(ajQuery.DataTable);
 
-                            dt.TableName = dbname;
+                            ajQuery.DataTable.TableName = dbname;
                             myConn.Close();
                         }
                     } catch(Exception exc) {
-                        LastError = exc;
+                        ExcString = exc;
                     } finally {
                         myCmd = null;
                     }
                     break;
             }
 
-            return dt;
+            return ajQuery;
+        }
+        public static int GetCount<T>(string sqlWhere) where T : new() {
+            int recordCount = -1;
+            T item = new T();
+            string dbname = Ajutil.GetSechemaName(item);
+            switch(_DbType) {
+                case DbType.Mssql:    // Mssql
+                    SqlCommand msCmd = new SqlCommand();
+                    try {
+                        ExcString = null;
+                        using(SqlConnection msConn = new SqlConnection(_DbConnectionString)) {
+                            msConn.Open();
+                            msCmd.Connection = msConn;
+                            msCmd.CommandText = "select count(*) from " + dbname + sqlWhere;
+                            recordCount = AdobeUtil.ParseInt(msCmd.ExecuteScalar());
+                            msConn.Close();
+                        }
+                    } catch(Exception exc) {
+                        recordCount = -1;
+                        ExcString = exc;
+                    } finally {
+                        msCmd = null;
+                    }
+                    break;
+                case DbType.Mysql:
+                    MySqlCommand myCmd = new MySqlCommand();
+                    try {
+                        using(MySqlConnection myConn = new MySqlConnection(_DbConnectionString)) {
+                            myConn.Open();
+                            myCmd.Connection = myConn;
+                            myCmd.CommandText = "select count(*) from " + dbname + sqlWhere;
+                            recordCount = AdobeUtil.ParseInt(myCmd.ExecuteScalar());
+                            myConn.Close();
+                        }
+                    } catch(Exception exc) {
+                        Console.WriteLine(exc.ToString());
+                        recordCount = -1;
+                        ExcString = exc;
+                    } finally {
+                        myCmd = null;
+                    }
+                    break;
+            }
+            return recordCount;
         }
         //public static DataTable AddColumn(DataTable dt,params DbCellTypes[] columnList) {
         //    return AddColumn(dt,false,columnList);
@@ -1298,7 +1174,7 @@ namespace com.yuzz.dbframework {
         //    return dt;
         //}
 
-        public static Exception LastError {
+        public static Exception ExcString {
             get;
             set;
         }
@@ -1307,14 +1183,5 @@ namespace com.yuzz.dbframework {
             get;
             set;
         }
-        //public static string AjaxDataTable() {
-        //    return "";
-        //}
-       
-
-        //public static string CurrentFiled {
-        //    get;
-        //    set;
-        //}
     }
 }

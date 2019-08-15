@@ -74,6 +74,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="vo\SysDept.cs" />
+    <Compile Include="vo\sys_uuid.cs" />
     <EmbeddedResource Include="Form_Demo.resx">
       <DependentUpon>Form_Demo.cs</DependentUpon>
     </EmbeddedResource>

@@ -110,12 +110,13 @@
     <Compile Include="util\SmartHtml.cs" />
     <Compile Include="util\SmartKey.cs" />
     <Compile Include="util\SmartWeb.cs" />
+    <Compile Include="vo\AjQuery.cs" />
     <Compile Include="vo\DbCellTypes.cs" />
     <Compile Include="vo\DbType.cs" />
     <Compile Include="vo\SaveAction.cs" />
     <Compile Include="vo\SaveResult.cs" />
     <Compile Include="vo\SpCondition.cs" />
-    <Compile Include="vo\SQLAction.cs" />
+    <Compile Include="vo\AjQueryType.cs" />
     <Compile Include="vo\SQLField.cs" />
   </ItemGroup>
   <ItemGroup>
