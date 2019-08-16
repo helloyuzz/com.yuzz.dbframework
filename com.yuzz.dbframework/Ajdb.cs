@@ -552,17 +552,7 @@ namespace com.yuzz.dbframework {
             AjQuery ajQuery = Query<T>(sqlWhere,"",AjQueryType.QueryAll,null);
 
             if(ajQuery.DataTable != null && ajQuery.DataTable.Rows.Count > 0) {
-                List<MethodInfo> execMethods = Ajutil.GetMethodList(item.GetType());
-                foreach(DataColumn col in ajQuery.DataTable.Columns) {  // 遍历数据库中所有列
-                    MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + col.ColumnName,StringComparison.CurrentCultureIgnoreCase));
-                    object dbValue = ajQuery.DataTable.Rows[0][col.ColumnName];
-                    if(dbValue == DBNull.Value) {   // 数据库为null
-                        if(col.DataType.Equals(typeof(DateTime))) { // 日期类型
-                            dbValue = DateTime.Parse("1901-01-01 01:01:01");
-                        }
-                    }
-                    setMethod.Invoke(item,new object[] { dbValue });
-                }
+                Ajutil.ConvertAsObject(ajQuery.DataTable,ref item);
             }
 
             return item;

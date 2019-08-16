@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -52,6 +53,20 @@ namespace com.yuzz.dbframework.util {
             MethodInfo mdh_GetFields = execMethods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
             List<SQLField> sqlFields = (List<SQLField>)mdh_GetFields.Invoke(obj,null);
             return sqlFields;
+        }
+
+        internal static void ConvertAsObject<T>(DataTable dataTable,ref T item){
+            List<MethodInfo> execMethods = Ajutil.GetMethodList(item.GetType());
+            foreach(DataColumn col in dataTable.Columns) {  // 遍历数据库中所有列
+                MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + col.ColumnName,StringComparison.CurrentCultureIgnoreCase));
+                object dbValue = dataTable.Rows[0][col.ColumnName];
+                if(dbValue == DBNull.Value) {   // 数据库为null
+                    if(col.DataType.Equals(typeof(DateTime))) { // 日期类型
+                        dbValue = DateTime.Parse("1901-01-01 01:01:01");
+                    }
+                }
+                setMethod.Invoke(item,new object[] { dbValue });
+            }
         }
     }
 }
