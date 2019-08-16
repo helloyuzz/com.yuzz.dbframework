@@ -49,6 +49,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tbx_uuid = new System.Windows.Forms.TextBox();
             this.btn_AddUser = new System.Windows.Forms.Button();
+            this.btn_MultiQuery = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_int)).BeginInit();
             this.SuspendLayout();
             // 
@@ -282,11 +283,22 @@
             this.btn_AddUser.UseVisualStyleBackColor = true;
             this.btn_AddUser.Click += new System.EventHandler(this.btn_AddUser_Click);
             // 
+            // btn_MultiQuery
+            // 
+            this.btn_MultiQuery.Location = new System.Drawing.Point(940, 368);
+            this.btn_MultiQuery.Name = "btn_MultiQuery";
+            this.btn_MultiQuery.Size = new System.Drawing.Size(116, 29);
+            this.btn_MultiQuery.TabIndex = 13;
+            this.btn_MultiQuery.Text = "MultiQuery";
+            this.btn_MultiQuery.UseVisualStyleBackColor = true;
+            this.btn_MultiQuery.Click += new System.EventHandler(this.btn_MultiQuery_Click);
+            // 
             // Form_Demo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1233, 641);
+            this.Controls.Add(this.btn_MultiQuery);
             this.Controls.Add(this.btn_AddUser);
             this.Controls.Add(this.tbx_uuid);
             this.Controls.Add(this.label2);
@@ -343,6 +355,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbx_uuid;
         private System.Windows.Forms.Button btn_AddUser;
+        private System.Windows.Forms.Button btn_MultiQuery;
     }
 }
 

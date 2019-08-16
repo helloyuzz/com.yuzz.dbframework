@@ -171,5 +171,9 @@ namespace com.yuzz.demo.app {
                 Ajdb.Insert(user);
             }
         }
+
+        private void btn_MultiQuery_Click(object sender,EventArgs e) {
+            Ajdb.Query<sysuser>("","");
+        }
     }
 }
