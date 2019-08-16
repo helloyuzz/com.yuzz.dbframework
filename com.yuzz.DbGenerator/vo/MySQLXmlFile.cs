@@ -18,5 +18,7 @@ namespace com.yuzz.DbGenerator.vo {
         public string pwd { get; internal set; }
         [JsonProperty("schema")]
         public string schema { get; set; }
+        [JsonProperty("SavePath")]
+        public string SavePath { get; internal set; }
     }
 }

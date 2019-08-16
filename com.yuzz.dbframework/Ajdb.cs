@@ -539,136 +539,167 @@ namespace com.yuzz.dbframework {
         //    return recordCount;
         //}
 
-        public static T GetItem<T>(string sqlWhere) where T : new() {
-            Console.WriteLine($"{nameof(GetItem)} {typeof(T).Name} by sql {sqlWhere}");
-            List<T> getList = GetList<T>(sqlWhere,"");
-            if(getList.Count > 0) {
-                return getList[0];
-            } else {
-                T item = new T();
-                return item;
-            }
-        }
-        public static T GetItem<T>(int pkValue) where T : new() {
+        internal static T GetItem<T>(int intPkValue,string uuid) where T : new() {
             T item = new T();
             string pkFieldName = Ajutil.GetPkFieldName(item);
-            return GetItem<T>(" where " + pkFieldName + "=" + pkValue);
-        }
-
-
-        public static List<T> GetList<T>(string sqlWhere,string sqlOrder) where T : new() {
-            return GetList<T>(sqlWhere,sqlOrder,1,1000);
-        }
-
-        public static List<T> GetList<T>(string sqlWhere,string sqlOrder,int pageNumber,int pageCount) where T : new() {
-            bool getVoContent = false;
-            List<T> getList = new List<T>();
-            T item = new T();
-            Type voType = item.GetType();
+            string sqlWhere = "";
+            if(intPkValue > 0) { // int类型主键
+                sqlWhere = " where " + pkFieldName + "=" + intPkValue;
+            } else {
+                sqlWhere = " where " + pkFieldName + "='" + uuid + "'";
+            }
             
-            List<MethodInfo> execMethods = Ajutil.GetMethodList(voType);// SmartHtml.ParseTypeMethods(voType);
+            AjQuery ajQuery = Query<T>(sqlWhere,"",AjQueryType.QueryAll,null);
 
-            // MethodInfo mdh_UUID = execMethods.Find(t => t.Name.Equals("set_uuid",StringComparison.CurrentCultureIgnoreCase));
-            MethodInfo mdh_GetFields = execMethods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
-            MethodInfo mdh_GetTableName = execMethods.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));
-
-            //object tmpFieldsValue = voType.Assembly.CreateInstance(voType.FullName);
-            List<SQLField> getSQLFields = (List<SQLField>)mdh_GetFields.Invoke(item,null);
-
-            //string selectFields = string.Empty;
-            StringBuilder selectFields = new StringBuilder();
-            selectFields.Append("select ");
-            string sechma_Name = (string)mdh_GetTableName.Invoke(item,null);
-
-            int fieldCount = 1;
-            foreach(SQLField sqlField in getSQLFields) {
-                selectFields.Append(dbPrefix).Append(sqlField.Name).Append(dbSuffix);
-                if(fieldCount < getSQLFields.Count) {
-                    selectFields.Append(",");
-                    fieldCount++;
+            if(ajQuery.DataTable != null && ajQuery.DataTable.Rows.Count > 0) {
+                List<MethodInfo> execMethods = Ajutil.GetMethodList(item.GetType());
+                foreach(DataColumn col in ajQuery.DataTable.Columns) {  // 遍历数据库中所有列
+                    MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + col.ColumnName,StringComparison.CurrentCultureIgnoreCase));
+                    object dbValue = ajQuery.DataTable.Rows[0][col.ColumnName];
+                    if(dbValue == DBNull.Value) {   // 数据库为null
+                        if(col.DataType.Equals(typeof(DateTime))) { // 日期类型
+                            dbValue = DateTime.Parse("1901-01-01 01:01:01");
+                        }
+                    }
+                    setMethod.Invoke(item,new object[] { dbValue });
                 }
             }
 
-            try {
-                if(_DbType == DbType.Mssql) { // mssql
-                    SqlCommand dbCmd = new SqlCommand();
-                    SqlDataReader dbReader = null;
-                    using(SqlConnection dbConn = new SqlConnection(_DbConnectionString)) {
-                        dbConn.Open();
-
-                        dbCmd.Connection = dbConn;
-                        selectFields.Append(" from ").Append(dbPrefix).Append(sechma_Name).Append(dbSuffix).Append(sqlWhere).Append(sqlOrder);
-                        dbCmd.CommandText = selectFields.ToString();
-
-                        Ajdb.CommandText = dbCmd.CommandText;
-                        dbReader = dbCmd.ExecuteReader();
-                        while(dbReader.Read()) {
-                            T getValue = new T();
-
-                            foreach(SQLField sqlField in getSQLFields) {
-                                if(getVoContent == false && sqlField.Name.Equals("VoContent")) {
-                                    continue;
-                                }
-                                object dbValue = dbReader[sqlField.Name];
-                                MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + sqlField.Name,StringComparison.CurrentCultureIgnoreCase));
-                                if(dbValue == null || dbValue == DBNull.Value) {
-                                } else {
-                                    setMethod.Invoke(getValue,new object[] { dbValue });
-                                }
-                            }
-
-                            getList.Add(getValue);
-                        }
-                        dbReader.Close();
-                        dbReader = null;
-
-                        dbConn.Close();
-                    }
-                } else { // mysql
-                    MySqlCommand dbCmd = new MySqlCommand();
-                    MySqlDataReader dbReader = null;
-                    using(MySqlConnection dbConn = new MySqlConnection(_DbConnectionString)) {
-                        dbConn.Open();  // 打开数据库连接
-
-                        dbCmd.Connection = dbConn;
-
-                        // 构造select xxx from xxx where xxx order by xxx
-                        // 暂时只支持以上格式的sql语句，不支持group by等高级查询关键字
-                        selectFields.Append(" from ").Append(dbPrefix).Append(sechma_Name).Append(dbSuffix).Append(sqlWhere).Append(sqlOrder); 
-                        dbCmd.CommandText = selectFields.ToString();
-                        Ajdb.CommandText = dbCmd.CommandText;
-
-                        // 执行sql查询
-                        dbReader = dbCmd.ExecuteReader();
-                        while(dbReader.Read()) {    // 遍历查询结果
-                            T newDBItem = new T();
-
-                            MethodInfo clearUpdateFields = execMethods.Find(t => t.Name.Equals("set_UpdateFields",StringComparison.CurrentCultureIgnoreCase));
-                            foreach(SQLField sqlField in getSQLFields) {
-                                Console.WriteLine($"GetList()-----------CurrentFiled={sqlField.Name}");
-                                object dbValue = dbReader[sqlField.Name];   // 数据库值
-                                MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + sqlField.Name,StringComparison.CurrentCultureIgnoreCase));      // 对应的set方法
-                                if(dbValue == null || dbValue == DBNull.Value) {    //  判断是否为空
-                                } else {    // 不为空
-                                    setMethod.Invoke(newDBItem,new object[] { dbValue });    // 执行set方法对对象的属性进行赋值
-                                }
-                            }
-                            clearUpdateFields.Invoke(newDBItem,new object[] { new List<string>() });
-                            getList.Add(newDBItem);  // 添加到返回值的List
-                        }
-                        dbReader.Close();
-                        dbReader = null;
-
-                        dbConn.Close();
-                    }
-                }
-            } catch(Exception exc) {
-                Ajdb.ExcString = exc;
-            } finally {
-            }
-
-            return getList;
+            return item;
         }
+        /// <summary>
+        /// 根据主键id（int类型主键）获取对象（一行数据）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="intPkValue"></param>
+        /// <returns></returns>
+        public static T GetItem<T>(int intPkValue) where T : new() {
+            return GetItem<T>(intPkValue,null);
+        }
+        /// <summary>
+        /// 根据UUID（varchar类型主键）获取对象（一行数据）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="uuid"></param>
+        /// <returns></returns>
+        public static T GetItem<T>(string uuid) where T : new() {
+            return GetItem<T>(-1,uuid);
+        }
+
+
+        //public static List<T> GetList<T>(string sqlWhere,string sqlOrder) where T : new() {
+        //    return GetList<T>(sqlWhere,sqlOrder,1,1000);
+        //}
+
+        //public static List<T> GetList<T>(string sqlWhere,string sqlOrder,int pageNumber,int pageCount) where T : new() {
+        //    bool getVoContent = false;
+        //    List<T> getList = new List<T>();
+        //    T item = new T();
+        //    Type voType = item.GetType();
+
+        //    List<MethodInfo> execMethods = Ajutil.GetMethodList(voType);// SmartHtml.ParseTypeMethods(voType);
+
+        //    // MethodInfo mdh_UUID = execMethods.Find(t => t.Name.Equals("set_uuid",StringComparison.CurrentCultureIgnoreCase));
+        //    MethodInfo mdh_GetFields = execMethods.Find(t => t.Name.Equals("get_fields",StringComparison.CurrentCultureIgnoreCase));
+        //    MethodInfo mdh_GetTableName = execMethods.Find(t => t.Name.Equals("get_tablename",StringComparison.CurrentCultureIgnoreCase));
+
+        //    //object tmpFieldsValue = voType.Assembly.CreateInstance(voType.FullName);
+        //    List<SQLField> getSQLFields = (List<SQLField>)mdh_GetFields.Invoke(item,null);
+
+        //    //string selectFields = string.Empty;
+        //    StringBuilder selectFields = new StringBuilder();
+        //    selectFields.Append("select ");
+        //    string sechma_Name = (string)mdh_GetTableName.Invoke(item,null);
+
+        //    int fieldCount = 1;
+        //    foreach(SQLField sqlField in getSQLFields) {
+        //        selectFields.Append(dbPrefix).Append(sqlField.Name).Append(dbSuffix);
+        //        if(fieldCount < getSQLFields.Count) {
+        //            selectFields.Append(",");
+        //            fieldCount++;
+        //        }
+        //    }
+
+        //    try {
+        //        if(_DbType == DbType.Mssql) { // mssql
+        //            SqlCommand dbCmd = new SqlCommand();
+        //            SqlDataReader dbReader = null;
+        //            using(SqlConnection dbConn = new SqlConnection(_DbConnectionString)) {
+        //                dbConn.Open();
+
+        //                dbCmd.Connection = dbConn;
+        //                selectFields.Append(" from ").Append(dbPrefix).Append(sechma_Name).Append(dbSuffix).Append(sqlWhere).Append(sqlOrder);
+        //                dbCmd.CommandText = selectFields.ToString();
+
+        //                Ajdb.CommandText = dbCmd.CommandText;
+        //                dbReader = dbCmd.ExecuteReader();
+        //                while(dbReader.Read()) {
+        //                    T getValue = new T();
+
+        //                    foreach(SQLField sqlField in getSQLFields) {
+        //                        if(getVoContent == false && sqlField.Name.Equals("VoContent")) {
+        //                            continue;
+        //                        }
+        //                        object dbValue = dbReader[sqlField.Name];
+        //                        MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + sqlField.Name,StringComparison.CurrentCultureIgnoreCase));
+        //                        if(dbValue == null || dbValue == DBNull.Value) {
+        //                        } else {
+        //                            setMethod.Invoke(getValue,new object[] { dbValue });
+        //                        }
+        //                    }
+
+        //                    getList.Add(getValue);
+        //                }
+        //                dbReader.Close();
+        //                dbReader = null;
+
+        //                dbConn.Close();
+        //            }
+        //        } else { // mysql
+        //            MySqlCommand dbCmd = new MySqlCommand();
+        //            MySqlDataReader dbReader = null;
+        //            using(MySqlConnection dbConn = new MySqlConnection(_DbConnectionString)) {
+        //                dbConn.Open();  // 打开数据库连接
+
+        //                dbCmd.Connection = dbConn;
+
+        //                // 构造select xxx from xxx where xxx order by xxx
+        //                // 暂时只支持以上格式的sql语句，不支持group by等高级查询关键字
+        //                selectFields.Append(" from ").Append(dbPrefix).Append(sechma_Name).Append(dbSuffix).Append(sqlWhere).Append(sqlOrder); 
+        //                dbCmd.CommandText = selectFields.ToString();
+        //                Ajdb.CommandText = dbCmd.CommandText;
+
+        //                // 执行sql查询
+        //                dbReader = dbCmd.ExecuteReader();
+        //                while(dbReader.Read()) {    // 遍历查询结果
+        //                    T newDBItem = new T();
+
+        //                    MethodInfo clearUpdateFields = execMethods.Find(t => t.Name.Equals("set_UpdateFields",StringComparison.CurrentCultureIgnoreCase));
+        //                    foreach(SQLField sqlField in getSQLFields) {
+        //                        Console.WriteLine($"GetList()-----------CurrentFiled={sqlField.Name}");
+        //                        object dbValue = dbReader[sqlField.Name];   // 数据库值
+        //                        MethodInfo setMethod = execMethods.Find(t => t.Name.Equals("set_" + sqlField.Name,StringComparison.CurrentCultureIgnoreCase));      // 对应的set方法
+        //                        if(dbValue == null || dbValue == DBNull.Value) {    //  判断是否为空
+        //                        } else {    // 不为空
+        //                            setMethod.Invoke(newDBItem,new object[] { dbValue });    // 执行set方法对对象的属性进行赋值
+        //                        }
+        //                    }
+        //                    clearUpdateFields.Invoke(newDBItem,new object[] { new List<string>() });
+        //                    getList.Add(newDBItem);  // 添加到返回值的List
+        //                }
+        //                dbReader.Close();
+        //                dbReader = null;
+
+        //                dbConn.Close();
+        //            }
+        //        }
+        //    } catch(Exception exc) {
+        //        Ajdb.ExcString = exc;
+        //    } finally {
+        //    }
+
+        //    return getList;
+        //}
 
         /// <summary>
         /// 删除(int类型id)

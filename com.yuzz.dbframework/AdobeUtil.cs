@@ -181,6 +181,11 @@ namespace com.yuzz.dbframework {
         public static int GetWeekOfYear(this DateTime dt) {
             return new GregorianCalendar().GetWeekOfYear(dt,CalendarWeekRule.FirstDay,DayOfWeek.Monday);
         }
+
+        public static int RandomNumber() {
+            return new Random().Next(1000,100000);
+        }
+
         /// <summary>
         /// 获取当前第几季度
         /// </summary>

@@ -39,11 +39,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tbx_TableName = new System.Windows.Forms.TextBox();
             this.showTop_Panel = new System.Windows.Forms.Panel();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tvw = new System.Windows.Forms.TreeView();
             this.showLeft_Panel = new System.Windows.Forms.Panel();
             this.showRight_Panel = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.tbx_schema = new System.Windows.Forms.TextBox();
             this.tbx_pwd = new System.Windows.Forms.TextBox();
             this.tbx_user = new System.Windows.Forms.TextBox();
             this.tbx_port = new System.Windows.Forms.TextBox();
@@ -53,7 +53,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.tbx_schema = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.rtb_MultiSQLCode = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv)).BeginInit();
             this.showContent_Panel.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -61,6 +65,9 @@
             this.showLeft_Panel.SuspendLayout();
             this.showRight_Panel.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgv
@@ -82,10 +89,10 @@
             this.dgv.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dgv.Location = new System.Drawing.Point(5, 25);
+            this.dgv.Location = new System.Drawing.Point(3, 3);
             this.dgv.Name = "dgv";
             this.dgv.RowTemplate.Height = 23;
-            this.dgv.Size = new System.Drawing.Size(824, 357);
+            this.dgv.Size = new System.Drawing.Size(888, 345);
             this.dgv.TabIndex = 0;
             // 
             // rtb_Code
@@ -94,13 +101,13 @@
             this.rtb_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtb_Code.Location = new System.Drawing.Point(2, 75);
             this.rtb_Code.Name = "rtb_Code";
-            this.rtb_Code.Size = new System.Drawing.Size(830, 111);
+            this.rtb_Code.Size = new System.Drawing.Size(908, 111);
             this.rtb_Code.TabIndex = 1;
             this.rtb_Code.Text = "";
             // 
             // btn_Connect
             // 
-            this.btn_Connect.Location = new System.Drawing.Point(966, 16);
+            this.btn_Connect.Location = new System.Drawing.Point(1001, 16);
             this.btn_Connect.Name = "btn_Connect";
             this.btn_Connect.Size = new System.Drawing.Size(109, 25);
             this.btn_Connect.TabIndex = 2;
@@ -116,23 +123,22 @@
             this.showContent_Panel.Location = new System.Drawing.Point(0, 387);
             this.showContent_Panel.Name = "showContent_Panel";
             this.showContent_Panel.Padding = new System.Windows.Forms.Padding(2);
-            this.showContent_Panel.Size = new System.Drawing.Size(834, 188);
+            this.showContent_Panel.Size = new System.Drawing.Size(912, 188);
             this.showContent_Panel.TabIndex = 3;
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.btn_dbname);
             this.panel2.Controls.Add(this.btn_html);
             this.panel2.Controls.Add(this.btn_Save);
-            this.panel2.Controls.Add(this.tbx_SavePath);
-            this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.btn_Build);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.tbx_TableName);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(2, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(830, 73);
+            this.panel2.Size = new System.Drawing.Size(908, 73);
             this.panel2.TabIndex = 3;
             // 
             // btn_dbname
@@ -167,20 +173,21 @@
             // 
             // tbx_SavePath
             // 
-            this.tbx_SavePath.Location = new System.Drawing.Point(177, 42);
+            this.tbx_SavePath.Location = new System.Drawing.Point(493, 59);
+            this.tbx_SavePath.Multiline = true;
             this.tbx_SavePath.Name = "tbx_SavePath";
-            this.tbx_SavePath.Size = new System.Drawing.Size(487, 21);
+            this.tbx_SavePath.Size = new System.Drawing.Size(487, 35);
             this.tbx_SavePath.TabIndex = 4;
             this.tbx_SavePath.Text = "D:\\svn_shtcrane\\com.sht.library\\db_class";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(106, 46);
+            this.label2.Location = new System.Drawing.Point(368, 63);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 12);
+            this.label2.Size = new System.Drawing.Size(119, 12);
             this.label2.TabIndex = 3;
-            this.label2.Text = "保存路径：";
+            this.label2.Text = "class文件保存路径：";
             // 
             // btn_Build
             // 
@@ -211,31 +218,13 @@
             // 
             // showTop_Panel
             // 
-            this.showTop_Panel.Controls.Add(this.dgv);
-            this.showTop_Panel.Controls.Add(this.comboBox1);
+            this.showTop_Panel.Controls.Add(this.tabControl1);
             this.showTop_Panel.Dock = System.Windows.Forms.DockStyle.Top;
             this.showTop_Panel.Location = new System.Drawing.Point(0, 0);
             this.showTop_Panel.Name = "showTop_Panel";
             this.showTop_Panel.Padding = new System.Windows.Forms.Padding(5);
-            this.showTop_Panel.Size = new System.Drawing.Size(834, 387);
+            this.showTop_Panel.Size = new System.Drawing.Size(912, 387);
             this.showTop_Panel.TabIndex = 4;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Server=192.168.1.221;User Id=root;Password=20127163;Persist Security Info=True;Da" +
-                "tabase=shtcrane;Connect Timeout=10;charset=utf8",
-            "Server=127.0.0.1;User Id=root;Password=wangmo123wm;Persist Security Info=True;Dat" +
-                "abase=wangmo;Connect Timeout=10;charset=utf8"});
-            this.comboBox1.Location = new System.Drawing.Point(5, 5);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(824, 20);
-            this.comboBox1.TabIndex = 2;
-            this.comboBox1.Visible = false;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // tvw
             // 
@@ -267,7 +256,7 @@
             this.showRight_Panel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.showRight_Panel.Location = new System.Drawing.Point(266, 106);
             this.showRight_Panel.Name = "showRight_Panel";
-            this.showRight_Panel.Size = new System.Drawing.Size(834, 575);
+            this.showRight_Panel.Size = new System.Drawing.Size(912, 575);
             this.showRight_Panel.TabIndex = 6;
             // 
             // panel3
@@ -275,6 +264,8 @@
             this.panel3.Controls.Add(this.tbx_schema);
             this.panel3.Controls.Add(this.tbx_pwd);
             this.panel3.Controls.Add(this.tbx_user);
+            this.panel3.Controls.Add(this.tbx_SavePath);
+            this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.tbx_port);
             this.panel3.Controls.Add(this.tbx_dbip);
             this.panel3.Controls.Add(this.label7);
@@ -286,26 +277,33 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(6, 6);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1094, 100);
+            this.panel3.Size = new System.Drawing.Size(1172, 100);
             this.panel3.TabIndex = 7;
+            // 
+            // tbx_schema
+            // 
+            this.tbx_schema.Location = new System.Drawing.Point(110, 59);
+            this.tbx_schema.Name = "tbx_schema";
+            this.tbx_schema.Size = new System.Drawing.Size(231, 21);
+            this.tbx_schema.TabIndex = 12;
             // 
             // tbx_pwd
             // 
-            this.tbx_pwd.Location = new System.Drawing.Point(795, 18);
+            this.tbx_pwd.Location = new System.Drawing.Point(880, 18);
             this.tbx_pwd.Name = "tbx_pwd";
             this.tbx_pwd.Size = new System.Drawing.Size(100, 21);
             this.tbx_pwd.TabIndex = 11;
             // 
             // tbx_user
             // 
-            this.tbx_user.Location = new System.Drawing.Point(598, 18);
+            this.tbx_user.Location = new System.Drawing.Point(638, 18);
             this.tbx_user.Name = "tbx_user";
             this.tbx_user.Size = new System.Drawing.Size(118, 21);
             this.tbx_user.TabIndex = 10;
             // 
             // tbx_port
             // 
-            this.tbx_port.Location = new System.Drawing.Point(412, 18);
+            this.tbx_port.Location = new System.Drawing.Point(419, 18);
             this.tbx_port.Name = "tbx_port";
             this.tbx_port.Size = new System.Drawing.Size(100, 21);
             this.tbx_port.TabIndex = 9;
@@ -329,7 +327,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(748, 22);
+            this.label6.Location = new System.Drawing.Point(833, 22);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 6;
@@ -338,7 +336,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(539, 22);
+            this.label5.Location = new System.Drawing.Point(579, 22);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 5;
@@ -347,7 +345,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(365, 22);
+            this.label4.Location = new System.Drawing.Point(372, 22);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 12);
             this.label4.TabIndex = 4;
@@ -362,18 +360,62 @@
             this.label3.TabIndex = 3;
             this.label3.Text = "服务器地址：";
             // 
-            // tbx_schema
+            // button1
             // 
-            this.tbx_schema.Location = new System.Drawing.Point(110, 59);
-            this.tbx_schema.Name = "tbx_schema";
-            this.tbx_schema.Size = new System.Drawing.Size(231, 21);
-            this.tbx_schema.TabIndex = 12;
+            this.button1.Location = new System.Drawing.Point(798, 14);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(5, 5);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(902, 377);
+            this.tabControl1.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.dgv);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(894, 351);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "数据库字段属性";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.rtb_MultiSQLCode);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(894, 351);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "多表SQL代码（复杂查询，直接粘贴SQL代码）";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // rtb_MultiSQLCode
+            // 
+            this.rtb_MultiSQLCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtb_MultiSQLCode.Location = new System.Drawing.Point(3, 3);
+            this.rtb_MultiSQLCode.Name = "rtb_MultiSQLCode";
+            this.rtb_MultiSQLCode.Size = new System.Drawing.Size(888, 345);
+            this.rtb_MultiSQLCode.TabIndex = 0;
+            this.rtb_MultiSQLCode.Text = "";
             // 
             // Form_MySQL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1106, 687);
+            this.ClientSize = new System.Drawing.Size(1184, 687);
             this.Controls.Add(this.showRight_Panel);
             this.Controls.Add(this.showLeft_Panel);
             this.Controls.Add(this.panel3);
@@ -392,6 +434,9 @@
             this.showRight_Panel.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -410,7 +455,6 @@
         private System.Windows.Forms.TreeView tvw;
         private System.Windows.Forms.Panel showLeft_Panel;
         private System.Windows.Forms.Panel showRight_Panel;
-        private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_Save;
         private System.Windows.Forms.TextBox tbx_SavePath;
@@ -427,5 +471,10 @@
         private System.Windows.Forms.TextBox tbx_port;
         private System.Windows.Forms.TextBox tbx_dbip;
         private System.Windows.Forms.TextBox tbx_schema;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.RichTextBox rtb_MultiSQLCode;
     }
 }

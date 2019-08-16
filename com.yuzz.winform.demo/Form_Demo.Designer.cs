@@ -23,7 +23,6 @@
         /// 使用代码编辑器修改此方法的内容。
         /// </summary>
         private void InitializeComponent() {
-            this.btn_AddUUID = new System.Windows.Forms.Button();
             this.btn_AddInt = new System.Windows.Forms.Button();
             this.btn_UpdateInt = new System.Windows.Forms.Button();
             this.btn_getDatatable_Int = new System.Windows.Forms.Button();
@@ -40,18 +39,18 @@
             this.btn_NextPage = new System.Windows.Forms.Button();
             this.btn_LastPage = new System.Windows.Forms.Button();
             this.txt_PageTip = new System.Windows.Forms.Label();
+            this.btn_GetItem = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tbx_id = new System.Windows.Forms.TextBox();
+            this.btn_getDatatableUUID = new System.Windows.Forms.Button();
+            this.btn_AddVarchar = new System.Windows.Forms.Button();
+            this.btn_UpdateVarchar = new System.Windows.Forms.Button();
+            this.btn_getuuid = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbx_uuid = new System.Windows.Forms.TextBox();
+            this.btn_AddUser = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_int)).BeginInit();
             this.SuspendLayout();
-            // 
-            // btn_AddUUID
-            // 
-            this.btn_AddUUID.Location = new System.Drawing.Point(605, 449);
-            this.btn_AddUUID.Name = "btn_AddUUID";
-            this.btn_AddUUID.Size = new System.Drawing.Size(91, 30);
-            this.btn_AddUUID.TabIndex = 0;
-            this.btn_AddUUID.Text = "add uuid";
-            this.btn_AddUUID.UseVisualStyleBackColor = true;
-            this.btn_AddUUID.Click += new System.EventHandler(this.btn_AddUUID_Click);
             // 
             // btn_AddInt
             // 
@@ -77,7 +76,7 @@
             // 
             this.btn_getDatatable_Int.Location = new System.Drawing.Point(940, 40);
             this.btn_getDatatable_Int.Name = "btn_getDatatable_Int";
-            this.btn_getDatatable_Int.Size = new System.Drawing.Size(170, 30);
+            this.btn_getDatatable_Int.Size = new System.Drawing.Size(116, 30);
             this.btn_getDatatable_Int.TabIndex = 2;
             this.btn_getDatatable_Int.Text = "getDatatable Int";
             this.btn_getDatatable_Int.UseVisualStyleBackColor = true;
@@ -191,21 +190,122 @@
             this.txt_PageTip.TabIndex = 8;
             this.txt_PageTip.Text = "分页提示：";
             // 
+            // btn_GetItem
+            // 
+            this.btn_GetItem.Location = new System.Drawing.Point(940, 246);
+            this.btn_GetItem.Name = "btn_GetItem";
+            this.btn_GetItem.Size = new System.Drawing.Size(116, 33);
+            this.btn_GetItem.TabIndex = 9;
+            this.btn_GetItem.Text = "get item";
+            this.btn_GetItem.UseVisualStyleBackColor = true;
+            this.btn_GetItem.Click += new System.EventHandler(this.btn_GetItem_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(938, 207);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 12);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "id：";
+            // 
+            // tbx_id
+            // 
+            this.tbx_id.Location = new System.Drawing.Point(940, 222);
+            this.tbx_id.Name = "tbx_id";
+            this.tbx_id.Size = new System.Drawing.Size(116, 21);
+            this.tbx_id.TabIndex = 11;
+            // 
+            // btn_getDatatableUUID
+            // 
+            this.btn_getDatatableUUID.Location = new System.Drawing.Point(1098, 40);
+            this.btn_getDatatableUUID.Name = "btn_getDatatableUUID";
+            this.btn_getDatatableUUID.Size = new System.Drawing.Size(116, 30);
+            this.btn_getDatatableUUID.TabIndex = 2;
+            this.btn_getDatatableUUID.Text = "getDatatable UUID";
+            this.btn_getDatatableUUID.UseVisualStyleBackColor = true;
+            this.btn_getDatatableUUID.Click += new System.EventHandler(this.btn_getDatatableUUID_Click);
+            // 
+            // btn_AddVarchar
+            // 
+            this.btn_AddVarchar.Location = new System.Drawing.Point(1098, 106);
+            this.btn_AddVarchar.Name = "btn_AddVarchar";
+            this.btn_AddVarchar.Size = new System.Drawing.Size(116, 30);
+            this.btn_AddVarchar.TabIndex = 0;
+            this.btn_AddVarchar.Text = "add Varchar";
+            this.btn_AddVarchar.UseVisualStyleBackColor = true;
+            this.btn_AddVarchar.Click += new System.EventHandler(this.btn_AddInt_Click);
+            // 
+            // btn_UpdateVarchar
+            // 
+            this.btn_UpdateVarchar.Location = new System.Drawing.Point(1098, 157);
+            this.btn_UpdateVarchar.Name = "btn_UpdateVarchar";
+            this.btn_UpdateVarchar.Size = new System.Drawing.Size(116, 30);
+            this.btn_UpdateVarchar.TabIndex = 1;
+            this.btn_UpdateVarchar.Text = "Update Varchar";
+            this.btn_UpdateVarchar.UseVisualStyleBackColor = true;
+            this.btn_UpdateVarchar.Click += new System.EventHandler(this.btn_UpdateInt_Click);
+            // 
+            // btn_getuuid
+            // 
+            this.btn_getuuid.Location = new System.Drawing.Point(1098, 246);
+            this.btn_getuuid.Name = "btn_getuuid";
+            this.btn_getuuid.Size = new System.Drawing.Size(116, 33);
+            this.btn_getuuid.TabIndex = 9;
+            this.btn_getuuid.Text = "get item";
+            this.btn_getuuid.UseVisualStyleBackColor = true;
+            this.btn_getuuid.Click += new System.EventHandler(this.btn_getuuid_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(1096, 207);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "uuid：";
+            // 
+            // tbx_uuid
+            // 
+            this.tbx_uuid.Location = new System.Drawing.Point(1098, 222);
+            this.tbx_uuid.Name = "tbx_uuid";
+            this.tbx_uuid.Size = new System.Drawing.Size(116, 21);
+            this.tbx_uuid.TabIndex = 11;
+            // 
+            // btn_AddUser
+            // 
+            this.btn_AddUser.Location = new System.Drawing.Point(940, 326);
+            this.btn_AddUser.Name = "btn_AddUser";
+            this.btn_AddUser.Size = new System.Drawing.Size(116, 23);
+            this.btn_AddUser.TabIndex = 12;
+            this.btn_AddUser.Text = "add user";
+            this.btn_AddUser.UseVisualStyleBackColor = true;
+            this.btn_AddUser.Click += new System.EventHandler(this.btn_AddUser_Click);
+            // 
             // Form_Demo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1122, 641);
+            this.ClientSize = new System.Drawing.Size(1233, 641);
+            this.Controls.Add(this.btn_AddUser);
+            this.Controls.Add(this.tbx_uuid);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.tbx_id);
+            this.Controls.Add(this.btn_getuuid);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btn_GetItem);
             this.Controls.Add(this.txt_PageTip);
             this.Controls.Add(this.btn_LastPage);
             this.Controls.Add(this.btn_NextPage);
             this.Controls.Add(this.btn_PrevPage);
             this.Controls.Add(this.btn_FirstPage);
             this.Controls.Add(this.dgv_int);
+            this.Controls.Add(this.btn_getDatatableUUID);
             this.Controls.Add(this.btn_getDatatable_Int);
+            this.Controls.Add(this.btn_UpdateVarchar);
             this.Controls.Add(this.btn_UpdateInt);
+            this.Controls.Add(this.btn_AddVarchar);
             this.Controls.Add(this.btn_AddInt);
-            this.Controls.Add(this.btn_AddUUID);
             this.Name = "Form_Demo";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form_Demo";
@@ -217,8 +317,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button btn_AddUUID;
         private System.Windows.Forms.Button btn_AddInt;
         private System.Windows.Forms.Button btn_UpdateInt;
         private System.Windows.Forms.Button btn_getDatatable_Int;
@@ -235,6 +333,16 @@
         private System.Windows.Forms.Button btn_NextPage;
         private System.Windows.Forms.Button btn_LastPage;
         private System.Windows.Forms.Label txt_PageTip;
+        private System.Windows.Forms.Button btn_GetItem;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox tbx_id;
+        private System.Windows.Forms.Button btn_getDatatableUUID;
+        private System.Windows.Forms.Button btn_AddVarchar;
+        private System.Windows.Forms.Button btn_UpdateVarchar;
+        private System.Windows.Forms.Button btn_getuuid;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbx_uuid;
+        private System.Windows.Forms.Button btn_AddUser;
     }
 }
 

@@ -97,8 +97,13 @@ namespace com.yuzz.demo.app {
         private void btn_UpdateInt_Click(object sender,EventArgs e) {
 
         }
-
+        string tablename = "";
+        private void btn_getDatatableUUID_Click(object sender,EventArgs e) {
+            tablename = "sys_uuid";
+            btn_FirstPage_Click(sender,e);
+        }
         private void btn_getDatatable_Int_Click(object sender,EventArgs e) {
+            tablename = "sysdept";
             btn_FirstPage_Click(sender,e);
         }
 
@@ -132,11 +137,39 @@ namespace com.yuzz.demo.app {
             doQuery();
         }
         void doQuery() {
-            AjQuery ajResult = Ajdb.Query<SysDept>("","",pageIndex,pageSize,AjQueryType.QueryAll,null);
+            AjQuery ajResult = null;
+            switch(tablename) {
+                case "sys_uuid":
+                    ajResult = Ajdb.Query<sys_uuid>("","",pageIndex,pageSize,AjQueryType.QueryAll,null);
+                    break;
+                case "sysdept":
+                    ajResult = Ajdb.Query<SysDept>("","",pageIndex,pageSize,AjQueryType.QueryAll,null);
+                    break;
+            }
+            dgv_int.Columns.Clear();
+            dgv_int.AutoGenerateColumns = true;
             dgv_int.DataSource = ajResult.DataTable;
             pageCount = ajResult.PageCount;
 
             txt_PageTip.Text = "共：" + ajResult.RecordCount + "条记录，当前第：" + ajResult.PageIndex + "页，共：" + ajResult.PageCount + "，每页显示：" + ajResult.PageSize + "条记录";
+        }
+
+        private void btn_GetItem_Click(object sender,EventArgs e) {
+            SysDept dept = Ajdb.GetItem<SysDept>(AdobeUtil.ParseInt(tbx_id.Text));
+            MessageBox.Show(dept.Name);
+        }
+
+        private void btn_getuuid_Click(object sender,EventArgs e) {
+            sys_uuid uuid = Ajdb.GetItem<sys_uuid>(tbx_uuid.Text);
+            MessageBox.Show(uuid.name);
+        }
+
+        private void btn_AddUser_Click(object sender,EventArgs e) {
+            for(int n = 0;n <= 10;n++) {
+                sysuser user = new sysuser();
+                user.name = "aa" + AdobeUtil.RandomNumber();
+                Ajdb.Insert(user);
+            }
         }
     }
 }

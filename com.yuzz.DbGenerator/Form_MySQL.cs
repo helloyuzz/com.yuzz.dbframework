@@ -21,113 +21,117 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void btn_Build_Click(object sender,EventArgs e) {
-            rtb_Code.Clear();
-            StringBuilder sql = new StringBuilder();
-
-            sql.Append("using System;\r\n");
-            sql.Append("using System.Collections.Generic;\r\n");
-            sql.Append("using System.Data;\r\n");
-            sql.Append("using com.yuzz.dbframework;\r\n");
-            sql.Append("using MySql.Data.MySqlClient;\r\n");
-
-            //sql.Append("namespace JLJM {\r\n");
-            sql.Append("[Serializable]\r\n");
-            sql.Append("public class ").Append(tbx_TableName.Text).Append(" {\r\n");
-
-            // 更新字段
-            //sql.Append("\tpublic List<string> UpdateFields = new List<string>();").Append(Environment.NewLine);
-            sql.Append("\tList<string> _UpdateFields = new List<string>();\r\n");
-            sql.Append("\tpublic virtual List<string> UpdateFields {\r\n");
-            sql.Append("\t\tget { return _UpdateFields; }\r\n");
-            sql.Append("\t\tset { _UpdateFields = value; }\r\n");
-            sql.Append("\t}\r\n");
-
-            sql.Append("\tpublic static Type Type {").Append(Environment.NewLine);
-            sql.Append("\t\tget {").Append(Environment.NewLine);
-      
-            sql.Append("\t\t\treturn typeof(").Append(tbx_TableName.Text).Append(");").Append(Environment.NewLine);
-            sql.Append("\t\t}").Append(Environment.NewLine);
-            sql.Append("\t}").Append(Environment.NewLine);
-
-            sql.Append("\tpublic virtual string TableName {\r\n");
-            sql.Append("\t\tget {\r\n");
-            sql.Append("\t\t\treturn \"").Append(tbx_TableName.Text).Append("\";\r\n");
-            sql.Append("\t\t}\r\n");
-            sql.Append("\t}\r\n");
-
-            MySQLField sqlField = mysqlFields.Find(t => t.Key.Equals("PRI"));
-            if(sqlField == null) {
+            if(tabControl1.SelectedTab == tabPage1) {
                 rtb_Code.Clear();
-                throw new Exception("数据表必须有主键Primary Key");
-            }
+                StringBuilder sql = new StringBuilder();
 
-            sql.Append("\tpublic virtual string PkFieldName {\r\n");
-            sql.Append("\t\tget {\r\n");
-            sql.Append("\t\t\treturn \"").Append(sqlField.Field).Append("\";\r\n");
-            sql.Append("\t\t}\r\n");
-            sql.Append("\t}\r\n");
+                sql.Append("using System;\r\n");
+                sql.Append("using System.Collections.Generic;\r\n");
+                sql.Append("using System.Data;\r\n");
+                sql.Append("using com.yuzz.dbframework;\r\n");
+                sql.Append("using MySql.Data.MySqlClient;\r\n");
 
-            sql.Append("\tprivate List<SQLField> _Fields = null;\r\n");
-            sql.Append("\tpublic List<SQLField> Fields{\r\n");
-            sql.Append("\t\tget{\r\n");
-            sql.Append("\t\t\tif(_Fields == null){\r\n");
-            sql.Append("\t\t\t_Fields = new List<SQLField>();\r\n");
+                //sql.Append("namespace JLJM {\r\n");
+                sql.Append("[Serializable]\r\n");
+                sql.Append("public class ").Append(tbx_TableName.Text).Append(" {\r\n");
 
-
-
-
-            foreach(MySQLField field in mysqlFields) {
-                string isPRI = field.Key.Equals("PRI") ? "true" : "false";
-                string dateformat = "";
-                switch(field.Type) {
-                    case "date":
-                        dateformat = "yyyy-MM-dd";
-                        break;
-                    case "datetime":
-                        dateformat = "yyyy-MM-dd HH:mm:ss";
-                        break;
-                }
-                sql.Append("\t\t\t\t");
-                sql.Append("_Fields.Add(new SQLField(\"").Append(field.Field).Append("\",").Append(ParseCSharpRuntimeType(field.Type,true)).Append(",").Append(isPRI).Append(",\"").Append(field.Comment.Trim()).Append("\"");
-                //if(string.IsNullOrEmpty(dateformat) == false) {
-                //    sql.Append(",\"").Append(dateformat).Append("\"");
-                //}
-
-                sql.Append("));\r\n");
-            }
-            sql.Append("\t\t\t}\r\n");
-            sql.Append("\t\t\treturn _Fields;\r\n");
-            sql.Append("\t\t}\r\n");
-            sql.Append("\t}\r\n");
-
-            foreach(MySQLField field in mysqlFields) {
-                string getCSharpType = ParseCSharpRuntimeType(field.Type,false);
-                sql.Append("\t").Append(getCSharpType + " _" + field.Field + ";").Append(Environment.NewLine);
-                if(string.IsNullOrEmpty(field.Comment) == false) {  //  字段如果有备注就添加备注信息
-                    sql.Append("\t/// <summary>\r\n");
-                    sql.Append("\t/// ").Append(field.Comment).Append("\r\n");
-                    sql.Append("\t/// </summary>\r\n");
-                }
-                sql.Append("\tpublic virtual ").Append(getCSharpType).Append(" ").Append(field.Field).Append(" {\r\n");
-                sql.Append("\t\tget{").Append(Environment.NewLine);
-                sql.Append("\t\t\treturn _" + field.Field + ";").Append(Environment.NewLine);
-                sql.Append("\t\t}").Append(Environment.NewLine);
-
-
-                sql.Append("\t\tset{").Append(Environment.NewLine);
-                if("PRI".Equals(field.Key) == false) {  // 非主键
-                    sql.Append("\t\t\tif(value != this._" + field.Field + ") {").Append(Environment.NewLine);
-                    sql.Append("\t\t\t    UpdateFields.Add(\"" + field.Field + "\");").Append(Environment.NewLine);
-                    sql.Append("\t\t\t}").Append(Environment.NewLine);
-                }
-                sql.Append("\t\t\t_" + field.Field + " = value;").Append(Environment.NewLine);
-                sql.Append("\t\t}").Append(Environment.NewLine);
+                // 更新字段
+                //sql.Append("\tpublic List<string> UpdateFields = new List<string>();").Append(Environment.NewLine);
+                sql.Append("\tList<string> _UpdateFields = new List<string>();\r\n");
+                sql.Append("\tpublic virtual List<string> UpdateFields {\r\n");
+                sql.Append("\t\tget { return _UpdateFields; }\r\n");
+                sql.Append("\t\tset { _UpdateFields = value; }\r\n");
                 sql.Append("\t}\r\n");
-            }
-            sql.Append("}");
-            //sql.Append("    }");
 
-            rtb_Code.AppendText(sql.ToString());
+                sql.Append("\tpublic static Type Type {").Append(Environment.NewLine);
+                sql.Append("\t\tget {").Append(Environment.NewLine);
+
+                sql.Append("\t\t\treturn typeof(").Append(tbx_TableName.Text).Append(");").Append(Environment.NewLine);
+                sql.Append("\t\t}").Append(Environment.NewLine);
+                sql.Append("\t}").Append(Environment.NewLine);
+
+                sql.Append("\tpublic virtual string TableName {\r\n");
+                sql.Append("\t\tget {\r\n");
+                sql.Append("\t\t\treturn \"").Append(tbx_TableName.Text).Append("\";\r\n");
+                sql.Append("\t\t}\r\n");
+                sql.Append("\t}\r\n");
+
+                MySQLField sqlField = mysqlFields.Find(t => t.Key.Equals("PRI"));
+                if(sqlField == null) {
+                    rtb_Code.Clear();
+                    throw new Exception("数据表必须有主键Primary Key");
+                }
+
+                sql.Append("\tpublic virtual string PkFieldName {\r\n");
+                sql.Append("\t\tget {\r\n");
+                sql.Append("\t\t\treturn \"").Append(sqlField.Field).Append("\";\r\n");
+                sql.Append("\t\t}\r\n");
+                sql.Append("\t}\r\n");
+
+                sql.Append("\tprivate List<SQLField> _Fields = null;\r\n");
+                sql.Append("\tpublic List<SQLField> Fields{\r\n");
+                sql.Append("\t\tget{\r\n");
+                sql.Append("\t\t\tif(_Fields == null){\r\n");
+                sql.Append("\t\t\t_Fields = new List<SQLField>();\r\n");
+
+
+
+
+                foreach(MySQLField field in mysqlFields) {
+                    string isPRI = field.Key.Equals("PRI") ? "true" : "false";
+                    string dateformat = "";
+                    switch(field.Type) {
+                        case "date":
+                            dateformat = "yyyy-MM-dd";
+                            break;
+                        case "datetime":
+                            dateformat = "yyyy-MM-dd HH:mm:ss";
+                            break;
+                    }
+                    sql.Append("\t\t\t\t");
+                    sql.Append("_Fields.Add(new SQLField(\"").Append(field.Field).Append("\",").Append(ParseCSharpRuntimeType(field.Type,true)).Append(",").Append(isPRI).Append(",\"").Append(field.Comment.Trim()).Append("\"");
+                    //if(string.IsNullOrEmpty(dateformat) == false) {
+                    //    sql.Append(",\"").Append(dateformat).Append("\"");
+                    //}
+
+                    sql.Append("));\r\n");
+                }
+                sql.Append("\t\t\t}\r\n");
+                sql.Append("\t\t\treturn _Fields;\r\n");
+                sql.Append("\t\t}\r\n");
+                sql.Append("\t}\r\n");
+
+                foreach(MySQLField field in mysqlFields) {
+                    string getCSharpType = ParseCSharpRuntimeType(field.Type,false);
+                    sql.Append("\t").Append(getCSharpType + " _" + field.Field + ";").Append(Environment.NewLine);
+                    if(string.IsNullOrEmpty(field.Comment) == false) {  //  字段如果有备注就添加备注信息
+                        sql.Append("\t/// <summary>\r\n");
+                        sql.Append("\t/// ").Append(field.Comment).Append("\r\n");
+                        sql.Append("\t/// </summary>\r\n");
+                    }
+                    sql.Append("\tpublic virtual ").Append(getCSharpType).Append(" ").Append(field.Field).Append(" {\r\n");
+                    sql.Append("\t\tget{").Append(Environment.NewLine);
+                    sql.Append("\t\t\treturn _" + field.Field + ";").Append(Environment.NewLine);
+                    sql.Append("\t\t}").Append(Environment.NewLine);
+
+
+                    sql.Append("\t\tset{").Append(Environment.NewLine);
+                    if("PRI".Equals(field.Key) == false) {  // 非主键
+                        sql.Append("\t\t\tif(value != this._" + field.Field + ") {").Append(Environment.NewLine);
+                        sql.Append("\t\t\t    UpdateFields.Add(\"" + field.Field + "\");").Append(Environment.NewLine);
+                        sql.Append("\t\t\t}").Append(Environment.NewLine);
+                    }
+                    sql.Append("\t\t\t_" + field.Field + " = value;").Append(Environment.NewLine);
+                    sql.Append("\t\t}").Append(Environment.NewLine);
+                    sql.Append("\t}\r\n");
+                }
+                sql.Append("}");
+                //sql.Append("    }");
+
+                rtb_Code.AppendText(sql.ToString());
+            } else if(tabControl1.SelectedTab == tabPage2) {
+
+            }
         }
 
         private string ParseCSharpRuntimeType(string type,bool mysqlType) {
@@ -183,6 +187,7 @@ namespace com.yuzz.DbGenerator {
                     tbx_user.Text = xmlFile.user;
                     tbx_pwd.Text = xmlFile.pwd;
                     tbx_schema.Text = xmlFile.schema;
+                    tbx_SavePath.Text = xmlFile.SavePath;
                 }
                 streamReader.Close();
             }
@@ -238,6 +243,7 @@ namespace com.yuzz.DbGenerator {
             xmlFile.user = tbx_user.Text;
             xmlFile.pwd = tbx_pwd.Text;
             xmlFile.schema = tbx_schema.Text;
+            xmlFile.SavePath = tbx_SavePath.Text;
 
             string xmlString = JsonConvert.SerializeObject(xmlFile);
             StreamWriter streamWriter = File.CreateText(Application.StartupPath + "\\xml\\mysql.xml");
@@ -300,6 +306,7 @@ namespace com.yuzz.DbGenerator {
             Thread.Sleep(500);
             Application.DoEvents();
             this.Cursor = Cursors.Default;
+            MessageBox.Show(this,"操作成功!","系统提示");
         }
 
         private void btn_html_Click(object sender,EventArgs e) {
