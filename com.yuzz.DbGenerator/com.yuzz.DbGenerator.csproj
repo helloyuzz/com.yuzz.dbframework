@@ -138,6 +138,12 @@
     <Compile Include="Form_MySQL.Designer.cs">
       <DependentUpon>Form_MySQL.cs</DependentUpon>
     </Compile>
+    <Compile Include="uc\UC_Table.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="uc\UC_Table.Designer.cs">
+      <DependentUpon>UC_Table.cs</DependentUpon>
+    </Compile>
     <Compile Include="vo\MySQLField.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -161,6 +167,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="uc\UC_Table.resx">
+      <DependentUpon>UC_Table.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="com.yuzz.dbgenerator.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -175,6 +184,7 @@
     <Compile Include="Toolkit.cs" />
     <Compile Include="vo\DBClass.cs" />
     <Compile Include="vo\DBItem.cs" />
+    <Compile Include="vo\MySQLTreeNode.cs" />
     <Compile Include="vo\MySQLXmlFile.cs" />
     <Compile Include="vo\SmColumn.cs" />
     <Compile Include="vo\SmField.cs" />

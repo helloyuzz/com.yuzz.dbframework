@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("数据库");
             this.dgv = new System.Windows.Forms.DataGridView();
@@ -30,18 +31,32 @@
             this.btn_Connect = new System.Windows.Forms.Button();
             this.showContent_Panel = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.btn_dbname = new System.Windows.Forms.Button();
             this.btn_html = new System.Windows.Forms.Button();
             this.btn_Save = new System.Windows.Forms.Button();
-            this.tbx_SavePath = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.btn_Build = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tbx_TableName = new System.Windows.Forms.TextBox();
+            this.tbx_SavePath = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.showTop_Panel = new System.Windows.Forms.Panel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.rtb_MultiSQLCode = new System.Windows.Forms.RichTextBox();
             this.tvw = new System.Windows.Forms.TreeView();
             this.showLeft_Panel = new System.Windows.Forms.Panel();
             this.showRight_Panel = new System.Windows.Forms.Panel();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.tp_voBuilder = new System.Windows.Forms.TabPage();
+            this.tp_selectBuilder = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tbx_schema = new System.Windows.Forms.TextBox();
             this.tbx_pwd = new System.Windows.Forms.TextBox();
@@ -53,21 +68,25 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.rtb_MultiSQLCode = new System.Windows.Forms.RichTextBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgv)).BeginInit();
             this.showContent_Panel.SuspendLayout();
             this.panel2.SuspendLayout();
             this.showTop_Panel.SuspendLayout();
-            this.showLeft_Panel.SuspendLayout();
-            this.showRight_Panel.SuspendLayout();
-            this.panel3.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.showLeft_Panel.SuspendLayout();
+            this.showRight_Panel.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.tp_voBuilder.SuspendLayout();
+            this.tp_selectBuilder.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.panel3.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgv
@@ -92,7 +111,7 @@
             this.dgv.Location = new System.Drawing.Point(3, 3);
             this.dgv.Name = "dgv";
             this.dgv.RowTemplate.Height = 23;
-            this.dgv.Size = new System.Drawing.Size(888, 345);
+            this.dgv.Size = new System.Drawing.Size(868, 345);
             this.dgv.TabIndex = 0;
             // 
             // rtb_Code
@@ -101,7 +120,7 @@
             this.rtb_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtb_Code.Location = new System.Drawing.Point(2, 75);
             this.rtb_Code.Name = "rtb_Code";
-            this.rtb_Code.Size = new System.Drawing.Size(908, 111);
+            this.rtb_Code.Size = new System.Drawing.Size(888, 76);
             this.rtb_Code.TabIndex = 1;
             this.rtb_Code.Text = "";
             // 
@@ -120,10 +139,10 @@
             this.showContent_Panel.Controls.Add(this.rtb_Code);
             this.showContent_Panel.Controls.Add(this.panel2);
             this.showContent_Panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.showContent_Panel.Location = new System.Drawing.Point(0, 387);
+            this.showContent_Panel.Location = new System.Drawing.Point(3, 390);
             this.showContent_Panel.Name = "showContent_Panel";
             this.showContent_Panel.Padding = new System.Windows.Forms.Padding(2);
-            this.showContent_Panel.Size = new System.Drawing.Size(912, 188);
+            this.showContent_Panel.Size = new System.Drawing.Size(892, 153);
             this.showContent_Panel.TabIndex = 3;
             // 
             // panel2
@@ -138,8 +157,17 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(2, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(908, 73);
+            this.panel2.Size = new System.Drawing.Size(888, 73);
             this.panel2.TabIndex = 3;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(798, 14);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // btn_dbname
             // 
@@ -171,24 +199,6 @@
             this.btn_Save.UseVisualStyleBackColor = true;
             this.btn_Save.Click += new System.EventHandler(this.btn_Save_Click);
             // 
-            // tbx_SavePath
-            // 
-            this.tbx_SavePath.Location = new System.Drawing.Point(493, 59);
-            this.tbx_SavePath.Multiline = true;
-            this.tbx_SavePath.Name = "tbx_SavePath";
-            this.tbx_SavePath.Size = new System.Drawing.Size(487, 35);
-            this.tbx_SavePath.TabIndex = 4;
-            this.tbx_SavePath.Text = "D:\\svn_shtcrane\\com.sht.library\\db_class";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(368, 63);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(119, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "class文件保存路径：";
-            // 
             // btn_Build
             // 
             this.btn_Build.Location = new System.Drawing.Point(6, 7);
@@ -216,15 +226,75 @@
             this.tbx_TableName.TabIndex = 2;
             this.tbx_TableName.Text = "tb_";
             // 
+            // tbx_SavePath
+            // 
+            this.tbx_SavePath.Location = new System.Drawing.Point(493, 59);
+            this.tbx_SavePath.Multiline = true;
+            this.tbx_SavePath.Name = "tbx_SavePath";
+            this.tbx_SavePath.Size = new System.Drawing.Size(487, 35);
+            this.tbx_SavePath.TabIndex = 4;
+            this.tbx_SavePath.Text = "D:\\svn_shtcrane\\com.sht.library\\db_class";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(368, 63);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(119, 12);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "class文件保存路径：";
+            // 
             // showTop_Panel
             // 
             this.showTop_Panel.Controls.Add(this.tabControl1);
             this.showTop_Panel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.showTop_Panel.Location = new System.Drawing.Point(0, 0);
+            this.showTop_Panel.Location = new System.Drawing.Point(3, 3);
             this.showTop_Panel.Name = "showTop_Panel";
             this.showTop_Panel.Padding = new System.Windows.Forms.Padding(5);
-            this.showTop_Panel.Size = new System.Drawing.Size(912, 387);
+            this.showTop_Panel.Size = new System.Drawing.Size(892, 387);
             this.showTop_Panel.TabIndex = 4;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(5, 5);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(882, 377);
+            this.tabControl1.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.dgv);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(874, 351);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "数据库字段属性";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.rtb_MultiSQLCode);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(874, 351);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "多表SQL代码（复杂查询，直接粘贴SQL代码）";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // rtb_MultiSQLCode
+            // 
+            this.rtb_MultiSQLCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtb_MultiSQLCode.Location = new System.Drawing.Point(3, 3);
+            this.rtb_MultiSQLCode.Name = "rtb_MultiSQLCode";
+            this.rtb_MultiSQLCode.Size = new System.Drawing.Size(868, 345);
+            this.rtb_MultiSQLCode.TabIndex = 0;
+            this.rtb_MultiSQLCode.Text = "";
             // 
             // tvw
             // 
@@ -251,13 +321,122 @@
             // 
             // showRight_Panel
             // 
-            this.showRight_Panel.Controls.Add(this.showContent_Panel);
-            this.showRight_Panel.Controls.Add(this.showTop_Panel);
+            this.showRight_Panel.Controls.Add(this.tabControl2);
             this.showRight_Panel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.showRight_Panel.Location = new System.Drawing.Point(266, 106);
             this.showRight_Panel.Name = "showRight_Panel";
+            this.showRight_Panel.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.showRight_Panel.Size = new System.Drawing.Size(912, 575);
             this.showRight_Panel.TabIndex = 6;
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Controls.Add(this.tp_voBuilder);
+            this.tabControl2.Controls.Add(this.tp_selectBuilder);
+            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl2.Location = new System.Drawing.Point(3, 0);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(906, 572);
+            this.tabControl2.TabIndex = 9;
+            // 
+            // tp_voBuilder
+            // 
+            this.tp_voBuilder.Controls.Add(this.showContent_Panel);
+            this.tp_voBuilder.Controls.Add(this.showTop_Panel);
+            this.tp_voBuilder.Location = new System.Drawing.Point(4, 22);
+            this.tp_voBuilder.Name = "tp_voBuilder";
+            this.tp_voBuilder.Padding = new System.Windows.Forms.Padding(3);
+            this.tp_voBuilder.Size = new System.Drawing.Size(898, 546);
+            this.tp_voBuilder.TabIndex = 0;
+            this.tp_voBuilder.Text = "vo Builder";
+            this.tp_voBuilder.UseVisualStyleBackColor = true;
+            // 
+            // tp_selectBuilder
+            // 
+            this.tp_selectBuilder.Controls.Add(this.splitContainer1);
+            this.tp_selectBuilder.Location = new System.Drawing.Point(4, 22);
+            this.tp_selectBuilder.Name = "tp_selectBuilder";
+            this.tp_selectBuilder.Padding = new System.Windows.Forms.Padding(3);
+            this.tp_selectBuilder.Size = new System.Drawing.Size(898, 546);
+            this.tp_selectBuilder.TabIndex = 1;
+            this.tp_selectBuilder.Text = "select Builder";
+            this.tp_selectBuilder.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.BackColor = System.Drawing.Color.White;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.BackColor = System.Drawing.Color.White;
+            this.splitContainer1.Panel2.Controls.Add(this.panel1);
+            this.splitContainer1.Panel2.Controls.Add(this.label11);
+            this.splitContainer1.Panel2.Controls.Add(this.label10);
+            this.splitContainer1.Panel2.Controls.Add(this.label9);
+            this.splitContainer1.Panel2.Controls.Add(this.label8);
+            this.splitContainer1.Size = new System.Drawing.Size(892, 540);
+            this.splitContainer1.SplitterDistance = 251;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.Location = new System.Drawing.Point(79, 35);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(200, 100);
+            this.panel1.TabIndex = 1;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label11.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label11.Location = new System.Drawing.Point(322, 207);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(61, 12);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "ORDER BY";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label10.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label10.Location = new System.Drawing.Point(551, 19);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(40, 12);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "WHERE";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label9.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label9.Location = new System.Drawing.Point(315, 19);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(33, 12);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "FROM";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label8.Location = new System.Drawing.Point(13, 19);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(47, 12);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "SELECT";
             // 
             // panel3
             // 
@@ -360,56 +539,19 @@
             this.label3.TabIndex = 3;
             this.label3.Text = "服务器地址：";
             // 
-            // button1
+            // contextMenuStrip1
             // 
-            this.button1.Location = new System.Drawing.Point(798, 14);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
             // 
-            // tabControl1
+            // toolStripMenuItem1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(5, 5);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(902, 377);
-            this.tabControl1.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Controls.Add(this.dgv);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(894, 351);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "数据库字段属性";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.rtb_MultiSQLCode);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(894, 351);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "多表SQL代码（复杂查询，直接粘贴SQL代码）";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // rtb_MultiSQLCode
-            // 
-            this.rtb_MultiSQLCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtb_MultiSQLCode.Location = new System.Drawing.Point(3, 3);
-            this.rtb_MultiSQLCode.Name = "rtb_MultiSQLCode";
-            this.rtb_MultiSQLCode.Size = new System.Drawing.Size(888, 345);
-            this.rtb_MultiSQLCode.TabIndex = 0;
-            this.rtb_MultiSQLCode.Text = "";
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Text = "添加";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // Form_MySQL
             // 
@@ -430,13 +572,21 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.showTop_Panel.ResumeLayout(false);
-            this.showLeft_Panel.ResumeLayout(false);
-            this.showRight_Panel.ResumeLayout(false);
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.showLeft_Panel.ResumeLayout(false);
+            this.showRight_Panel.ResumeLayout(false);
+            this.tabControl2.ResumeLayout(false);
+            this.tp_voBuilder.ResumeLayout(false);
+            this.tp_selectBuilder.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -476,5 +626,16 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.RichTextBox rtb_MultiSQLCode;
+        private System.Windows.Forms.TabControl tabControl2;
+        private System.Windows.Forms.TabPage tp_voBuilder;
+        private System.Windows.Forms.TabPage tp_selectBuilder;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }

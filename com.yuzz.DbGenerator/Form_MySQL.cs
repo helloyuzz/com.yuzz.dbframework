@@ -13,6 +13,7 @@ using System.Threading;
 using com.yuzz.DbGenerator.vo;
 using System.Xml;
 using Newtonsoft.Json;
+using com.yuzz.DbGenerator.uc;
 
 namespace com.yuzz.DbGenerator {
     public partial class Form_MySQL:Form {
@@ -191,6 +192,7 @@ namespace com.yuzz.DbGenerator {
                 }
                 streamReader.Close();
             }
+            tabControl2.SelectedTab = tp_selectBuilder;
         }
 
         private void btn_Connect_Click(object sender,EventArgs e) {
@@ -286,10 +288,15 @@ namespace com.yuzz.DbGenerator {
                     filed.Comment = row["comment"].ToString();
                     mysqlFields.Add(filed);
                 }
+                e.Node.Tag = mysqlFields;
             } catch {
             } finally {
                 dbConn.Close();
                 dbConn = null;
+            }
+
+            if(tabControl2.SelectedTab == tp_selectBuilder && e.Node.Level >= 1) {
+                contextMenuStrip1.Show(tvw,tvw.PointToClient(MousePosition));
             }
         }
 
@@ -334,10 +341,25 @@ namespace com.yuzz.DbGenerator {
 
         private void btn_dbname_Click(object sender,EventArgs e) {
             rtb_Code.Clear();
-
-
             foreach(TreeNode node in tvw.Nodes["rootNode"].Nodes) {
             }
+        }
+
+        private void toolStripMenuItem1_Click(object sender,EventArgs e) {
+            if(tvw.SelectedNode != null) {
+                string schemaName = tvw.SelectedNode.Text;
+                if(splitContainer1.Panel1.Controls.Find(schemaName,false).Length > 0) {
+                    return;
+                }
+                UC_Table uctable = new UC_Table(schemaName,tvw.SelectedNode.Tag);
+                uctable.Name = schemaName;
+                uctable.Close += Uctable_Close;
+                splitContainer1.Panel1.Controls.Add(uctable);
+            }
+        }
+
+        private void Uctable_Close(string key) {
+            this.splitContainer1.Panel1.Controls.RemoveByKey(key);
         }
     }
 }
