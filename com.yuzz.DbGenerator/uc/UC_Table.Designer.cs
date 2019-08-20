@@ -24,9 +24,9 @@
         /// </summary>
         private void InitializeComponent() {
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tipInfo = new System.Windows.Forms.LinkLabel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,19 +52,7 @@
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(146, 190);
             this.checkedListBox1.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(127, 16);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "label1";
-            this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label1_MouseDown);
-            this.label1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.label1_MouseMove);
-            this.label1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.label1_MouseUp);
+            this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
             // 
             // linkLabel1
             // 
@@ -81,13 +69,28 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.tipInfo);
             this.panel1.Controls.Add(this.linkLabel1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(146, 16);
             this.panel1.TabIndex = 3;
+            // 
+            // tipInfo
+            // 
+            this.tipInfo.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.tipInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tipInfo.Location = new System.Drawing.Point(0, 0);
+            this.tipInfo.Name = "tipInfo";
+            this.tipInfo.Size = new System.Drawing.Size(127, 16);
+            this.tipInfo.TabIndex = 3;
+            this.tipInfo.TabStop = true;
+            this.tipInfo.Text = "a1";
+            this.tipInfo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tipInfo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label1_MouseDown);
+            this.tipInfo.MouseMove += new System.Windows.Forms.MouseEventHandler(this.label1_MouseMove);
+            this.tipInfo.MouseUp += new System.Windows.Forms.MouseEventHandler(this.label1_MouseUp);
             // 
             // UC_Table
             // 
@@ -108,8 +111,8 @@
         #endregion
 
         private System.Windows.Forms.CheckedListBox checkedListBox1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.LinkLabel tipInfo;
     }
 }

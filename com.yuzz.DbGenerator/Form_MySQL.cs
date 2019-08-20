@@ -351,15 +351,93 @@ namespace com.yuzz.DbGenerator {
                 if(splitContainer1.Panel1.Controls.Find(schemaName,false).Length > 0) {
                     return;
                 }
-                UC_Table uctable = new UC_Table(schemaName,tvw.SelectedNode.Tag);
+
+                NickIndex index = nickIndex.Find(t => t.Name.Equals(schemaName));
+                if(index == null) {
+                    index = new NickIndex();
+                    index.Name = schemaName;
+                    index.Index = newNickIndex++;
+
+                    nickIndex.Add(index);
+                } 
+
+                UC_Table uctable = new UC_Table(schemaName,"a"+ index.Index,tvw.SelectedNode.Tag);
                 uctable.Name = schemaName;
                 uctable.Close += Uctable_Close;
+                uctable.ClickField += Uctable_ClickField;
                 splitContainer1.Panel1.Controls.Add(uctable);
+                if(uctable.IsAccessible == false) {
+                    uctable.BringToFront();
+                }
+
+                BuildSQL();
             }
+        }
+
+        private void Uctable_ClickField() {
+            BuildSQL();
+        }
+
+        int newNickIndex = 1;
+        List<NickIndex> nickIndex = new List<NickIndex>();
+        private void BuildSQL() {
+            BuildSelect();
+            BuildFrom();
+            BuildWhere();
+            BuildOrderBy();
+            tabControl3.SelectedTab = tp_VisualEditor;
+        }
+
+        private void BuildSelect() {
+            string rtxString = "";
+            foreach(Control getControl in splitContainer1.Panel1.Controls) {
+                if(getControl.GetType().Equals(typeof(UC_Table))) {
+                    UC_Table table = (UC_Table)getControl;
+                    List<SelectedField> selectedFields = table.CheckedFields;
+                    
+                    foreach(SelectedField field in selectedFields) {
+                        if(string.IsNullOrEmpty(rtxString) == false) {
+                            rtxString += "\r\n,";
+                        }
+                        rtxString += field.TableNick + "." + field.FieldName + " as `" + field.TableNick + "_" + field.FieldName + "`";
+                    }
+                }
+            }
+            rtx_SELECT.Clear();
+            rtx_SELECT.AppendText(rtxString);
+        }
+
+        private void BuildFrom() {
+            string rtx = "";
+            foreach(NickIndex index in nickIndex) {
+                if(string.IsNullOrEmpty(rtx) == false) {
+                    rtx += "\r\n,";
+                }
+                rtx += index.Name + " as a" + index.Index;                
+            }
+
+            rtx_FORM.Clear();
+            rtx_FORM.AppendText(rtx);
+        }
+
+        private void BuildWhere() {
+
+        }
+
+        private void BuildOrderBy() {
+            
         }
 
         private void Uctable_Close(string key) {
             this.splitContainer1.Panel1.Controls.RemoveByKey(key);
+            //int removeIndex = nickIndex.FindIndex(t => t.Name.Equals(key));
+            //nickIndex.RemoveAt(removeIndex);
+        }
+
+        private void btn_TestSQL_Click(object sender,EventArgs e) {
+            rtx_SQLCode.Clear();
+            rtx_SQLCode.AppendText("SELECT " + rtx_SELECT.Text + " FROM " + rtx_FORM.Text + " WHERE " + rtx_WHERE.Text + " ORDER BY " + rtx_ORDERBY.Text);
+            tabControl3.SelectedTab = tp_TestSQL;
         }
     }
 }
