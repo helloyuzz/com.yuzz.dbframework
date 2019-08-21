@@ -17,7 +17,7 @@ namespace com.yuzz.DbGenerator.uc {
         public delegate void OnFieldClicked();
         public event OnFieldClicked ClickField;
 
-        List<MySQLField> sqlFields = null;
+        List<MySQLField> tb_sqlFields = null;
         string tbname = "";
         string tbnick = "";
         public UC_Table(string tbname,string tbnick,object obj) {
@@ -28,31 +28,56 @@ namespace com.yuzz.DbGenerator.uc {
             if(flagPos != -1) {
                 this.tipInfo.LinkArea = new LinkArea(flagPos + 1,this.tipInfo.Text.Length - flagPos -2);
             }
-            sqlFields = (List<MySQLField>)obj;
+            tb_sqlFields = (List<MySQLField>)obj;
 
             this.tbname = tbname;
             this.tbnick = tbnick;
 
             checkedListBox1.Items.Clear();
-            foreach(MySQLField sqlField in sqlFields) {
-                checkedListBox1.Items.Add(sqlField.Field);
+            foreach(MySQLField sqlField in tb_sqlFields) {                
+                checkedListBox1.Items.Add(sqlField.FieldName);                
             }
         }
+
+        public void AddSubMenu(SelectedMySQLFields _SelectedFields) {
+            stripMenu_INNER_JOIN.DropDownItems.Clear();
+            stripMenu_LEFT_JOIN.DropDownItems.Clear();
+            stripMenu_RIGHT_JOIN.DropDownItems.Clear();
+            foreach(string key in _SelectedFields.Keys) {
+                List<MySQLField> _list = _SelectedFields[key];
+
+                ToolStripMenuItem subMenu = new ToolStripMenuItem();
+                subMenu.Text = key;
+
+                stripMenu_INNER_JOIN.DropDownItems.Add(subMenu);
+                foreach(MySQLField sqlField in _list) {
+                    ToolStripMenuItem sqlMenu = new ToolStripMenuItem();
+                    sqlMenu.Text = sqlField.FieldName;
+                    subMenu.DropDownItems.Add(sqlMenu);
+                }
+            }      
+        }
+
         int xPos;
         int yPos;
         bool MoveFlag = false;
 
-        internal List<SelectedField> CheckedFields {
+        List<SelectedField> _CheckedFields = null;
+        public virtual List<SelectedField> CheckedFields {
             get {
-                List<SelectedField> selectedFields = new List<SelectedField>();
+                if(_CheckedFields == null) {
+                    _CheckedFields = new List<SelectedField>();
+                }
+                _CheckedFields.Clear();
                 foreach(int checkedIndex in checkedListBox1.CheckedIndices) {
                     SelectedField field = new SelectedField();
                     field.TableName = this.tbname;
                     field.TableNick = this.tbnick;
-                    field.FieldName = checkedListBox1.Items[checkedIndex].ToString();
-                    selectedFields.Add(field);
+                    field.FieldName = this.checkedListBox1.Items[checkedIndex].ToString();
+                    //field.SQLField = tb_sqlFields[tb_sqlFields.FindIndex(t => t.Field.Equals(field.FieldName,StringComparison.CurrentCultureIgnoreCase))];
+                    _CheckedFields.Add(field);
                 }
-                return selectedFields;
+                return _CheckedFields;
             }
         }
 
@@ -90,8 +115,15 @@ namespace com.yuzz.DbGenerator.uc {
         }
 
         private void checkedListBox1_SelectedIndexChanged(object sender,EventArgs e) {
-            Application.DoEvents();
             ClickField();
+            stripMenu_Main.Text = tbnick + "." + checkedListBox1.Items[checkedListBox1.SelectedIndex].ToString();
+            contextMenuStrip1.Show(checkedListBox1,checkedListBox1.PointToClient(MousePosition));
+        }
+
+        private void checkedListBox1_MouseClick(object sender,MouseEventArgs e) {
+            //if(e.Button == MouseButtons.Right) {
+            //    contextMenuStrip1.Show(checkedListBox1,checkedListBox1.PointToClient(MousePosition));
+            //}
         }
     }
 }

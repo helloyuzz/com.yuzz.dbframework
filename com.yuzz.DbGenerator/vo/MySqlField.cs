@@ -5,7 +5,7 @@ using System.Text;
 
 namespace com.yuzz.DbGenerator.vo {
     public class MySQLField {
-        public virtual string Field {
+        public virtual string FieldName {
             get;
             set;
         }

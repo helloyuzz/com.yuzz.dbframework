@@ -65,7 +65,7 @@ namespace com.yuzz.DbGenerator {
 
                 sql.Append("\tpublic virtual string PkFieldName {\r\n");
                 sql.Append("\t\tget {\r\n");
-                sql.Append("\t\t\treturn \"").Append(sqlField.Field).Append("\";\r\n");
+                sql.Append("\t\t\treturn \"").Append(sqlField.FieldName).Append("\";\r\n");
                 sql.Append("\t\t}\r\n");
                 sql.Append("\t}\r\n");
 
@@ -90,7 +90,7 @@ namespace com.yuzz.DbGenerator {
                             break;
                     }
                     sql.Append("\t\t\t\t");
-                    sql.Append("_Fields.Add(new SQLField(\"").Append(field.Field).Append("\",").Append(ParseCSharpRuntimeType(field.Type,true)).Append(",").Append(isPRI).Append(",\"").Append(field.Comment.Trim()).Append("\"");
+                    sql.Append("_Fields.Add(new SQLField(\"").Append(field.FieldName).Append("\",").Append(ParseCSharpRuntimeType(field.Type,true)).Append(",").Append(isPRI).Append(",\"").Append(field.Comment.Trim()).Append("\"");
                     //if(string.IsNullOrEmpty(dateformat) == false) {
                     //    sql.Append(",\"").Append(dateformat).Append("\"");
                     //}
@@ -104,25 +104,25 @@ namespace com.yuzz.DbGenerator {
 
                 foreach(MySQLField field in mysqlFields) {
                     string getCSharpType = ParseCSharpRuntimeType(field.Type,false);
-                    sql.Append("\t").Append(getCSharpType + " _" + field.Field + ";").Append(Environment.NewLine);
+                    sql.Append("\t").Append(getCSharpType + " _" + field.FieldName + ";").Append(Environment.NewLine);
                     if(string.IsNullOrEmpty(field.Comment) == false) {  //  字段如果有备注就添加备注信息
                         sql.Append("\t/// <summary>\r\n");
                         sql.Append("\t/// ").Append(field.Comment).Append("\r\n");
                         sql.Append("\t/// </summary>\r\n");
                     }
-                    sql.Append("\tpublic virtual ").Append(getCSharpType).Append(" ").Append(field.Field).Append(" {\r\n");
+                    sql.Append("\tpublic virtual ").Append(getCSharpType).Append(" ").Append(field.FieldName).Append(" {\r\n");
                     sql.Append("\t\tget{").Append(Environment.NewLine);
-                    sql.Append("\t\t\treturn _" + field.Field + ";").Append(Environment.NewLine);
+                    sql.Append("\t\t\treturn _" + field.FieldName + ";").Append(Environment.NewLine);
                     sql.Append("\t\t}").Append(Environment.NewLine);
 
 
                     sql.Append("\t\tset{").Append(Environment.NewLine);
                     if("PRI".Equals(field.Key) == false) {  // 非主键
-                        sql.Append("\t\t\tif(value != this._" + field.Field + ") {").Append(Environment.NewLine);
-                        sql.Append("\t\t\t    UpdateFields.Add(\"" + field.Field + "\");").Append(Environment.NewLine);
+                        sql.Append("\t\t\tif(value != this._" + field.FieldName + ") {").Append(Environment.NewLine);
+                        sql.Append("\t\t\t    UpdateFields.Add(\"" + field.FieldName + "\");").Append(Environment.NewLine);
                         sql.Append("\t\t\t}").Append(Environment.NewLine);
                     }
-                    sql.Append("\t\t\t_" + field.Field + " = value;").Append(Environment.NewLine);
+                    sql.Append("\t\t\t_" + field.FieldName + " = value;").Append(Environment.NewLine);
                     sql.Append("\t\t}").Append(Environment.NewLine);
                     sql.Append("\t}\r\n");
                 }
@@ -259,6 +259,7 @@ namespace com.yuzz.DbGenerator {
         }
 
         List<MySQLField> mysqlFields = new List<MySQLField>();
+        SelectedMySQLFields _SelectedFields = new SelectedMySQLFields();
         DataTable dt = new DataTable();
         private void tvw_AfterSelect(object sender,TreeViewEventArgs e) {
             mysqlFields.Clear();
@@ -280,16 +281,24 @@ namespace com.yuzz.DbGenerator {
                 dt.TableName = Guid.NewGuid().ToString().Replace("-","");
 
                 dgv.DataSource = dt;
+                List<MySQLField> _addFields = new List<MySQLField>();
                 foreach(DataRow row in dt.Rows) {
-                    MySQLField filed = new MySQLField();
-                    filed.Field = row["field"].ToString();
-                    filed.Type = row["type"].ToString();
-                    filed.Key = row["key"].ToString();
-                    filed.Comment = row["comment"].ToString();
-                    mysqlFields.Add(filed);
+                    MySQLField field = new MySQLField();
+                    field.FieldName = row["field"].ToString();
+                    field.Type = row["type"].ToString();
+                    field.Key = row["key"].ToString();
+                    field.Comment = row["comment"].ToString();
+
+                    mysqlFields.Add(field);
+                    _addFields.Add(field);
+                }
+
+                if(_SelectedFields.ContainsKey(e.Node.Text)== false) {
+                    _SelectedFields.Add(e.Node.Text,_addFields);
                 }
                 e.Node.Tag = mysqlFields;
-            } catch {
+            } catch(Exception exc) {
+                Console.WriteLine(exc.ToString());
             } finally {
                 dbConn.Close();
                 dbConn = null;
@@ -323,10 +332,10 @@ namespace com.yuzz.DbGenerator {
             foreach(MySQLField sqlField in mysqlFields) {
                 string showField = sqlField.Comment;
                 if(string.IsNullOrEmpty(showField)) {
-                    showField = sqlField.Field;
+                    showField = sqlField.FieldName;
                 }
 
-                string tbxid = "tbx__" + tbx_TableName.Text + "__" + sqlField.Field;
+                string tbxid = "tbx__" + tbx_TableName.Text + "__" + sqlField.FieldName;
                 rtb_Code.AppendText("\t<tr>");
                 rtb_Code.AppendText(Environment.NewLine);
                 rtb_Code.AppendText("\t\t<td width=\"150px\">" + showField + "</td>");
@@ -348,10 +357,8 @@ namespace com.yuzz.DbGenerator {
         private void toolStripMenuItem1_Click(object sender,EventArgs e) {
             if(tvw.SelectedNode != null) {
                 string schemaName = tvw.SelectedNode.Text;
-                if(splitContainer1.Panel1.Controls.Find(schemaName,false).Length > 0) {
-                    return;
-                }
 
+                string tpname = "a";
                 NickIndex index = nickIndex.Find(t => t.Name.Equals(schemaName));
                 if(index == null) {
                     index = new NickIndex();
@@ -359,10 +366,14 @@ namespace com.yuzz.DbGenerator {
                     index.Index = newNickIndex++;
 
                     nickIndex.Add(index);
-                } 
+                }
+                tpname += index.Index;
+                if(splitContainer1.Panel1.Controls.Find(tpname,false).Length > 0) {
+                    return;
+                }
 
-                UC_Table uctable = new UC_Table(schemaName,"a"+ index.Index,tvw.SelectedNode.Tag);
-                uctable.Name = schemaName;
+                UC_Table uctable = new UC_Table(schemaName,tpname,tvw.SelectedNode.Tag);
+                uctable.Name = tpname;
                 uctable.Close += Uctable_Close;
                 uctable.ClickField += Uctable_ClickField;
                 splitContainer1.Panel1.Controls.Add(uctable);
@@ -371,10 +382,21 @@ namespace com.yuzz.DbGenerator {
                 }
 
                 BuildSQL();
+                AddSubMenu();
+            }
+        }
+
+        private void AddSubMenu() {
+            foreach(Control getControl in splitContainer1.Panel1.Controls) {
+                if(getControl.GetType().Equals(typeof(UC_Table))) {
+                    UC_Table uctable = (UC_Table)getControl;
+                    uctable.AddSubMenu(_SelectedFields);
+                }
             }
         }
 
         private void Uctable_ClickField() {
+            Application.DoEvents();
             BuildSQL();
         }
 
@@ -390,18 +412,25 @@ namespace com.yuzz.DbGenerator {
 
         private void BuildSelect() {
             string rtxString = "";
-            foreach(Control getControl in splitContainer1.Panel1.Controls) {
-                if(getControl.GetType().Equals(typeof(UC_Table))) {
-                    UC_Table table = (UC_Table)getControl;
+            int controlIndex = 1;
+            while(true) { 
+                Control[] getList = splitContainer1.Panel1.Controls.Find("a" + controlIndex,false);
+                if(getList.Length <= 0) {
+                    break;
+                }
+                if(getList[0].GetType().Equals(typeof(UC_Table))) {
+                    UC_Table table = (UC_Table)getList[0];
                     List<SelectedField> selectedFields = table.CheckedFields;
-                    
                     foreach(SelectedField field in selectedFields) {
+                        field.SQLField = _SelectedFields[field.TableName].Find(t => t.FieldName.Equals(field.FieldName,StringComparison.CurrentCultureIgnoreCase));
+                        
                         if(string.IsNullOrEmpty(rtxString) == false) {
                             rtxString += "\r\n,";
                         }
                         rtxString += field.TableNick + "." + field.FieldName + " as `" + field.TableNick + "_" + field.FieldName + "`";
                     }
                 }
+                controlIndex++;
             }
             rtx_SELECT.Clear();
             rtx_SELECT.AppendText(rtxString);

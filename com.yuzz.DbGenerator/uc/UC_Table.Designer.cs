@@ -23,17 +23,25 @@
         /// 使用代码编辑器修改此方法的内容。
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tipInfo = new System.Windows.Forms.LinkLabel();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.stripMenu_Main = new System.Windows.Forms.ToolStripMenuItem();
+            this.stripMenu_INNER_JOIN = new System.Windows.Forms.ToolStripMenuItem();
+            this.stripMenu_RIGHT_JOIN = new System.Windows.Forms.ToolStripMenuItem();
+            this.stripMenu_LEFT_JOIN = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // checkedListBox1
             // 
             this.checkedListBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.checkedListBox1.CheckOnClick = true;
+            this.checkedListBox1.ContextMenuStrip = this.contextMenuStrip1;
             this.checkedListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkedListBox1.FormattingEnabled = true;
             this.checkedListBox1.Items.AddRange(new object[] {
@@ -52,6 +60,7 @@
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(146, 190);
             this.checkedListBox1.TabIndex = 0;
+            this.checkedListBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.checkedListBox1_MouseClick);
             this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
             // 
             // linkLabel1
@@ -92,6 +101,41 @@
             this.tipInfo.MouseMove += new System.Windows.Forms.MouseEventHandler(this.label1_MouseMove);
             this.tipInfo.MouseUp += new System.Windows.Forms.MouseEventHandler(this.label1_MouseUp);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stripMenu_Main});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(193, 48);
+            // 
+            // stripMenu_Main
+            // 
+            this.stripMenu_Main.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stripMenu_INNER_JOIN,
+            this.stripMenu_LEFT_JOIN,
+            this.stripMenu_RIGHT_JOIN});
+            this.stripMenu_Main.Name = "stripMenu_Main";
+            this.stripMenu_Main.Size = new System.Drawing.Size(192, 22);
+            this.stripMenu_Main.Text = "toolStripMenuItem1";
+            // 
+            // stripMenu_INNER_JOIN
+            // 
+            this.stripMenu_INNER_JOIN.Name = "stripMenu_INNER_JOIN";
+            this.stripMenu_INNER_JOIN.Size = new System.Drawing.Size(180, 22);
+            this.stripMenu_INNER_JOIN.Text = "INNER JOIN";
+            // 
+            // stripMenu_RIGHT_JOIN
+            // 
+            this.stripMenu_RIGHT_JOIN.Name = "stripMenu_RIGHT_JOIN";
+            this.stripMenu_RIGHT_JOIN.Size = new System.Drawing.Size(180, 22);
+            this.stripMenu_RIGHT_JOIN.Text = "RIGHT JOIN";
+            // 
+            // stripMenu_LEFT_JOIN
+            // 
+            this.stripMenu_LEFT_JOIN.Name = "stripMenu_LEFT_JOIN";
+            this.stripMenu_LEFT_JOIN.Size = new System.Drawing.Size(180, 22);
+            this.stripMenu_LEFT_JOIN.Text = "LEFT JOIN";
+            // 
             // UC_Table
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -104,6 +148,7 @@
             this.Enter += new System.EventHandler(this.UC_Table_Enter);
             this.Leave += new System.EventHandler(this.UC_Table_Leave);
             this.panel1.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -114,5 +159,10 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.LinkLabel tipInfo;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem stripMenu_Main;
+        private System.Windows.Forms.ToolStripMenuItem stripMenu_INNER_JOIN;
+        private System.Windows.Forms.ToolStripMenuItem stripMenu_LEFT_JOIN;
+        private System.Windows.Forms.ToolStripMenuItem stripMenu_RIGHT_JOIN;
     }
 }

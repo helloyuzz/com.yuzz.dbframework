@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>com.yuzz.DbGenerator</RootNamespace>
     <AssemblyName>com.yuzz.DbGenerator</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>com.yuzz.DbGenerator.Program</StartupObject>
     <SccProjectName>Svn</SccProjectName>
@@ -188,6 +188,7 @@
     <Compile Include="vo\MySQLXmlFile.cs" />
     <Compile Include="vo\NickIndex.cs" />
     <Compile Include="vo\SelectedField.cs" />
+    <Compile Include="vo\SelectedMySQLFields.cs" />
     <Compile Include="vo\SmColumn.cs" />
     <Compile Include="vo\SmField.cs" />
     <Compile Include="vo\SmTable.cs" />
