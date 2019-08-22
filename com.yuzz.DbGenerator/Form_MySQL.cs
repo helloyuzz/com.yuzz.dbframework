@@ -259,7 +259,7 @@ namespace com.yuzz.DbGenerator {
         }
 
         List<MySQLField> mysqlFields = new List<MySQLField>();
-        SelectedMySQLFields _SelectedFields = new SelectedMySQLFields();
+        List<MySQLSchema> _SelectedFields = new List<MySQLSchema>();
         DataTable dt = new DataTable();
         private void tvw_AfterSelect(object sender,TreeViewEventArgs e) {
             mysqlFields.Clear();
@@ -293,9 +293,9 @@ namespace com.yuzz.DbGenerator {
                     _addFields.Add(field);
                 }
 
-                if(_SelectedFields.ContainsKey(e.Node.Text)== false) {
-                    _SelectedFields.Add(e.Node.Text,_addFields);
-                }
+                //if(_SelectedFields.ContainsKey(e.Node.Text)== false) {
+                //    _SelectedFields.Add(e.Node.Text,_addFields);
+                //}
                 e.Node.Tag = mysqlFields;
             } catch(Exception exc) {
                 Console.WriteLine(exc.ToString());
@@ -358,7 +358,7 @@ namespace com.yuzz.DbGenerator {
             if(tvw.SelectedNode != null) {
                 string schemaName = tvw.SelectedNode.Text;
 
-                string tpname = "a";
+                string tpnick = "a";
                 NickIndex index = nickIndex.Find(t => t.Name.Equals(schemaName));
                 if(index == null) {
                     index = new NickIndex();
@@ -367,23 +367,34 @@ namespace com.yuzz.DbGenerator {
 
                     nickIndex.Add(index);
                 }
-                tpname += index.Index;
-                if(splitContainer1.Panel1.Controls.Find(tpname,false).Length > 0) {
+                tpnick += index.Index;
+                if(splitContainer1.Panel1.Controls.Find(tpnick,false).Length > 0) {
                     return;
                 }
 
-                UC_Table uctable = new UC_Table(schemaName,tpname,tvw.SelectedNode.Tag);
-                uctable.Name = tpname;
+                UC_Table uctable = new UC_Table(schemaName,tpnick,tvw.SelectedNode.Tag);
+                uctable.Name = tpnick;
                 uctable.Close += Uctable_Close;
                 uctable.ClickField += Uctable_ClickField;
+                uctable.AddJoin += Uctable_AddJoin;
                 splitContainer1.Panel1.Controls.Add(uctable);
                 if(uctable.IsAccessible == false) {
                     uctable.BringToFront();
                 }
 
+                if(_SelectedFields.Exists(t=>t.tbname.Equals(schemaName)) == false) {
+                    _SelectedFields.Add(new MySQLSchema(schemaName,tpnick,(List<MySQLField>)tvw.SelectedNode.Tag));
+                }
                 BuildSQL();
                 AddSubMenu();
             }
+        }
+
+        private void Uctable_AddJoin(MySQLReleationShip item) {
+            if(_JoinList.Contains(item) == false) {
+                _JoinList.Add(item);
+            }
+            BuildFrom();
         }
 
         private void AddSubMenu() {
@@ -422,7 +433,7 @@ namespace com.yuzz.DbGenerator {
                     UC_Table table = (UC_Table)getList[0];
                     List<SelectedField> selectedFields = table.CheckedFields;
                     foreach(SelectedField field in selectedFields) {
-                        field.SQLField = _SelectedFields[field.TableName].Find(t => t.FieldName.Equals(field.FieldName,StringComparison.CurrentCultureIgnoreCase));
+                        field.SQLField = _SelectedFields.Find(t => t.tbname.Equals(field.TableName,StringComparison.CurrentCultureIgnoreCase)).tbfields.Find(x=>x.FieldName.Equals(field.FieldName));
                         
                         if(string.IsNullOrEmpty(rtxString) == false) {
                             rtxString += "\r\n,";
@@ -436,17 +447,49 @@ namespace com.yuzz.DbGenerator {
             rtx_SELECT.AppendText(rtxString);
         }
 
+
+        public List<MySQLReleationShip> _JoinList = new List<MySQLReleationShip>();
         private void BuildFrom() {
-            string rtx = "";
-            foreach(NickIndex index in nickIndex) {
-                if(string.IsNullOrEmpty(rtx) == false) {
-                    rtx += "\r\n,";
+            string sqlString = "";
+            //foreach(NickIndex index in nickIndex) {
+            //    if(string.IsNullOrEmpty(rtx) == false) {
+            //        rtx += "\r\n,";
+            //    }
+            //    rtx += index.Name + " as a" + index.Index;                
+            //}
+            dgv_Join.Rows.Clear();
+
+            string rtxString = "";
+            foreach(MySQLReleationShip item in _JoinList) {
+                if(string.IsNullOrEmpty(sqlString) == false) {
+                    sqlString += "\r\n";
                 }
-                rtx += index.Name + " as a" + index.Index;                
+                sqlString += item.FromTable + " as " + item.FromNick;
+                rtxString = item.FromNick + "." + item.FromField;
+                switch(item.JoinType) {
+                    case MySQLJoin.INNER_JOIN:
+                        sqlString += " INNER JOIN ";
+                        rtxString += " INNER JOIN ";
+                        break;
+                    case MySQLJoin.LEFT_JOIN:
+                        sqlString += " LEFT JOIN ";
+                        rtxString += " LEFT JOIN ";
+                        break;
+                    case MySQLJoin.RIGHT_JOIN:
+                        sqlString += " RIGHT JOIN ";
+                        rtxString += " RIGHT JOIN ";
+                        break;
+                }
+                rtxString += item.ToNick + "." + item.ToField;
+                sqlString += item.ToTable + " as " + item.ToNick;
+                sqlString += "\r\n\t on " + item.FromNick + "." + item.FromField + "=" + item.ToNick + "." + item.ToField;
+                dgv_Join.Rows.Add();
+                dgv_Join.Rows[dgv_Join.Rows.Count - 1].Cells[0].Value = rtxString;
+                dgv_Join.Rows[dgv_Join.Rows.Count - 1].Cells[1].Value = item;
             }
 
             rtx_FORM.Clear();
-            rtx_FORM.AppendText(rtx);
+            rtx_FORM.AppendText(sqlString);
         }
 
         private void BuildWhere() {
@@ -465,8 +508,24 @@ namespace com.yuzz.DbGenerator {
 
         private void btn_TestSQL_Click(object sender,EventArgs e) {
             rtx_SQLCode.Clear();
-            rtx_SQLCode.AppendText("SELECT " + rtx_SELECT.Text + " FROM " + rtx_FORM.Text + " WHERE " + rtx_WHERE.Text + " ORDER BY " + rtx_ORDERBY.Text);
+            rtx_SQLCode.AppendText("SELECT \r\n\t" + rtx_SELECT.Text.Replace(",","\t,") + "\r\n FROM \r\n\t" + rtx_FORM.Text + "\r\n WHERE " + rtx_WHERE.Text + "\r\n ORDER BY " + rtx_ORDERBY.Text);
             tabControl3.SelectedTab = tp_TestSQL;
+        }
+
+        private void dgv_Join_CellClick(object sender,DataGridViewCellEventArgs e) {
+            if(e.RowIndex < 0) {
+                return;
+            }
+            contextMenu_Join.Show(dgv_Join,dgv_Join.PointToClient(MousePosition));
+        }
+
+        private void toolstrip_Join_Click(object sender,EventArgs e) {
+            if(dgv_Join.CurrentCell == null) {
+                return;
+            }
+            MySQLReleationShip item = (MySQLReleationShip)dgv_Join.Rows[dgv_Join.CurrentCell.RowIndex].Cells[1].Value;
+            _JoinList.Remove(item);
+            BuildFrom();
         }
     }
 }

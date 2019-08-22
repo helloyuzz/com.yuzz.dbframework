@@ -184,11 +184,13 @@
     <Compile Include="Toolkit.cs" />
     <Compile Include="vo\DBClass.cs" />
     <Compile Include="vo\DBItem.cs" />
+    <Compile Include="vo\MySQLJoin.cs" />
+    <Compile Include="vo\MySQLReleationShip.cs" />
+    <Compile Include="vo\MySQLSchema.cs" />
     <Compile Include="vo\MySQLTreeNode.cs" />
     <Compile Include="vo\MySQLXmlFile.cs" />
     <Compile Include="vo\NickIndex.cs" />
     <Compile Include="vo\SelectedField.cs" />
-    <Compile Include="vo\SelectedMySQLFields.cs" />
     <Compile Include="vo\SmColumn.cs" />
     <Compile Include="vo\SmField.cs" />
     <Compile Include="vo\SmTable.cs" />

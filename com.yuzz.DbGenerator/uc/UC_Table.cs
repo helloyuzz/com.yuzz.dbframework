@@ -17,6 +17,9 @@ namespace com.yuzz.DbGenerator.uc {
         public delegate void OnFieldClicked();
         public event OnFieldClicked ClickField;
 
+        public delegate void OnAddJoin(MySQLReleationShip item);
+        public event OnAddJoin AddJoin;
+
         List<MySQLField> tb_sqlFields = null;
         string tbname = "";
         string tbnick = "";
@@ -39,25 +42,44 @@ namespace com.yuzz.DbGenerator.uc {
             }
         }
 
-        public void AddSubMenu(SelectedMySQLFields _SelectedFields) {
+        public void AddSubMenu(List<MySQLSchema> _SelectedFields) {
             stripMenu_INNER_JOIN.DropDownItems.Clear();
             stripMenu_LEFT_JOIN.DropDownItems.Clear();
             stripMenu_RIGHT_JOIN.DropDownItems.Clear();
-            foreach(string key in _SelectedFields.Keys) {
-                List<MySQLField> _list = _SelectedFields[key];
-
+            foreach(MySQLSchema item in _SelectedFields) {
+                if(item.tbname.Equals(tbname) == true) {
+                    continue;
+                }
                 ToolStripMenuItem subMenu = new ToolStripMenuItem();
-                subMenu.Text = key;
+                subMenu.Text = item.tbnick + ".(" + item.tbname + ")";
 
                 stripMenu_INNER_JOIN.DropDownItems.Add(subMenu);
-                foreach(MySQLField sqlField in _list) {
+                foreach(MySQLField sqlField in item.tbfields) {
+                    MySQLReleationShip join = new MySQLReleationShip();
+                    join.ToTable = item.tbname;
+                    join.ToNick = item.tbnick;
+                    join.ToField = sqlField.FieldName;
+
                     ToolStripMenuItem sqlMenu = new ToolStripMenuItem();
                     sqlMenu.Text = sqlField.FieldName;
+                    sqlMenu.Tag = join;
+                    sqlMenu.Click += SqlMenu_Click;
                     subMenu.DropDownItems.Add(sqlMenu);
                 }
             }      
         }
 
+        private void SqlMenu_Click(object sender,EventArgs e) {
+            ToolStripMenuItem sqlMenu = (ToolStripMenuItem)sender;
+            MySQLReleationShip join = (MySQLReleationShip)sqlMenu.Tag;
+
+            join.FromTable = this.tbname;
+            join.FromNick = this.tbnick;
+            join.FromField = checkedListBox1.Items[checkedListBox1.SelectedIndex].ToString();
+
+            AddJoin(join);
+        }
+        
         int xPos;
         int yPos;
         bool MoveFlag = false;
@@ -116,8 +138,10 @@ namespace com.yuzz.DbGenerator.uc {
 
         private void checkedListBox1_SelectedIndexChanged(object sender,EventArgs e) {
             ClickField();
-            stripMenu_Main.Text = tbnick + "." + checkedListBox1.Items[checkedListBox1.SelectedIndex].ToString();
-            contextMenuStrip1.Show(checkedListBox1,checkedListBox1.PointToClient(MousePosition));
+            if(checkedListBox1.GetItemChecked(checkedListBox1.SelectedIndex) == true) {
+                stripMenu_Main.Text = tbnick + "." + checkedListBox1.Items[checkedListBox1.SelectedIndex].ToString();
+                contextMenuStrip1.Show(checkedListBox1,checkedListBox1.PointToClient(MousePosition));
+            }
         }
 
         private void checkedListBox1_MouseClick(object sender,MouseEventArgs e) {
