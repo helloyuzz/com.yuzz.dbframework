@@ -14,31 +14,26 @@ namespace com.yuzz.DbGenerator.uc {
         public delegate void OnCloseAction(string key);
         public event OnCloseAction Close;
 
-        public delegate void OnFieldClicked();
+        public delegate void OnFieldClicked(string tbname,string fieldname,bool clicked);
         public event OnFieldClicked ClickField;
 
         public delegate void OnAddJoin(MySQLReleationShip item);
         public event OnAddJoin AddJoin;
 
-        List<MySQLField> tb_sqlFields = null;
-        string tbname = "";
-        string tbnick = "";
-        public UC_Table(string tbname,string tbnick,object obj) {
+        private MySQLSchema mysqlSchema = null;
+        public UC_Table(MySQLSchema mysqlSchema) {
             InitializeComponent();
+            this.mysqlSchema = mysqlSchema;
 
-            this.tipInfo.Text = tbname + "(" + tbnick + ")";
+            this.tipInfo.Text = mysqlSchema.tbname + "(" + mysqlSchema.tbnick + ")";
             int flagPos = this.tipInfo.Text.IndexOf("(");
             if(flagPos != -1) {
-                this.tipInfo.LinkArea = new LinkArea(flagPos + 1,this.tipInfo.Text.Length - flagPos -2);
+                this.tipInfo.LinkArea = new LinkArea(flagPos + 1,this.tipInfo.Text.Length - flagPos - 2);
             }
-            tb_sqlFields = (List<MySQLField>)obj;
-
-            this.tbname = tbname;
-            this.tbnick = tbnick;
-
+            
             checkedListBox1.Items.Clear();
-            foreach(MySQLField sqlField in tb_sqlFields) {                
-                checkedListBox1.Items.Add(sqlField.FieldName);                
+            foreach(MySQLField sqlField in mysqlSchema.tbfields) {
+                checkedListBox1.Items.Add(sqlField.FieldName);
             }
         }
 
@@ -47,7 +42,7 @@ namespace com.yuzz.DbGenerator.uc {
             stripMenu_LEFT_JOIN.DropDownItems.Clear();
             stripMenu_RIGHT_JOIN.DropDownItems.Clear();
             foreach(MySQLSchema item in _SelectedFields) {
-                if(item.tbname.Equals(tbname) == true) {
+                if(item.tbname.Equals(mysqlSchema.tbname) == true) {
                     continue;
                 }
                 ToolStripMenuItem subMenu = new ToolStripMenuItem();
@@ -73,8 +68,8 @@ namespace com.yuzz.DbGenerator.uc {
             ToolStripMenuItem sqlMenu = (ToolStripMenuItem)sender;
             MySQLReleationShip join = (MySQLReleationShip)sqlMenu.Tag;
 
-            join.FromTable = this.tbname;
-            join.FromNick = this.tbnick;
+            join.FromTable = mysqlSchema.tbname;
+            join.FromNick = mysqlSchema.tbnick;
             join.FromField = checkedListBox1.Items[checkedListBox1.SelectedIndex].ToString();
 
             AddJoin(join);
@@ -84,24 +79,25 @@ namespace com.yuzz.DbGenerator.uc {
         int yPos;
         bool MoveFlag = false;
 
-        List<SelectedField> _CheckedFields = null;
-        public virtual List<SelectedField> CheckedFields {
-            get {
-                if(_CheckedFields == null) {
-                    _CheckedFields = new List<SelectedField>();
-                }
-                _CheckedFields.Clear();
-                foreach(int checkedIndex in checkedListBox1.CheckedIndices) {
-                    SelectedField field = new SelectedField();
-                    field.TableName = this.tbname;
-                    field.TableNick = this.tbnick;
-                    field.FieldName = this.checkedListBox1.Items[checkedIndex].ToString();
-                    //field.SQLField = tb_sqlFields[tb_sqlFields.FindIndex(t => t.Field.Equals(field.FieldName,StringComparison.CurrentCultureIgnoreCase))];
-                    _CheckedFields.Add(field);
-                }
-                return _CheckedFields;
-            }
-        }
+        //List<SelectedField> _CheckedFields = null;
+
+        //public virtual List<SelectedField> CheckedFields {
+        //    get {
+        //        if(_CheckedFields == null) {
+        //            _CheckedFields = new List<SelectedField>();
+        //        }
+        //        _CheckedFields.Clear();
+        //        foreach(int checkedIndex in checkedListBox1.CheckedIndices) {
+        //            SelectedField field = new SelectedField();
+        //            field.TableName = mysqlSchema.tbname;
+        //            field.TableNick = mysqlSchema.tbnick;
+        //            field.FieldName = this.checkedListBox1.Items[checkedIndex].ToString();
+        //            //field.SQLField = tb_sqlFields[tb_sqlFields.FindIndex(t => t.Field.Equals(field.FieldName,StringComparison.CurrentCultureIgnoreCase))];
+        //            _CheckedFields.Add(field);
+        //        }
+        //        return _CheckedFields;
+        //    }
+        //}
 
         private void label1_MouseMove(object sender,MouseEventArgs e) {
             if(MoveFlag) {
@@ -137,17 +133,18 @@ namespace com.yuzz.DbGenerator.uc {
         }
 
         private void checkedListBox1_SelectedIndexChanged(object sender,EventArgs e) {
-            ClickField();
-            if(checkedListBox1.GetItemChecked(checkedListBox1.SelectedIndex) == true) {
-                stripMenu_Main.Text = tbnick + "." + checkedListBox1.Items[checkedListBox1.SelectedIndex].ToString();
+            bool clicked = checkedListBox1.GetItemChecked(checkedListBox1.SelectedIndex);
+            string fieldname = checkedListBox1.Items[checkedListBox1.SelectedIndex].ToString();
+
+            ClickField(mysqlSchema.tbname,fieldname,clicked);
+            if(clicked == true) {
+                stripMenu_Main.Text = mysqlSchema.tbnick + "." + fieldname;
                 contextMenuStrip1.Show(checkedListBox1,checkedListBox1.PointToClient(MousePosition));
             }
         }
 
         private void checkedListBox1_MouseClick(object sender,MouseEventArgs e) {
-            //if(e.Button == MouseButtons.Right) {
-            //    contextMenuStrip1.Show(checkedListBox1,checkedListBox1.PointToClient(MousePosition));
-            //}
+         
         }
     }
 }

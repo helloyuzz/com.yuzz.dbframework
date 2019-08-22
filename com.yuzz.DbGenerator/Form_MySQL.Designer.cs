@@ -24,8 +24,8 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("数据库");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("数据库");
             this.dgv = new System.Windows.Forms.DataGridView();
             this.rtb_Code = new System.Windows.Forms.RichTextBox();
             this.btn_Connect = new System.Windows.Forms.Button();
@@ -126,14 +126,14 @@
             this.dgv.BackgroundColor = System.Drawing.Color.White;
             this.dgv.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv.DefaultCellStyle = dataGridViewCellStyle5;
             this.dgv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgv.Location = new System.Drawing.Point(3, 3);
@@ -330,10 +330,10 @@
             this.tvw.HideSelection = false;
             this.tvw.Location = new System.Drawing.Point(0, 0);
             this.tvw.Name = "tvw";
-            treeNode4.Name = "rootNode";
-            treeNode4.Text = "数据库";
+            treeNode5.Name = "rootNode";
+            treeNode5.Text = "数据库";
             this.tvw.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode4});
+            treeNode5});
             this.tvw.Size = new System.Drawing.Size(260, 575);
             this.tvw.TabIndex = 2;
             this.tvw.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvw_AfterSelect);
@@ -480,6 +480,7 @@
             this.btn_BuildSQL.TabIndex = 6;
             this.btn_BuildSQL.Text = "Build SQL";
             this.btn_BuildSQL.UseVisualStyleBackColor = true;
+            this.btn_BuildSQL.Click += new System.EventHandler(this.btn_BuildSQL_Click);
             // 
             // btn_TestSQL
             // 
@@ -793,7 +794,7 @@
             this.contextMenu_Join.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolstrip_Join});
             this.contextMenu_Join.Name = "contextMenu_Join";
-            this.contextMenu_Join.Size = new System.Drawing.Size(181, 48);
+            this.contextMenu_Join.Size = new System.Drawing.Size(101, 26);
             // 
             // toolstrip_Join
             // 

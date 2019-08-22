@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace com.yuzz.DbGenerator.vo {
     public class MySQLSchema {
+        public MySQLSchema() {
+        }
+
         public MySQLSchema(string schemaName,string tpnick,List<MySQLField> tag) {
             this.tbname = schemaName;
             this.tbnick = tpnick;

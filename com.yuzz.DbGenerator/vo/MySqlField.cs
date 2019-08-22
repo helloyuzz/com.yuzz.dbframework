@@ -21,5 +21,6 @@ namespace com.yuzz.DbGenerator.vo {
             get;
             set;
         }
+        public virtual bool Checked { get; set; }
     }
 }

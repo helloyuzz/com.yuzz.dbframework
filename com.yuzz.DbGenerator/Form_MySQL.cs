@@ -75,9 +75,6 @@ namespace com.yuzz.DbGenerator {
                 sql.Append("\t\t\tif(_Fields == null){\r\n");
                 sql.Append("\t\t\t_Fields = new List<SQLField>();\r\n");
 
-
-
-
                 foreach(MySQLField field in mysqlFields) {
                     string isPRI = field.Key.Equals("PRI") ? "true" : "false";
                     string dateformat = "";
@@ -177,7 +174,7 @@ namespace com.yuzz.DbGenerator {
         private void Form_MySQL_Load(object sender,EventArgs e) {
             this.Icon = Resources.mysql;
             string xmlFilePath = Application.StartupPath + "\\xml\\mysql.xml";
-            
+
             if(File.Exists(xmlFilePath) == true) {
                 StreamReader streamReader = File.OpenText(xmlFilePath);
                 string getXmlString = streamReader.ReadToEnd();
@@ -207,7 +204,7 @@ namespace com.yuzz.DbGenerator {
             try {
                 dbConn.ConnectionString = getConnectionString();
                 dbConn.Open();
-                
+
                 MySqlCommand dbCmd = new MySqlCommand();
                 dbCmd.CommandText = "show tables";// ' like tb_tj%'";
                 dbCmd.Connection = dbConn;
@@ -251,7 +248,7 @@ namespace com.yuzz.DbGenerator {
             StreamWriter streamWriter = File.CreateText(Application.StartupPath + "\\xml\\mysql.xml");
             streamWriter.Write(xmlString);
             streamWriter.Flush();
-            streamWriter.Close();            
+            streamWriter.Close();
         }
 
         private string getConnectionString() {
@@ -272,8 +269,9 @@ namespace com.yuzz.DbGenerator {
                 dbConn.ConnectionString = getConnectionString();
                 dbConn.Open();
 
+                string schemaName = e.Node.Text;
                 MySqlCommand dbCmd = new MySqlCommand();
-                dbCmd.CommandText = "SHOW full COLUMNS FROM " + e.Node.Text;
+                dbCmd.CommandText = "SHOW full COLUMNS FROM " + schemaName;
                 dbCmd.Connection = dbConn;
 
                 MySqlDataAdapter dbAdapter = new MySqlDataAdapter(dbCmd);
@@ -293,10 +291,32 @@ namespace com.yuzz.DbGenerator {
                     _addFields.Add(field);
                 }
 
+
+                if(_SelectedFields.Exists(t => t.tbname.Equals(schemaName,StringComparison.CurrentCultureIgnoreCase)) == false) {
+                    string tpnick = "a";
+                    NickIndex index = nickIndex.Find(t => t.Name.Equals(schemaName));
+                    if(index == null) {
+                        index = new NickIndex();
+                        index.Name = schemaName;
+                        index.Index = newNickIndex++;
+
+                        nickIndex.Add(index);
+                    }
+                    tpnick += index.Index;
+
+                    MySQLSchema mysqlSchema = new MySQLSchema();
+                    mysqlSchema.tbname = schemaName;
+                    mysqlSchema.tbnick = tpnick;
+                    mysqlSchema.tbfields = _addFields;
+
+                    _SelectedFields.Add(mysqlSchema);
+                }
                 //if(_SelectedFields.ContainsKey(e.Node.Text)== false) {
                 //    _SelectedFields.Add(e.Node.Text,_addFields);
                 //}
-                e.Node.Tag = mysqlFields;
+                //if(e.Node.Tag == null) {
+                //    e.Node.Tag = mysqlFields;
+                //}
             } catch(Exception exc) {
                 Console.WriteLine(exc.ToString());
             } finally {
@@ -354,38 +374,28 @@ namespace com.yuzz.DbGenerator {
             }
         }
 
+        // 添加到设计界面
         private void toolStripMenuItem1_Click(object sender,EventArgs e) {
             if(tvw.SelectedNode != null) {
                 string schemaName = tvw.SelectedNode.Text;
+                MySQLSchema mysqlSchema = _SelectedFields.Find(t => t.tbname.Equals(schemaName,StringComparison.CurrentCultureIgnoreCase));
 
-                string tpnick = "a";
-                NickIndex index = nickIndex.Find(t => t.Name.Equals(schemaName));
-                if(index == null) {
-                    index = new NickIndex();
-                    index.Name = schemaName;
-                    index.Index = newNickIndex++;
-
-                    nickIndex.Add(index);
-                }
-                tpnick += index.Index;
-                if(splitContainer1.Panel1.Controls.Find(tpnick,false).Length > 0) {
+                if(splitContainer1.Panel1.Controls.Find(mysqlSchema.tbnick,false).Length > 0) {
                     return;
-                }
+                }  
 
-                UC_Table uctable = new UC_Table(schemaName,tpnick,tvw.SelectedNode.Tag);
-                uctable.Name = tpnick;
+                UC_Table uctable = new UC_Table(mysqlSchema);
+                uctable.Name = mysqlSchema.tbnick;
                 uctable.Close += Uctable_Close;
                 uctable.ClickField += Uctable_ClickField;
                 uctable.AddJoin += Uctable_AddJoin;
+
                 splitContainer1.Panel1.Controls.Add(uctable);
                 if(uctable.IsAccessible == false) {
                     uctable.BringToFront();
                 }
-
-                if(_SelectedFields.Exists(t=>t.tbname.Equals(schemaName)) == false) {
-                    _SelectedFields.Add(new MySQLSchema(schemaName,tpnick,(List<MySQLField>)tvw.SelectedNode.Tag));
-                }
-                BuildSQL();
+ 
+                BuildSelect();
                 AddSubMenu();
             }
         }
@@ -406,7 +416,11 @@ namespace com.yuzz.DbGenerator {
             }
         }
 
-        private void Uctable_ClickField() {
+        private void Uctable_ClickField(string tbname,string fieldname,bool clicked) {
+            // 更新选择状态
+            MySQLSchema mysqlSchema = _SelectedFields.Find(t => t.tbname.Equals(tbname,StringComparison.CurrentCultureIgnoreCase));
+            mysqlSchema.tbfields.Find(x => x.FieldName.Equals(fieldname,StringComparison.CurrentCultureIgnoreCase)).Checked = clicked;
+
             Application.DoEvents();
             BuildSQL();
         }
@@ -421,30 +435,25 @@ namespace com.yuzz.DbGenerator {
             tabControl3.SelectedTab = tp_VisualEditor;
         }
 
-        private void BuildSelect() {
+        private string BuildSelect() {
             string rtxString = "";
-            int controlIndex = 1;
-            while(true) { 
-                Control[] getList = splitContainer1.Panel1.Controls.Find("a" + controlIndex,false);
-                if(getList.Length <= 0) {
-                    break;
-                }
-                if(getList[0].GetType().Equals(typeof(UC_Table))) {
-                    UC_Table table = (UC_Table)getList[0];
-                    List<SelectedField> selectedFields = table.CheckedFields;
-                    foreach(SelectedField field in selectedFields) {
-                        field.SQLField = _SelectedFields.Find(t => t.tbname.Equals(field.TableName,StringComparison.CurrentCultureIgnoreCase)).tbfields.Find(x=>x.FieldName.Equals(field.FieldName));
-                        
-                        if(string.IsNullOrEmpty(rtxString) == false) {
-                            rtxString += "\r\n,";
-                        }
-                        rtxString += field.TableNick + "." + field.FieldName + " as `" + field.TableNick + "_" + field.FieldName + "`";
+            foreach(MySQLSchema mysqlSchema in _SelectedFields) {
+                foreach(MySQLField mysqlField in mysqlSchema.tbfields) {
+                    if(mysqlField.Checked == false) {
+                        continue;
                     }
+
+                    if(string.IsNullOrEmpty(rtxString) == false) {
+                        rtxString += "\r\n,";
+                    }
+                    rtxString += mysqlSchema.tbnick + "." + mysqlField.FieldName + " as `" + mysqlSchema.tbnick + "_" + mysqlField.FieldName + "`";
                 }
-                controlIndex++;
             }
+
             rtx_SELECT.Clear();
             rtx_SELECT.AppendText(rtxString);
+
+            return rtxString;
         }
 
 
@@ -497,19 +506,13 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void BuildOrderBy() {
-            
+
         }
 
         private void Uctable_Close(string key) {
             this.splitContainer1.Panel1.Controls.RemoveByKey(key);
             //int removeIndex = nickIndex.FindIndex(t => t.Name.Equals(key));
             //nickIndex.RemoveAt(removeIndex);
-        }
-
-        private void btn_TestSQL_Click(object sender,EventArgs e) {
-            rtx_SQLCode.Clear();
-            rtx_SQLCode.AppendText("SELECT \r\n\t" + rtx_SELECT.Text.Replace(",","\t,") + "\r\n FROM \r\n\t" + rtx_FORM.Text + "\r\n WHERE " + rtx_WHERE.Text + "\r\n ORDER BY " + rtx_ORDERBY.Text);
-            tabControl3.SelectedTab = tp_TestSQL;
         }
 
         private void dgv_Join_CellClick(object sender,DataGridViewCellEventArgs e) {
@@ -526,6 +529,104 @@ namespace com.yuzz.DbGenerator {
             MySQLReleationShip item = (MySQLReleationShip)dgv_Join.Rows[dgv_Join.CurrentCell.RowIndex].Cells[1].Value;
             _JoinList.Remove(item);
             BuildFrom();
+        }
+
+        private void btn_TestSQL_Click(object sender,EventArgs e) {
+            rtx_SQLCode.Clear();
+
+            rtx_SQLCode.AppendText(BuildFullSQL());
+            tabControl3.SelectedTab = tp_TestSQL;
+        }
+
+        private string BuildFullSQL() {
+            return "SELECT \r\n\t" + rtx_SELECT.Text.Replace(",","\t,") + "\r\n FROM \r\n\t" + rtx_FORM.Text + "\r\n WHERE " + rtx_WHERE.Text + "\r\n ORDER BY " + rtx_ORDERBY.Text;
+        }
+
+        private void btn_BuildSQL_Click(object sender,EventArgs e) {
+            StringBuilder sqlBuilder = new StringBuilder();
+
+            sqlBuilder.Append("using System;\r\n");
+            sqlBuilder.Append("using System.Collections.Generic;\r\n");
+            sqlBuilder.Append("using System.Data;\r\n");
+            sqlBuilder.Append("using com.yuzz.dbframework;\r\n");
+            sqlBuilder.Append("using MySql.Data.MySqlClient;\r\n");
+            sqlBuilder.Append("[Serializable]\r\n");
+
+            string className = "aaaaaaaaaaaaaaaa";
+            // public class <className>
+            sqlBuilder.Append("public class ").Append(className).Append("{\r\n");
+
+            // class type
+            sqlBuilder.Append("\tpublic static Type Type {\r\n");
+            sqlBuilder.Append("\t\tget {\r\n");
+            sqlBuilder.Append("\t\t\treturn typeof(").Append(className).Append(");\r\n");
+            sqlBuilder.Append("\t\t}\r\n");
+            sqlBuilder.Append("\t}\r\n");
+
+            sqlBuilder.Append("\tprivate List<SQLField> _Fields = null;\r\n");
+            sqlBuilder.Append("\tpublic List<SQLField> Fields{\r\n");
+            sqlBuilder.Append("\t\tget{\r\n");
+            sqlBuilder.Append("\t\t\tif(_Fields == null){\r\n");
+            sqlBuilder.Append("\t\t\t_Fields = new List<SQLField>();\r\n");
+
+            foreach(MySQLSchema mysqlSchema in _SelectedFields) {
+                foreach(MySQLField mysqlField in mysqlSchema.tbfields) {
+                    if(mysqlField.Checked == false) {
+                        continue;
+                    }
+
+                    string isPRI = mysqlField.Key.Equals("PRI") ? "true" : "false";
+                    string dateformat = "";
+                    switch(mysqlField.Type) {
+                        case "date":
+                            dateformat = "yyyy-MM-dd";
+                            break;
+                        case "datetime":
+                            dateformat = "yyyy-MM-dd HH:mm:ss";
+                            break;
+                    }
+                    sqlBuilder.Append("\t\t\t\t");
+                    sqlBuilder.Append("_Fields.Add(new SQLField(\"").Append(mysqlSchema.tbnick).Append("_").Append(mysqlField.FieldName).Append("\",").Append(ParseCSharpRuntimeType(mysqlField.Type,true)).Append(",").Append(isPRI).Append(",\"").Append(mysqlField.Comment.Trim()).Append("\"");
+
+                    sqlBuilder.Append("));\r\n");
+                }
+            }
+
+            sqlBuilder.Append("\t\t\t}\r\n");
+            sqlBuilder.Append("\t\t\treturn _Fields;\r\n");
+            sqlBuilder.Append("\t\t}\r\n");
+            sqlBuilder.Append("\t}\r\n");
+
+            foreach(MySQLSchema mysqlSchema in _SelectedFields) {
+                foreach(MySQLField mysqlField in mysqlSchema.tbfields) {
+                    if(mysqlField.Checked == false) {
+                        continue;
+                    }
+                    string getCSharpType = ParseCSharpRuntimeType(mysqlField.Type,false);
+                    if(string.IsNullOrEmpty(mysqlField.Comment) == false) {  //  字段如果有备注就添加备注信息
+                        sqlBuilder.Append("\t/// <summary>\r\n");
+                        sqlBuilder.Append("\t/// ").Append(mysqlField.Comment).Append("\r\n");
+                        sqlBuilder.Append("\t/// </summary>\r\n");
+                    }
+                    sqlBuilder.Append("\tpublic virtual ").Append(getCSharpType).Append(" ").Append(mysqlSchema.tbnick).Append("_").Append(mysqlField.FieldName).Append(" {get;set;}\r\n");
+
+                }
+            }
+
+            sqlBuilder.Append("\tpublic virtual string SQLString{\r\n");
+            sqlBuilder.Append("\t\tget{\r\n");
+            sqlBuilder.Append("\t\t\treturn @\"").Append(BuildFullSQL());
+            sqlBuilder.Append("\";\r\n");
+            sqlBuilder.Append("\t\t}\r\n");
+            
+            sqlBuilder.Append("\t\t\n");
+            
+            sqlBuilder.Append("}\r\n");
+            sqlBuilder.Append("}");
+
+            rtx_SQLCode.Clear();
+            rtx_SQLCode.AppendText(sqlBuilder.ToString());
+            tabControl3.SelectedTab = tp_TestSQL;
         }
     }
 }
