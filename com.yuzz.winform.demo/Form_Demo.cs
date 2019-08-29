@@ -28,6 +28,12 @@ namespace com.yuzz.demo.app {
             // -------------------------------------------
             Ajdb.Init(DbType.Mysql,"127.0.0.1",3306,"root","jlkj111111","guangjuqili");
 
+            sys_test.dbWhere dbwhere = new sys_test.dbWhere();
+            
+            sys_test.dbOrderBy dborderby = new sys_test.dbOrderBy();
+
+            Ajdb.Query<sys_test>(dbwhere,dborderby,1,100);
+
             //SysDept dept = new SysDept();
             //dept.Name = "aaa" + Guid.NewGuid().ToString();
             

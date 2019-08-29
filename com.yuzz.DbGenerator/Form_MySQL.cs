@@ -628,5 +628,50 @@ namespace com.yuzz.DbGenerator {
             rtx_SQLCode.AppendText(sqlBuilder.ToString());
             tabControl3.SelectedTab = tp_TestSQL;
         }
+
+        private void btn_AddLink_Click(object sender,EventArgs e) {
+            dgv_WhereCondition.Rows.Add();
+            dgv_WhereCondition.Rows[dgv_WhereCondition.Rows.Count - 1].Cells[0].Value = "<->";
+            dgv_WhereCondition.Rows[dgv_WhereCondition.Rows.Count - 1].Cells[1].Value = "=";
+            dgv_WhereCondition.Rows[dgv_WhereCondition.Rows.Count - 1].Cells[2].Value = "<->";
+        }
+
+        private void dgv_WhereCondition_CellClick(object sender,DataGridViewCellEventArgs e) {
+            if(e.RowIndex < 0) {
+                return;
+            }
+
+            switch(e.ColumnIndex) {
+                case 0:
+                    break;
+                case 1:
+                    contextMenu_KeyWord.Show(dgv_WhereCondition,dgv_WhereCondition.PointToClient(MousePosition));
+                    break;
+                case 2:
+                    break;
+
+            }
+        }
+
+        private void contextMenu_Keyword_Clicked(object sender,EventArgs e) {
+            if(dgv_WhereCondition.CurrentCell == null) {
+                return;
+            }
+            ToolStripMenuItem toolstripMenu = (ToolStripMenuItem)sender;
+
+            dgv_WhereCondition.Rows[dgv_WhereCondition.CurrentCell.RowIndex].Cells[1].Value = toolstripMenu.Text;
+        }
+
+        private void btn_AddJoin_Click(object sender,EventArgs e) {
+            dgv_From.Rows.Add();
+            dgv_From.Rows[dgv_From.Rows.Count - 1].Cells[0].Value = "<->";
+            dgv_From.Rows[dgv_From.Rows.Count - 1].Cells[1].Value = "INNER JOIN";
+            dgv_From.Rows[dgv_From.Rows.Count - 1].Cells[2].Value = "<->";
+            dgv_From.Rows[dgv_From.Rows.Count - 1].Cells[3].Value = "ON";
+            dgv_From.Rows[dgv_From.Rows.Count - 1].Cells[4].Value = "<->";
+            dgv_From.Rows[dgv_From.Rows.Count - 1].Cells[5].Value = "=";
+            dgv_From.Rows[dgv_From.Rows.Count - 1].Cells[6].Value = "<->";
+
+        }
     }
 }

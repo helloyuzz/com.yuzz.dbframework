@@ -103,6 +103,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="interface\IOrderBy.cs" />
+    <Compile Include="interface\IWhereCondition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdobeUtil.cs" />
     <Compile Include="Ajdb.cs" />

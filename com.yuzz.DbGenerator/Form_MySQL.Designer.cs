@@ -24,8 +24,11 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("数据库");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("数据库");
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgv = new System.Windows.Forms.DataGridView();
             this.rtb_Code = new System.Windows.Forms.RichTextBox();
             this.btn_Connect = new System.Windows.Forms.Button();
@@ -91,6 +94,45 @@
             this.dgvColumn_OP = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenu_Join = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolstrip_Join = new System.Windows.Forms.ToolStripMenuItem();
+            this.dgv_WhereCondition = new System.Windows.Forms.DataGridView();
+            this.btn_AddLink = new System.Windows.Forms.Button();
+            this.btn_DelLink = new System.Windows.Forms.Button();
+            this.contextMenu_KeyWord = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgv_From = new System.Windows.Forms.DataGridView();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btn_DelJoin = new System.Windows.Forms.Button();
+            this.btn_AddJoin = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgv)).BeginInit();
             this.showContent_Panel.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -115,6 +157,20 @@
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Join)).BeginInit();
             this.contextMenu_Join.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_WhereCondition)).BeginInit();
+            this.contextMenu_KeyWord.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel5.SuspendLayout();
+            this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_From)).BeginInit();
             this.SuspendLayout();
             // 
             // dgv
@@ -126,14 +182,14 @@
             this.dgv.BackgroundColor = System.Drawing.Color.White;
             this.dgv.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv.DefaultCellStyle = dataGridViewCellStyle9;
             this.dgv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgv.Location = new System.Drawing.Point(3, 3);
@@ -330,10 +386,10 @@
             this.tvw.HideSelection = false;
             this.tvw.Location = new System.Drawing.Point(0, 0);
             this.tvw.Name = "tvw";
-            treeNode5.Name = "rootNode";
-            treeNode5.Text = "数据库";
+            treeNode3.Name = "rootNode";
+            treeNode3.Text = "数据库";
             this.tvw.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5});
+            treeNode3});
             this.tvw.Size = new System.Drawing.Size(260, 575);
             this.tvw.TabIndex = 2;
             this.tvw.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvw_AfterSelect);
@@ -426,21 +482,8 @@
             // 
             // tp_VisualEditor
             // 
-            this.tp_VisualEditor.Controls.Add(this.label14);
-            this.tp_VisualEditor.Controls.Add(this.textBox2);
-            this.tp_VisualEditor.Controls.Add(this.textBox1);
-            this.tp_VisualEditor.Controls.Add(this.btn_BuildSQL);
-            this.tp_VisualEditor.Controls.Add(this.btn_TestSQL);
-            this.tp_VisualEditor.Controls.Add(this.label8);
-            this.tp_VisualEditor.Controls.Add(this.label12);
-            this.tp_VisualEditor.Controls.Add(this.label13);
-            this.tp_VisualEditor.Controls.Add(this.label9);
-            this.tp_VisualEditor.Controls.Add(this.rtx_WHERE);
-            this.tp_VisualEditor.Controls.Add(this.label10);
-            this.tp_VisualEditor.Controls.Add(this.rtx_ORDERBY);
-            this.tp_VisualEditor.Controls.Add(this.label11);
-            this.tp_VisualEditor.Controls.Add(this.rtx_FORM);
-            this.tp_VisualEditor.Controls.Add(this.rtx_SELECT);
+            this.tp_VisualEditor.Controls.Add(this.splitContainer2);
+            this.tp_VisualEditor.Controls.Add(this.panel6);
             this.tp_VisualEditor.Location = new System.Drawing.Point(4, 22);
             this.tp_VisualEditor.Name = "tp_VisualEditor";
             this.tp_VisualEditor.Padding = new System.Windows.Forms.Padding(3);
@@ -452,7 +495,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(897, 294);
+            this.label14.Location = new System.Drawing.Point(167, 118);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(47, 12);
             this.label14.TabIndex = 8;
@@ -460,21 +503,21 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(842, 290);
+            this.textBox2.Location = new System.Drawing.Point(112, 114);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(45, 21);
             this.textBox2.TabIndex = 7;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(791, 290);
+            this.textBox1.Location = new System.Drawing.Point(61, 114);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(45, 21);
             this.textBox1.TabIndex = 7;
             // 
             // btn_BuildSQL
             // 
-            this.btn_BuildSQL.Location = new System.Drawing.Point(29, 188);
+            this.btn_BuildSQL.Location = new System.Drawing.Point(43, 194);
             this.btn_BuildSQL.Name = "btn_BuildSQL";
             this.btn_BuildSQL.Size = new System.Drawing.Size(78, 34);
             this.btn_BuildSQL.TabIndex = 6;
@@ -484,7 +527,7 @@
             // 
             // btn_TestSQL
             // 
-            this.btn_TestSQL.Location = new System.Drawing.Point(29, 148);
+            this.btn_TestSQL.Location = new System.Drawing.Point(43, 154);
             this.btn_TestSQL.Name = "btn_TestSQL";
             this.btn_TestSQL.Size = new System.Drawing.Size(78, 34);
             this.btn_TestSQL.TabIndex = 5;
@@ -497,7 +540,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label8.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.label8.Location = new System.Drawing.Point(6, 20);
+            this.label8.Location = new System.Drawing.Point(3, 6);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(47, 12);
             this.label8.TabIndex = 0;
@@ -506,7 +549,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(59, 20);
+            this.label12.Location = new System.Drawing.Point(56, 6);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(65, 12);
             this.label12.TabIndex = 4;
@@ -517,7 +560,7 @@
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label13.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.label13.Location = new System.Drawing.Point(725, 294);
+            this.label13.Location = new System.Drawing.Point(3, 117);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(40, 12);
             this.label13.TabIndex = 0;
@@ -525,12 +568,12 @@
             // 
             // label9
             // 
-            this.label9.AutoSize = true;
+            this.label9.Dock = System.Windows.Forms.DockStyle.Left;
             this.label9.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label9.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.label9.Location = new System.Drawing.Point(426, 20);
+            this.label9.Location = new System.Drawing.Point(0, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(33, 12);
+            this.label9.Size = new System.Drawing.Size(73, 182);
             this.label9.TabIndex = 0;
             this.label9.Text = "FROM";
             // 
@@ -538,12 +581,13 @@
             // 
             this.rtx_WHERE.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.rtx_WHERE.Location = new System.Drawing.Point(485, 151);
+            this.rtx_WHERE.Location = new System.Drawing.Point(42, 115);
             this.rtx_WHERE.Name = "rtx_WHERE";
             this.rtx_WHERE.ReadOnly = true;
             this.rtx_WHERE.Size = new System.Drawing.Size(227, 212);
             this.rtx_WHERE.TabIndex = 3;
             this.rtx_WHERE.Text = "";
+            this.rtx_WHERE.Visible = false;
             // 
             // label10
             // 
@@ -552,7 +596,7 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label10.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.label10.Location = new System.Drawing.Point(426, 159);
+            this.label10.Location = new System.Drawing.Point(15, 5);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(40, 12);
             this.label10.TabIndex = 0;
@@ -560,21 +604,21 @@
             // 
             // rtx_ORDERBY
             // 
-            this.rtx_ORDERBY.Location = new System.Drawing.Point(791, 151);
+            this.rtx_ORDERBY.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtx_ORDERBY.Location = new System.Drawing.Point(61, 0);
             this.rtx_ORDERBY.Name = "rtx_ORDERBY";
             this.rtx_ORDERBY.ReadOnly = true;
-            this.rtx_ORDERBY.Size = new System.Drawing.Size(220, 123);
+            this.rtx_ORDERBY.Size = new System.Drawing.Size(141, 100);
             this.rtx_ORDERBY.TabIndex = 2;
             this.rtx_ORDERBY.Text = "";
             // 
             // label11
             // 
-            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.AutoSize = true;
+            this.label11.Dock = System.Windows.Forms.DockStyle.Left;
             this.label11.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label11.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.label11.Location = new System.Drawing.Point(724, 159);
+            this.label11.Location = new System.Drawing.Point(0, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(61, 12);
             this.label11.TabIndex = 0;
@@ -582,21 +626,22 @@
             // 
             // rtx_FORM
             // 
-            this.rtx_FORM.Location = new System.Drawing.Point(485, 17);
+            this.rtx_FORM.Location = new System.Drawing.Point(17, 188);
             this.rtx_FORM.Name = "rtx_FORM";
             this.rtx_FORM.ReadOnly = true;
-            this.rtx_FORM.Size = new System.Drawing.Size(526, 109);
+            this.rtx_FORM.Size = new System.Drawing.Size(85, 145);
             this.rtx_FORM.TabIndex = 2;
             this.rtx_FORM.Text = "";
+            this.rtx_FORM.Visible = false;
             // 
             // rtx_SELECT
             // 
             this.rtx_SELECT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.rtx_SELECT.Location = new System.Drawing.Point(130, 17);
+            this.rtx_SELECT.Location = new System.Drawing.Point(127, 3);
             this.rtx_SELECT.Name = "rtx_SELECT";
             this.rtx_SELECT.ReadOnly = true;
-            this.rtx_SELECT.Size = new System.Drawing.Size(290, 346);
+            this.rtx_SELECT.Size = new System.Drawing.Size(290, 550);
             this.rtx_SELECT.TabIndex = 1;
             this.rtx_SELECT.Text = "";
             // 
@@ -782,11 +827,13 @@
             // 
             this.dgvColumn_Title.HeaderText = "标题";
             this.dgvColumn_Title.Name = "dgvColumn_Title";
+            this.dgvColumn_Title.ReadOnly = true;
             // 
             // dgvColumn_OP
             // 
             this.dgvColumn_OP.HeaderText = "操作";
             this.dgvColumn_OP.Name = "dgvColumn_OP";
+            this.dgvColumn_OP.ReadOnly = true;
             this.dgvColumn_OP.Visible = false;
             // 
             // contextMenu_Join
@@ -799,9 +846,380 @@
             // toolstrip_Join
             // 
             this.toolstrip_Join.Name = "toolstrip_Join";
-            this.toolstrip_Join.Size = new System.Drawing.Size(180, 22);
+            this.toolstrip_Join.Size = new System.Drawing.Size(100, 22);
             this.toolstrip_Join.Text = "删除";
             this.toolstrip_Join.Click += new System.EventHandler(this.toolstrip_Join_Click);
+            // 
+            // dgv_WhereCondition
+            // 
+            this.dgv_WhereCondition.AllowUserToAddRows = false;
+            this.dgv_WhereCondition.AllowUserToDeleteRows = false;
+            this.dgv_WhereCondition.AllowUserToResizeColumns = false;
+            this.dgv_WhereCondition.AllowUserToResizeRows = false;
+            this.dgv_WhereCondition.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgv_WhereCondition.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgv_WhereCondition.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgv_WhereCondition.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_WhereCondition.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1,
+            this.Column2,
+            this.Column3});
+            this.dgv_WhereCondition.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv_WhereCondition.Location = new System.Drawing.Point(73, 0);
+            this.dgv_WhereCondition.MultiSelect = false;
+            this.dgv_WhereCondition.Name = "dgv_WhereCondition";
+            this.dgv_WhereCondition.RowHeadersVisible = false;
+            this.dgv_WhereCondition.RowTemplate.Height = 23;
+            this.dgv_WhereCondition.Size = new System.Drawing.Size(297, 178);
+            this.dgv_WhereCondition.TabIndex = 9;
+            this.dgv_WhereCondition.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_WhereCondition_CellClick);
+            // 
+            // btn_AddLink
+            // 
+            this.btn_AddLink.Location = new System.Drawing.Point(11, 34);
+            this.btn_AddLink.Name = "btn_AddLink";
+            this.btn_AddLink.Size = new System.Drawing.Size(56, 23);
+            this.btn_AddLink.TabIndex = 10;
+            this.btn_AddLink.Text = "AddLink";
+            this.btn_AddLink.UseVisualStyleBackColor = true;
+            this.btn_AddLink.Click += new System.EventHandler(this.btn_AddLink_Click);
+            // 
+            // btn_DelLink
+            // 
+            this.btn_DelLink.Location = new System.Drawing.Point(11, 63);
+            this.btn_DelLink.Name = "btn_DelLink";
+            this.btn_DelLink.Size = new System.Drawing.Size(56, 23);
+            this.btn_DelLink.TabIndex = 10;
+            this.btn_DelLink.Text = "DelLink";
+            this.btn_DelLink.UseVisualStyleBackColor = true;
+            // 
+            // contextMenu_KeyWord
+            // 
+            this.contextMenu_KeyWord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.toolStripSeparator1,
+            this.toolStripMenuItem3,
+            this.toolStripMenuItem4,
+            this.toolStripMenuItem5,
+            this.toolStripSeparator2,
+            this.toolStripMenuItem13,
+            this.toolStripMenuItem14,
+            this.toolStripSeparator4,
+            this.toolStripMenuItem6,
+            this.toolStripMenuItem7,
+            this.toolStripMenuItem9,
+            this.toolStripMenuItem8,
+            this.toolStripMenuItem10,
+            this.toolStripSeparator3,
+            this.toolStripMenuItem11,
+            this.toolStripMenuItem12});
+            this.contextMenu_KeyWord.Name = "contextMenu_KeyWord";
+            this.contextMenu_KeyWord.Size = new System.Drawing.Size(152, 314);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem2.Text = "=";
+            this.toolStripMenuItem2.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem3.Text = "like \'%<->%\'";
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem4.Text = "like \'%<->\'";
+            this.toolStripMenuItem4.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem5.Text = "like \'<->%\'";
+            this.toolStripMenuItem5.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(148, 6);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(148, 6);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem6.Text = "<>";
+            this.toolStripMenuItem6.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem7
+            // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem7.Text = "<";
+            this.toolStripMenuItem7.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem8
+            // 
+            this.toolStripMenuItem8.Name = "toolStripMenuItem8";
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem8.Text = ">";
+            this.toolStripMenuItem8.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem9
+            // 
+            this.toolStripMenuItem9.Name = "toolStripMenuItem9";
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem9.Text = "<=";
+            this.toolStripMenuItem9.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem10
+            // 
+            this.toolStripMenuItem10.Name = "toolStripMenuItem10";
+            this.toolStripMenuItem10.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem10.Text = ">=";
+            this.toolStripMenuItem10.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem11
+            // 
+            this.toolStripMenuItem11.Name = "toolStripMenuItem11";
+            this.toolStripMenuItem11.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem11.Text = "is null";
+            this.toolStripMenuItem11.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(148, 6);
+            // 
+            // toolStripMenuItem12
+            // 
+            this.toolStripMenuItem12.Name = "toolStripMenuItem12";
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem12.Text = "is not null";
+            this.toolStripMenuItem12.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripMenuItem13
+            // 
+            this.toolStripMenuItem13.Name = "toolStripMenuItem13";
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem13.Text = "in (\'<->\')";
+            this.toolStripMenuItem13.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(148, 6);
+            // 
+            // toolStripMenuItem14
+            // 
+            this.toolStripMenuItem14.Name = "toolStripMenuItem14";
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(151, 22);
+            this.toolStripMenuItem14.Text = "not in (\'<->\')";
+            this.toolStripMenuItem14.Click += new System.EventHandler(this.contextMenu_Keyword_Clicked);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(444, 3);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.dgv_From);
+            this.splitContainer2.Panel1.Controls.Add(this.btn_AddJoin);
+            this.splitContainer2.Panel1.Controls.Add(this.btn_DelJoin);
+            this.splitContainer2.Panel1.Controls.Add(this.label9);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
+            this.splitContainer2.Size = new System.Drawing.Size(576, 364);
+            this.splitContainer2.SplitterDistance = 182;
+            this.splitContainer2.TabIndex = 11;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.dgv_WhereCondition);
+            this.splitContainer3.Panel1.Controls.Add(this.panel4);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.panel5);
+            this.splitContainer3.Panel2.Controls.Add(this.label14);
+            this.splitContainer3.Panel2.Controls.Add(this.textBox2);
+            this.splitContainer3.Panel2.Controls.Add(this.label13);
+            this.splitContainer3.Panel2.Controls.Add(this.textBox1);
+            this.splitContainer3.Size = new System.Drawing.Size(576, 178);
+            this.splitContainer3.SplitterDistance = 370;
+            this.splitContainer3.TabIndex = 0;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.label10);
+            this.panel4.Controls.Add(this.btn_AddLink);
+            this.panel4.Controls.Add(this.btn_DelLink);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel4.Location = new System.Drawing.Point(0, 0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(73, 178);
+            this.panel4.TabIndex = 11;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.rtx_ORDERBY);
+            this.panel5.Controls.Add(this.label11);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel5.Location = new System.Drawing.Point(0, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(202, 100);
+            this.panel5.TabIndex = 9;
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.rtx_FORM);
+            this.panel6.Controls.Add(this.rtx_WHERE);
+            this.panel6.Controls.Add(this.label8);
+            this.panel6.Controls.Add(this.rtx_SELECT);
+            this.panel6.Controls.Add(this.btn_BuildSQL);
+            this.panel6.Controls.Add(this.label12);
+            this.panel6.Controls.Add(this.btn_TestSQL);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel6.Location = new System.Drawing.Point(3, 3);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(441, 364);
+            this.panel6.TabIndex = 12;
+            // 
+            // Column1
+            // 
+            dataGridViewCellStyle10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle10;
+            this.Column1.HeaderText = "<->";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column2
+            // 
+            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle11;
+            this.Column2.HeaderText = "KeyWord";
+            this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
+            this.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column3
+            // 
+            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle12;
+            this.Column3.HeaderText = "<->";
+            this.Column3.Name = "Column3";
+            this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // dgv_From
+            // 
+            this.dgv_From.AllowUserToAddRows = false;
+            this.dgv_From.AllowUserToDeleteRows = false;
+            this.dgv_From.AllowUserToResizeColumns = false;
+            this.dgv_From.AllowUserToResizeRows = false;
+            this.dgv_From.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgv_From.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgv_From.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgv_From.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_From.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column4,
+            this.Column5,
+            this.Column6,
+            this.Column7,
+            this.Column8,
+            this.Column9,
+            this.Column10});
+            this.dgv_From.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv_From.Location = new System.Drawing.Point(73, 0);
+            this.dgv_From.MultiSelect = false;
+            this.dgv_From.Name = "dgv_From";
+            this.dgv_From.ReadOnly = true;
+            this.dgv_From.RowHeadersVisible = false;
+            this.dgv_From.RowTemplate.Height = 23;
+            this.dgv_From.Size = new System.Drawing.Size(503, 182);
+            this.dgv_From.TabIndex = 1;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "<From table>";
+            this.Column4.Name = "Column4";
+            this.Column4.ReadOnly = true;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "<Join>";
+            this.Column5.Name = "Column5";
+            this.Column5.ReadOnly = true;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "<Join to table>";
+            this.Column6.Name = "Column6";
+            this.Column6.ReadOnly = true;
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "<ON>";
+            this.Column7.Name = "Column7";
+            this.Column7.ReadOnly = true;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "<From field>";
+            this.Column8.Name = "Column8";
+            this.Column8.ReadOnly = true;
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "<->";
+            this.Column9.Name = "Column9";
+            this.Column9.ReadOnly = true;
+            // 
+            // Column10
+            // 
+            this.Column10.HeaderText = "<To field>";
+            this.Column10.Name = "Column10";
+            this.Column10.ReadOnly = true;
+            // 
+            // btn_DelJoin
+            // 
+            this.btn_DelJoin.Location = new System.Drawing.Point(11, 68);
+            this.btn_DelJoin.Name = "btn_DelJoin";
+            this.btn_DelJoin.Size = new System.Drawing.Size(56, 23);
+            this.btn_DelJoin.TabIndex = 10;
+            this.btn_DelJoin.Text = "DelJoin";
+            this.btn_DelJoin.UseVisualStyleBackColor = true;
+            // 
+            // btn_AddJoin
+            // 
+            this.btn_AddJoin.Location = new System.Drawing.Point(11, 39);
+            this.btn_AddJoin.Name = "btn_AddJoin";
+            this.btn_AddJoin.Size = new System.Drawing.Size(56, 23);
+            this.btn_AddJoin.TabIndex = 10;
+            this.btn_AddJoin.Text = "AddJoin";
+            this.btn_AddJoin.UseVisualStyleBackColor = true;
+            this.btn_AddJoin.Click += new System.EventHandler(this.btn_AddJoin_Click);
             // 
             // Form_MySQL
             // 
@@ -836,7 +1254,6 @@
             this.splitContainer1.ResumeLayout(false);
             this.tabControl3.ResumeLayout(false);
             this.tp_VisualEditor.ResumeLayout(false);
-            this.tp_VisualEditor.PerformLayout();
             this.tp_TestSQL.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -844,6 +1261,24 @@
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Join)).EndInit();
             this.contextMenu_Join.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_WhereCondition)).EndInit();
+            this.contextMenu_KeyWord.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            this.splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_From)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -915,5 +1350,44 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvColumn_OP;
         private System.Windows.Forms.ContextMenuStrip contextMenu_Join;
         private System.Windows.Forms.ToolStripMenuItem toolstrip_Join;
+        private System.Windows.Forms.DataGridView dgv_WhereCondition;
+        private System.Windows.Forms.Button btn_DelLink;
+        private System.Windows.Forms.Button btn_AddLink;
+        private System.Windows.Forms.ContextMenuStrip contextMenu_KeyWord;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem13;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem14;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem7;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem9;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem8;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem10;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem11;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem12;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridView dgv_From;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
+        private System.Windows.Forms.Button btn_AddJoin;
+        private System.Windows.Forms.Button btn_DelJoin;
     }
 }

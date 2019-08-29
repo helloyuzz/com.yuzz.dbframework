@@ -1116,6 +1116,11 @@ namespace com.yuzz.dbframework {
             }
             return recordCount;
         }
+
+        public static void Query<T>(IWhereCondition dbwhere,IOrderBy dborderby,int v1,int v2) {
+            throw new NotImplementedException();
+        }
+
         //public static DataTable AddColumn(DataTable dt,params DbCellTypes[] columnList) {
         //    return AddColumn(dt,false,columnList);
         //}

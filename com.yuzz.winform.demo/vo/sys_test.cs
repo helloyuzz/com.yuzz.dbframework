@@ -4,10 +4,10 @@ using System.Data;
 using com.yuzz.dbframework;
 using MySql.Data.MySqlClient;
 [Serializable]
-public class aaaaaaaaaaaaaaaa {
+public class sys_test {
     public static Type Type {
         get {
-            return typeof(aaaaaaaaaaaaaaaa);
+            return typeof(sys_test);
         }
     }
     private List<SQLField> _Fields = null;
@@ -47,5 +47,11 @@ public class aaaaaaaaaaaaaaaa {
 
         }
 
+    }
+    public class dbWhere:IWhereCondition {
+
+    }
+
+    internal class dbOrderBy:IOrderBy {
     }
 }
