@@ -37,7 +37,7 @@ using com.yuzz.dbframework.util;
 using com.yuzz.dbframework.vo;
 
 namespace com.yuzz.dbframework {
-    public static class Ajdb {
+    public static class Mydb {
         static DbType _DbType {
             get; set;
         }
@@ -145,7 +145,7 @@ namespace com.yuzz.dbframework {
             // 或者：update tb set filed1=@arg1,field2=@arg2,fieldxxx=@argxxx where pk=@argid
             // ------------------------------------------------------------------------------------------------------------------------
             string execSQLString = BuildSQLCommandText(getTableName,getPKFieldName,getAllFields,getUpdatedFields,saveAction);
-            Ajdb.CommandText = execSQLString;
+            Mydb.CommandText = execSQLString;
 
             Console.WriteLine("\n\nSQL:\t" + execSQLString);
             saveResult.SchemaName = getTableName;
@@ -262,7 +262,7 @@ namespace com.yuzz.dbframework {
                     }
                 }
             } catch(Exception exc) {
-                Ajdb.ExcString = exc;
+                Mydb.ExcString = exc;
                 saveResult.PK_Int = -1;
                 saveResult.Msg = exc.Message;
             } finally {
@@ -736,7 +736,7 @@ namespace com.yuzz.dbframework {
                         }
                     } catch(Exception exc) {
                         delResult = false;
-                        Ajdb.ExcString = exc;
+                        Mydb.ExcString = exc;
                     } finally {
                         mscmd = null;
                     }
@@ -757,7 +757,7 @@ namespace com.yuzz.dbframework {
                         }
                     } catch(Exception exc) {
                         delResult = false;
-                        Ajdb.ExcString = exc;
+                        Mydb.ExcString = exc;
                     } finally {
                         mycmd = null;
                     }
@@ -793,7 +793,7 @@ namespace com.yuzz.dbframework {
                             dbConn.Close();
                         }
                     } catch(Exception exc) {
-                        Ajdb.ExcString = exc;
+                        Mydb.ExcString = exc;
                     } finally {
                         dbCmd = null;
                     }
@@ -810,7 +810,7 @@ namespace com.yuzz.dbframework {
                             myConn.Close();
                         }
                     } catch(Exception exc) {
-                        Ajdb.ExcString = exc;
+                        Mydb.ExcString = exc;
                     } finally {
                         myCmd = null;
                     }

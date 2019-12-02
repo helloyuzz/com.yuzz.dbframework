@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using System.Data.OleDb;
 
 namespace com.yuzz.DbGenerator {
-    public class Toolkit {
-        public Toolkit() {
+    public class MyToolkit {
+        public MyToolkit() {
 
         }
 
@@ -36,7 +36,7 @@ namespace com.yuzz.DbGenerator {
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        internal static string ParseDbTypeString(SqlDbType type) {
+        internal static string ParseToDbTypeString(SqlDbType type) {
             string dbTypeString = "";
 
             switch(type) {
@@ -75,7 +75,7 @@ namespace com.yuzz.DbGenerator {
             return dbTypeString;
         }
 
-        internal static SqlDbType transTypeName(string typeName) {
+        internal static SqlDbType ParseToSqlDbType(string typeName) {
             SqlDbType dbType = SqlDbType.Int;
             switch(typeName) {
                 case "varchar":

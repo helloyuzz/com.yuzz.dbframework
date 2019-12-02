@@ -126,6 +126,12 @@
     <Compile Include="Form_MSSQL.Designer.cs">
       <DependentUpon>Form_MSSQL.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form_SQLBuilder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_SQLBuilder.Designer.cs">
+      <DependentUpon>Form_SQLBuilder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form_Startup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,6 +156,9 @@
     <EmbeddedResource Include="Form_MSSQL.resx">
       <DependentUpon>Form_MSSQL.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_SQLBuilder.resx">
+      <DependentUpon>Form_SQLBuilder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form_Startup.resx">
       <DependentUpon>Form_Startup.cs</DependentUpon>
@@ -181,20 +190,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Toolkit.cs" />
-    <Compile Include="vo\DBClass.cs" />
+    <Compile Include="MyToolkit.cs" />
     <Compile Include="vo\DBItem.cs" />
     <Compile Include="vo\MySQLJoin.cs" />
     <Compile Include="vo\MySQLReleationShip.cs" />
     <Compile Include="vo\MySQLSchema.cs" />
     <Compile Include="vo\MySQLTreeNode.cs" />
     <Compile Include="vo\MySQLXmlFile.cs" />
-    <Compile Include="vo\NickIndex.cs" />
     <Compile Include="vo\SelectedField.cs" />
-    <Compile Include="vo\SmColumn.cs" />
-    <Compile Include="vo\SmField.cs" />
-    <Compile Include="vo\SmTable.cs" />
-    <Compile Include="vo\SQLField.cs" />
     <Compile Include="Web References\bimpApp\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -213,6 +216,7 @@
     <Content Include="makefile\makefile.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\mysql_512px_1168793_easyicon.net.png" />
     <None Include="app.config" />
     <None Include="Web References\bimpApp\bimp_CloudPro.disco" />
     <None Include="Web References\bimpApp\bimp_CloudPro.wsdl" />
@@ -220,9 +224,6 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
@@ -259,6 +260,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="xml\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\com.yuzz.dblibrary\com.yuzz.dblibrary.csproj">
+      <Project>{8bd5af6e-682a-4a3f-bc48-de60bc181748}</Project>
+      <Name>com.yuzz.dblibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

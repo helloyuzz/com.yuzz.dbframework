@@ -294,15 +294,15 @@ namespace com.yuzz.DbGenerator {
 
                 if(_SelectedFields.Exists(t => t.tbname.Equals(schemaName,StringComparison.CurrentCultureIgnoreCase)) == false) {
                     string tpnick = "a";
-                    NickIndex index = nickIndex.Find(t => t.Name.Equals(schemaName));
-                    if(index == null) {
-                        index = new NickIndex();
-                        index.Name = schemaName;
-                        index.Index = newNickIndex++;
+                    //NickIndex index = nickIndex.Find(t => t.Name.Equals(schemaName));
+                    //if(index == null) {
+                    //    index = new NickIndex();
+                    //    index.Name = schemaName;
+                    //    index.Index = newNickIndex++;
 
-                        nickIndex.Add(index);
-                    }
-                    tpnick += index.Index;
+                    //    nickIndex.Add(index);
+                    //}
+                    //tpnick += index.Index;
 
                     MySQLSchema mysqlSchema = new MySQLSchema();
                     mysqlSchema.tbname = schemaName;
@@ -426,7 +426,7 @@ namespace com.yuzz.DbGenerator {
         }
 
         int newNickIndex = 1;
-        List<NickIndex> nickIndex = new List<NickIndex>();
+        //List<NickIndex> nickIndex = new List<NickIndex>();
         private void BuildSQL() {
             BuildSelect();
             BuildFrom();

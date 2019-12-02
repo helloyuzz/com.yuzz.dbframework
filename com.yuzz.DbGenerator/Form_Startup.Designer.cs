@@ -29,11 +29,14 @@
             // 
             // btn_MySQL
             // 
-            this.btn_MySQL.Location = new System.Drawing.Point(159, 167);
+            this.btn_MySQL.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btn_MySQL.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btn_MySQL.Location = new System.Drawing.Point(167, 167);
             this.btn_MySQL.Name = "btn_MySQL";
-            this.btn_MySQL.Size = new System.Drawing.Size(210, 68);
+            this.btn_MySQL.Size = new System.Drawing.Size(202, 68);
             this.btn_MySQL.TabIndex = 0;
             this.btn_MySQL.Text = "Launch MySQL DbGenerator";
+            this.btn_MySQL.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btn_MySQL.UseVisualStyleBackColor = true;
             this.btn_MySQL.Click += new System.EventHandler(this.btn_MySQL_Click);
             // 

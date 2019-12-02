@@ -26,13 +26,13 @@ namespace com.yuzz.demo.app {
             // -----------------demo----------------------
             // 1、init 操作
             // -------------------------------------------
-            Ajdb.Init(DbType.Mysql,"127.0.0.1",3306,"root","jlkj111111","guangjuqili");
+            Mydb.Init(DbType.Mysql,"127.0.0.1",3306,"root","jlkj111111","guangjuqili");
 
             sys_test.dbWhere dbwhere = new sys_test.dbWhere();
             
             sys_test.dbOrderBy dborderby = new sys_test.dbOrderBy();
 
-            Ajdb.Query<sys_test>(dbwhere,dborderby,1,100);
+            Mydb.Query<sys_test>(dbwhere,dborderby,1,100);
 
             //SysDept dept = new SysDept();
             //dept.Name = "aaa" + Guid.NewGuid().ToString();
@@ -82,7 +82,7 @@ namespace com.yuzz.demo.app {
             addItem.name = "aa";
             addItem.money = 1000;
 
-            SaveResult addResult = Ajdb.Insert(addItem);
+            SaveResult addResult = Mydb.Insert(addItem);
             if(addResult.OK) {
                 MessageBox.Show(addResult.PK_Varchar);
             }
@@ -92,7 +92,7 @@ namespace com.yuzz.demo.app {
             SysDept dept = new SysDept();
             dept.Name = "aaa" + Guid.NewGuid().ToString();
 
-            SaveResult saveResult = Ajdb.Insert(dept);
+            SaveResult saveResult = Mydb.Insert(dept);
             if(saveResult.OK) {
                 MessageBox.Show(saveResult.PK_Int.ToString());
             } else {
@@ -146,10 +146,10 @@ namespace com.yuzz.demo.app {
             AjQuery ajResult = null;
             switch(tablename) {
                 case "sys_uuid":
-                    ajResult = Ajdb.Query<sys_uuid>("","",pageIndex,pageSize,AjQueryType.QueryAll,null);
+                    ajResult = Mydb.Query<sys_uuid>("","",pageIndex,pageSize,AjQueryType.QueryAll,null);
                     break;
                 case "sysdept":
-                    ajResult = Ajdb.Query<SysDept>("","",pageIndex,pageSize,AjQueryType.QueryAll,null);
+                    ajResult = Mydb.Query<SysDept>("","",pageIndex,pageSize,AjQueryType.QueryAll,null);
                     break;
             }
             dgv_int.Columns.Clear();
@@ -161,12 +161,12 @@ namespace com.yuzz.demo.app {
         }
 
         private void btn_GetItem_Click(object sender,EventArgs e) {
-            SysDept dept = Ajdb.GetItem<SysDept>(AdobeUtil.ParseInt(tbx_id.Text));
+            SysDept dept = Mydb.GetItem<SysDept>(AdobeUtil.ParseInt(tbx_id.Text));
             MessageBox.Show(dept.Name);
         }
 
         private void btn_getuuid_Click(object sender,EventArgs e) {
-            sys_uuid uuid = Ajdb.GetItem<sys_uuid>(tbx_uuid.Text);
+            sys_uuid uuid = Mydb.GetItem<sys_uuid>(tbx_uuid.Text);
             MessageBox.Show(uuid.name);
         }
 
@@ -174,12 +174,12 @@ namespace com.yuzz.demo.app {
             for(int n = 0;n <= 10;n++) {
                 sysuser user = new sysuser();
                 user.name = "aa" + AdobeUtil.RandomNumber();
-                Ajdb.Insert(user);
+                Mydb.Insert(user);
             }
         }
 
         private void btn_MultiQuery_Click(object sender,EventArgs e) {
-            Ajdb.Query<sysuser>("","");
+            Mydb.Query<sysuser>("","");
         }
     }
 }

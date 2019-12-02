@@ -25,17 +25,58 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_MSSQL));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
             this.showLeftPanel = new System.Windows.Forms.Panel();
             this.showDBPage = new System.Windows.Forms.TabControl();
             this.tp_表 = new System.Windows.Forms.TabPage();
-            this.lst_表 = new System.Windows.Forms.ListBox();
+            this.list_Schema = new System.Windows.Forms.ListBox();
             this.tp_存储过程 = new System.Windows.Forms.TabPage();
-            this.lst_存储过程 = new System.Windows.Forms.ListBox();
+            this.list_StoreProcedure = new System.Windows.Forms.ListBox();
             this.img = new System.Windows.Forms.ImageList(this.components);
             this.showContentPanel = new System.Windows.Forms.Panel();
             this.showPage = new System.Windows.Forms.TabControl();
             this.tp_DAO = new System.Windows.Forms.TabPage();
             this.tbx_DAO_Code = new System.Windows.Forms.RichTextBox();
+            this.tp_selectBuilder = new System.Windows.Forms.TabPage();
+            this.tabControl3 = new System.Windows.Forms.TabControl();
+            this.tp_VisualEditor = new System.Windows.Forms.TabPage();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.dgv_From = new System.Windows.Forms.DataGridView();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btn_AddJoin = new System.Windows.Forms.Button();
+            this.btn_DelJoin = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.dgv_WhereCondition = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.label16 = new System.Windows.Forms.Label();
+            this.btn_AddLink = new System.Windows.Forms.Button();
+            this.btn_DelLink = new System.Windows.Forms.Button();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.rtx_ORDERBY = new System.Windows.Forms.RichTextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.label20 = new System.Windows.Forms.Label();
+            this.btn_BuildSQL = new System.Windows.Forms.Button();
+            this.label21 = new System.Windows.Forms.Label();
+            this.btn_TestSQL = new System.Windows.Forms.Button();
+            this.tp_TestSQL = new System.Windows.Forms.TabPage();
+            this.rtx_SQLCode = new System.Windows.Forms.RichTextBox();
             this.tp_load = new System.Windows.Forms.TabPage();
             this.tbx_Load = new System.Windows.Forms.RichTextBox();
             this.tp_save = new System.Windows.Forms.TabPage();
@@ -76,9 +117,18 @@
             this.txt_类前缀 = new System.Windows.Forms.Label();
             this.showTopPanel = new System.Windows.Forms.Panel();
             this.pneFile = new System.Windows.Forms.Panel();
-            this.tbx_Text = new System.Windows.Forms.ComboBox();
+            this.tbx_MSSQL_Schema = new System.Windows.Forms.TextBox();
+            this.tbx_MSSQL_Pwd = new System.Windows.Forms.TextBox();
+            this.tbx_MSSQL_User = new System.Windows.Forms.TextBox();
+            this.tbx_MSSQL_Port = new System.Windows.Forms.TextBox();
+            this.tbx_MSSQL_ServerIP = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.pneButton = new System.Windows.Forms.Panel();
-            this.btn_连接 = new System.Windows.Forms.Button();
+            this.btn_ConnectMSSQL = new System.Windows.Forms.Button();
             this.pneLeft = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -90,6 +140,16 @@
             this.label5 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_MySQL = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.showLeftPanel.SuspendLayout();
             this.showDBPage.SuspendLayout();
             this.tp_表.SuspendLayout();
@@ -97,6 +157,23 @@
             this.showContentPanel.SuspendLayout();
             this.showPage.SuspendLayout();
             this.tp_DAO.SuspendLayout();
+            this.tp_selectBuilder.SuspendLayout();
+            this.tabControl3.SuspendLayout();
+            this.tp_VisualEditor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_From)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_WhereCondition)).BeginInit();
+            this.panel5.SuspendLayout();
+            this.panel6.SuspendLayout();
+            this.panel7.SuspendLayout();
+            this.tp_TestSQL.SuspendLayout();
             this.tp_load.SuspendLayout();
             this.tp_save.SuspendLayout();
             this.tp_VO.SuspendLayout();
@@ -113,6 +190,11 @@
             this.pneLeft.SuspendLayout();
             this.panel3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.panel8.SuspendLayout();
+            this.panel9.SuspendLayout();
+            this.panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // showLeftPanel
@@ -120,10 +202,10 @@
             this.showLeftPanel.BackColor = System.Drawing.Color.White;
             this.showLeftPanel.Controls.Add(this.showDBPage);
             this.showLeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.showLeftPanel.Location = new System.Drawing.Point(3, 75);
+            this.showLeftPanel.Location = new System.Drawing.Point(3, 137);
             this.showLeftPanel.Name = "showLeftPanel";
             this.showLeftPanel.Padding = new System.Windows.Forms.Padding(3);
-            this.showLeftPanel.Size = new System.Drawing.Size(331, 478);
+            this.showLeftPanel.Size = new System.Drawing.Size(331, 568);
             this.showLeftPanel.TabIndex = 0;
             // 
             // showDBPage
@@ -134,52 +216,52 @@
             this.showDBPage.Location = new System.Drawing.Point(3, 3);
             this.showDBPage.Name = "showDBPage";
             this.showDBPage.SelectedIndex = 0;
-            this.showDBPage.Size = new System.Drawing.Size(325, 472);
+            this.showDBPage.Size = new System.Drawing.Size(325, 562);
             this.showDBPage.TabIndex = 9;
             // 
             // tp_表
             // 
-            this.tp_表.Controls.Add(this.lst_表);
+            this.tp_表.Controls.Add(this.list_Schema);
             this.tp_表.Location = new System.Drawing.Point(4, 22);
             this.tp_表.Name = "tp_表";
-            this.tp_表.Size = new System.Drawing.Size(317, 446);
+            this.tp_表.Size = new System.Drawing.Size(317, 536);
             this.tp_表.TabIndex = 0;
             this.tp_表.Text = "表";
             this.tp_表.UseVisualStyleBackColor = true;
             // 
-            // lst_表
+            // list_Schema
             // 
-            this.lst_表.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lst_表.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lst_表.FormattingEnabled = true;
-            this.lst_表.ItemHeight = 12;
-            this.lst_表.Location = new System.Drawing.Point(0, 0);
-            this.lst_表.Margin = new System.Windows.Forms.Padding(0);
-            this.lst_表.Name = "lst_表";
-            this.lst_表.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lst_表.Size = new System.Drawing.Size(317, 446);
-            this.lst_表.TabIndex = 8;
+            this.list_Schema.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.list_Schema.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list_Schema.FormattingEnabled = true;
+            this.list_Schema.ItemHeight = 12;
+            this.list_Schema.Location = new System.Drawing.Point(0, 0);
+            this.list_Schema.Margin = new System.Windows.Forms.Padding(0);
+            this.list_Schema.Name = "list_Schema";
+            this.list_Schema.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.list_Schema.Size = new System.Drawing.Size(317, 536);
+            this.list_Schema.TabIndex = 8;
             // 
             // tp_存储过程
             // 
-            this.tp_存储过程.Controls.Add(this.lst_存储过程);
+            this.tp_存储过程.Controls.Add(this.list_StoreProcedure);
             this.tp_存储过程.Location = new System.Drawing.Point(4, 22);
             this.tp_存储过程.Name = "tp_存储过程";
-            this.tp_存储过程.Size = new System.Drawing.Size(317, 446);
+            this.tp_存储过程.Size = new System.Drawing.Size(317, 536);
             this.tp_存储过程.TabIndex = 1;
             this.tp_存储过程.Text = "存储过程";
             this.tp_存储过程.UseVisualStyleBackColor = true;
             // 
-            // lst_存储过程
+            // list_StoreProcedure
             // 
-            this.lst_存储过程.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lst_存储过程.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lst_存储过程.FormattingEnabled = true;
-            this.lst_存储过程.ItemHeight = 12;
-            this.lst_存储过程.Location = new System.Drawing.Point(0, 0);
-            this.lst_存储过程.Name = "lst_存储过程";
-            this.lst_存储过程.Size = new System.Drawing.Size(317, 446);
-            this.lst_存储过程.TabIndex = 10;
+            this.list_StoreProcedure.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.list_StoreProcedure.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list_StoreProcedure.FormattingEnabled = true;
+            this.list_StoreProcedure.ItemHeight = 12;
+            this.list_StoreProcedure.Location = new System.Drawing.Point(0, 0);
+            this.list_StoreProcedure.Name = "list_StoreProcedure";
+            this.list_StoreProcedure.Size = new System.Drawing.Size(317, 536);
+            this.list_StoreProcedure.TabIndex = 10;
             // 
             // img
             // 
@@ -194,15 +276,16 @@
             this.showContentPanel.Controls.Add(this.showPage);
             this.showContentPanel.Controls.Add(this.panel2);
             this.showContentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.showContentPanel.Location = new System.Drawing.Point(334, 75);
+            this.showContentPanel.Location = new System.Drawing.Point(334, 137);
             this.showContentPanel.Name = "showContentPanel";
             this.showContentPanel.Padding = new System.Windows.Forms.Padding(3);
-            this.showContentPanel.Size = new System.Drawing.Size(766, 478);
+            this.showContentPanel.Size = new System.Drawing.Size(1069, 568);
             this.showContentPanel.TabIndex = 1;
             // 
             // showPage
             // 
             this.showPage.Controls.Add(this.tp_DAO);
+            this.showPage.Controls.Add(this.tp_selectBuilder);
             this.showPage.Controls.Add(this.tp_load);
             this.showPage.Controls.Add(this.tp_save);
             this.showPage.Controls.Add(this.tp_VO);
@@ -217,7 +300,7 @@
             this.showPage.Name = "showPage";
             this.showPage.Padding = new System.Drawing.Point(19, 3);
             this.showPage.SelectedIndex = 0;
-            this.showPage.Size = new System.Drawing.Size(760, 307);
+            this.showPage.Size = new System.Drawing.Size(1063, 397);
             this.showPage.TabIndex = 2;
             // 
             // tp_DAO
@@ -225,7 +308,7 @@
             this.tp_DAO.Controls.Add(this.tbx_DAO_Code);
             this.tp_DAO.Location = new System.Drawing.Point(4, 27);
             this.tp_DAO.Name = "tp_DAO";
-            this.tp_DAO.Size = new System.Drawing.Size(752, 276);
+            this.tp_DAO.Size = new System.Drawing.Size(1055, 366);
             this.tp_DAO.TabIndex = 0;
             this.tp_DAO.Text = "DAO";
             this.tp_DAO.UseVisualStyleBackColor = true;
@@ -236,16 +319,418 @@
             this.tbx_DAO_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_DAO_Code.Location = new System.Drawing.Point(0, 0);
             this.tbx_DAO_Code.Name = "tbx_DAO_Code";
-            this.tbx_DAO_Code.Size = new System.Drawing.Size(752, 276);
+            this.tbx_DAO_Code.Size = new System.Drawing.Size(1055, 366);
             this.tbx_DAO_Code.TabIndex = 0;
             this.tbx_DAO_Code.Text = "";
+            // 
+            // tp_selectBuilder
+            // 
+            this.tp_selectBuilder.Controls.Add(this.tabControl3);
+            this.tp_selectBuilder.Location = new System.Drawing.Point(4, 27);
+            this.tp_selectBuilder.Name = "tp_selectBuilder";
+            this.tp_selectBuilder.Padding = new System.Windows.Forms.Padding(3);
+            this.tp_selectBuilder.Size = new System.Drawing.Size(1055, 366);
+            this.tp_selectBuilder.TabIndex = 9;
+            this.tp_selectBuilder.Text = "select Builder";
+            this.tp_selectBuilder.UseVisualStyleBackColor = true;
+            // 
+            // tabControl3
+            // 
+            this.tabControl3.Controls.Add(this.tp_VisualEditor);
+            this.tabControl3.Controls.Add(this.tp_TestSQL);
+            this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl3.Location = new System.Drawing.Point(3, 3);
+            this.tabControl3.Name = "tabControl3";
+            this.tabControl3.SelectedIndex = 0;
+            this.tabControl3.Size = new System.Drawing.Size(1049, 360);
+            this.tabControl3.TabIndex = 6;
+            // 
+            // tp_VisualEditor
+            // 
+            this.tp_VisualEditor.Controls.Add(this.splitContainer2);
+            this.tp_VisualEditor.Controls.Add(this.panel7);
+            this.tp_VisualEditor.Location = new System.Drawing.Point(4, 22);
+            this.tp_VisualEditor.Name = "tp_VisualEditor";
+            this.tp_VisualEditor.Padding = new System.Windows.Forms.Padding(3);
+            this.tp_VisualEditor.Size = new System.Drawing.Size(1041, 334);
+            this.tp_VisualEditor.TabIndex = 0;
+            this.tp_VisualEditor.Text = "可视化编辑";
+            this.tp_VisualEditor.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(444, 3);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.panel8);
+            this.splitContainer2.Panel1.Controls.Add(this.panel9);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
+            this.splitContainer2.Size = new System.Drawing.Size(594, 328);
+            this.splitContainer2.SplitterDistance = 164;
+            this.splitContainer2.TabIndex = 11;
+            // 
+            // dgv_From
+            // 
+            this.dgv_From.AllowUserToAddRows = false;
+            this.dgv_From.AllowUserToDeleteRows = false;
+            this.dgv_From.AllowUserToResizeColumns = false;
+            this.dgv_From.AllowUserToResizeRows = false;
+            this.dgv_From.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgv_From.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgv_From.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgv_From.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_From.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column4,
+            this.Column5,
+            this.Column6,
+            this.Column7,
+            this.Column8,
+            this.Column9,
+            this.Column10});
+            this.dgv_From.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv_From.Location = new System.Drawing.Point(0, 0);
+            this.dgv_From.MultiSelect = false;
+            this.dgv_From.Name = "dgv_From";
+            this.dgv_From.ReadOnly = true;
+            this.dgv_From.RowHeadersVisible = false;
+            this.dgv_From.RowTemplate.Height = 23;
+            this.dgv_From.Size = new System.Drawing.Size(521, 164);
+            this.dgv_From.TabIndex = 1;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "<From table>";
+            this.Column4.Name = "Column4";
+            this.Column4.ReadOnly = true;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "<Join>";
+            this.Column5.Name = "Column5";
+            this.Column5.ReadOnly = true;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "<Join to table>";
+            this.Column6.Name = "Column6";
+            this.Column6.ReadOnly = true;
+            // 
+            // Column7
+            // 
+            this.Column7.HeaderText = "<ON>";
+            this.Column7.Name = "Column7";
+            this.Column7.ReadOnly = true;
+            // 
+            // Column8
+            // 
+            this.Column8.HeaderText = "<From field>";
+            this.Column8.Name = "Column8";
+            this.Column8.ReadOnly = true;
+            // 
+            // Column9
+            // 
+            this.Column9.HeaderText = "<->";
+            this.Column9.Name = "Column9";
+            this.Column9.ReadOnly = true;
+            // 
+            // Column10
+            // 
+            this.Column10.HeaderText = "<To field>";
+            this.Column10.Name = "Column10";
+            this.Column10.ReadOnly = true;
+            // 
+            // btn_AddJoin
+            // 
+            this.btn_AddJoin.Location = new System.Drawing.Point(11, 53);
+            this.btn_AddJoin.Name = "btn_AddJoin";
+            this.btn_AddJoin.Size = new System.Drawing.Size(56, 23);
+            this.btn_AddJoin.TabIndex = 10;
+            this.btn_AddJoin.Text = "AddJoin";
+            this.btn_AddJoin.UseVisualStyleBackColor = true;
+            // 
+            // btn_DelJoin
+            // 
+            this.btn_DelJoin.Location = new System.Drawing.Point(14, 82);
+            this.btn_DelJoin.Name = "btn_DelJoin";
+            this.btn_DelJoin.Size = new System.Drawing.Size(56, 23);
+            this.btn_DelJoin.TabIndex = 10;
+            this.btn_DelJoin.Text = "DelJoin";
+            this.btn_DelJoin.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label14.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label14.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label14.Location = new System.Drawing.Point(0, 0);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(73, 164);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "FROM";
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.dgv_WhereCondition);
+            this.splitContainer3.Panel1.Controls.Add(this.panel5);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.panel6);
+            this.splitContainer3.Panel2.Controls.Add(this.label18);
+            this.splitContainer3.Panel2.Controls.Add(this.textBox2);
+            this.splitContainer3.Panel2.Controls.Add(this.label19);
+            this.splitContainer3.Panel2.Controls.Add(this.textBox3);
+            this.splitContainer3.Size = new System.Drawing.Size(594, 160);
+            this.splitContainer3.SplitterDistance = 381;
+            this.splitContainer3.TabIndex = 0;
+            // 
+            // dgv_WhereCondition
+            // 
+            this.dgv_WhereCondition.AllowUserToAddRows = false;
+            this.dgv_WhereCondition.AllowUserToDeleteRows = false;
+            this.dgv_WhereCondition.AllowUserToResizeColumns = false;
+            this.dgv_WhereCondition.AllowUserToResizeRows = false;
+            this.dgv_WhereCondition.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgv_WhereCondition.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgv_WhereCondition.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgv_WhereCondition.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_WhereCondition.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1,
+            this.Column2,
+            this.Column3});
+            this.dgv_WhereCondition.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv_WhereCondition.Location = new System.Drawing.Point(73, 0);
+            this.dgv_WhereCondition.MultiSelect = false;
+            this.dgv_WhereCondition.Name = "dgv_WhereCondition";
+            this.dgv_WhereCondition.RowHeadersVisible = false;
+            this.dgv_WhereCondition.RowTemplate.Height = 23;
+            this.dgv_WhereCondition.Size = new System.Drawing.Size(308, 160);
+            this.dgv_WhereCondition.TabIndex = 9;
+            // 
+            // Column1
+            // 
+            dataGridViewCellStyle25.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle25;
+            this.Column1.HeaderText = "<->";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column2
+            // 
+            dataGridViewCellStyle26.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle26;
+            this.Column2.HeaderText = "KeyWord";
+            this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
+            this.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column3
+            // 
+            dataGridViewCellStyle27.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle27;
+            this.Column3.HeaderText = "<->";
+            this.Column3.Name = "Column3";
+            this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.label16);
+            this.panel5.Controls.Add(this.btn_AddLink);
+            this.panel5.Controls.Add(this.btn_DelLink);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel5.Location = new System.Drawing.Point(0, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(73, 160);
+            this.panel5.TabIndex = 11;
+            // 
+            // label16
+            // 
+            this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label16.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label16.Location = new System.Drawing.Point(15, 5);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(40, 12);
+            this.label16.TabIndex = 0;
+            this.label16.Text = "WHERE";
+            // 
+            // btn_AddLink
+            // 
+            this.btn_AddLink.Location = new System.Drawing.Point(11, 34);
+            this.btn_AddLink.Name = "btn_AddLink";
+            this.btn_AddLink.Size = new System.Drawing.Size(56, 23);
+            this.btn_AddLink.TabIndex = 10;
+            this.btn_AddLink.Text = "AddLink";
+            this.btn_AddLink.UseVisualStyleBackColor = true;
+            // 
+            // btn_DelLink
+            // 
+            this.btn_DelLink.Location = new System.Drawing.Point(11, 63);
+            this.btn_DelLink.Name = "btn_DelLink";
+            this.btn_DelLink.Size = new System.Drawing.Size(56, 23);
+            this.btn_DelLink.TabIndex = 10;
+            this.btn_DelLink.Text = "DelLink";
+            this.btn_DelLink.UseVisualStyleBackColor = true;
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.rtx_ORDERBY);
+            this.panel6.Controls.Add(this.label17);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel6.Location = new System.Drawing.Point(0, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(209, 100);
+            this.panel6.TabIndex = 9;
+            // 
+            // rtx_ORDERBY
+            // 
+            this.rtx_ORDERBY.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtx_ORDERBY.Location = new System.Drawing.Point(61, 0);
+            this.rtx_ORDERBY.Name = "rtx_ORDERBY";
+            this.rtx_ORDERBY.ReadOnly = true;
+            this.rtx_ORDERBY.Size = new System.Drawing.Size(148, 100);
+            this.rtx_ORDERBY.TabIndex = 2;
+            this.rtx_ORDERBY.Text = "";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label17.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label17.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label17.Location = new System.Drawing.Point(0, 0);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(61, 12);
+            this.label17.TabIndex = 0;
+            this.label17.Text = "ORDER BY";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(167, 118);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(47, 12);
+            this.label18.TabIndex = 8;
+            this.label18.Text = "(rows.)";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(112, 114);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(45, 21);
+            this.textBox2.TabIndex = 7;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label19.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label19.Location = new System.Drawing.Point(3, 117);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(40, 12);
+            this.label19.TabIndex = 0;
+            this.label19.Text = "LIMIT";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(61, 114);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(45, 21);
+            this.textBox3.TabIndex = 7;
+            // 
+            // panel7
+            // 
+            this.panel7.Controls.Add(this.dataGridView2);
+            this.panel7.Controls.Add(this.label20);
+            this.panel7.Controls.Add(this.btn_BuildSQL);
+            this.panel7.Controls.Add(this.label21);
+            this.panel7.Controls.Add(this.btn_TestSQL);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel7.Location = new System.Drawing.Point(3, 3);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(441, 328);
+            this.panel7.TabIndex = 12;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label20.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.label20.Location = new System.Drawing.Point(3, 6);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(47, 12);
+            this.label20.TabIndex = 0;
+            this.label20.Text = "SELECT";
+            // 
+            // btn_BuildSQL
+            // 
+            this.btn_BuildSQL.Location = new System.Drawing.Point(43, 194);
+            this.btn_BuildSQL.Name = "btn_BuildSQL";
+            this.btn_BuildSQL.Size = new System.Drawing.Size(78, 34);
+            this.btn_BuildSQL.TabIndex = 6;
+            this.btn_BuildSQL.Text = "Build SQL";
+            this.btn_BuildSQL.UseVisualStyleBackColor = true;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(56, 6);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(65, 12);
+            this.label21.TabIndex = 4;
+            this.label21.Text = "<Distinct>";
+            // 
+            // btn_TestSQL
+            // 
+            this.btn_TestSQL.Location = new System.Drawing.Point(43, 154);
+            this.btn_TestSQL.Name = "btn_TestSQL";
+            this.btn_TestSQL.Size = new System.Drawing.Size(78, 34);
+            this.btn_TestSQL.TabIndex = 5;
+            this.btn_TestSQL.Text = "Test SQL";
+            this.btn_TestSQL.UseVisualStyleBackColor = true;
+            // 
+            // tp_TestSQL
+            // 
+            this.tp_TestSQL.Controls.Add(this.rtx_SQLCode);
+            this.tp_TestSQL.Location = new System.Drawing.Point(4, 22);
+            this.tp_TestSQL.Name = "tp_TestSQL";
+            this.tp_TestSQL.Padding = new System.Windows.Forms.Padding(3);
+            this.tp_TestSQL.Size = new System.Drawing.Size(1041, 334);
+            this.tp_TestSQL.TabIndex = 1;
+            this.tp_TestSQL.Text = "Test SQL预览";
+            this.tp_TestSQL.UseVisualStyleBackColor = true;
+            // 
+            // rtx_SQLCode
+            // 
+            this.rtx_SQLCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtx_SQLCode.Location = new System.Drawing.Point(3, 3);
+            this.rtx_SQLCode.Name = "rtx_SQLCode";
+            this.rtx_SQLCode.Size = new System.Drawing.Size(1035, 328);
+            this.rtx_SQLCode.TabIndex = 0;
+            this.rtx_SQLCode.Text = "";
             // 
             // tp_load
             // 
             this.tp_load.Controls.Add(this.tbx_Load);
             this.tp_load.Location = new System.Drawing.Point(4, 27);
             this.tp_load.Name = "tp_load";
-            this.tp_load.Size = new System.Drawing.Size(752, 276);
+            this.tp_load.Size = new System.Drawing.Size(1055, 366);
             this.tp_load.TabIndex = 7;
             this.tp_load.Text = "Asp.net Load";
             this.tp_load.UseVisualStyleBackColor = true;
@@ -255,7 +740,7 @@
             this.tbx_Load.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_Load.Location = new System.Drawing.Point(0, 0);
             this.tbx_Load.Name = "tbx_Load";
-            this.tbx_Load.Size = new System.Drawing.Size(752, 276);
+            this.tbx_Load.Size = new System.Drawing.Size(1055, 366);
             this.tbx_Load.TabIndex = 0;
             this.tbx_Load.Text = "";
             // 
@@ -264,7 +749,7 @@
             this.tp_save.Controls.Add(this.tbx_Save);
             this.tp_save.Location = new System.Drawing.Point(4, 27);
             this.tp_save.Name = "tp_save";
-            this.tp_save.Size = new System.Drawing.Size(752, 276);
+            this.tp_save.Size = new System.Drawing.Size(1055, 366);
             this.tp_save.TabIndex = 8;
             this.tp_save.Text = "Asp.net Save";
             this.tp_save.UseVisualStyleBackColor = true;
@@ -274,7 +759,7 @@
             this.tbx_Save.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_Save.Location = new System.Drawing.Point(0, 0);
             this.tbx_Save.Name = "tbx_Save";
-            this.tbx_Save.Size = new System.Drawing.Size(752, 276);
+            this.tbx_Save.Size = new System.Drawing.Size(1055, 366);
             this.tbx_Save.TabIndex = 2;
             this.tbx_Save.Text = "";
             // 
@@ -284,7 +769,7 @@
             this.tp_VO.Controls.Add(this.panel1);
             this.tp_VO.Location = new System.Drawing.Point(4, 27);
             this.tp_VO.Name = "tp_VO";
-            this.tp_VO.Size = new System.Drawing.Size(752, 276);
+            this.tp_VO.Size = new System.Drawing.Size(1055, 366);
             this.tp_VO.TabIndex = 1;
             this.tp_VO.Text = "VO";
             this.tp_VO.UseVisualStyleBackColor = true;
@@ -295,7 +780,7 @@
             this.tbx_VO_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_VO_Code.Location = new System.Drawing.Point(0, 0);
             this.tbx_VO_Code.Name = "tbx_VO_Code";
-            this.tbx_VO_Code.Size = new System.Drawing.Size(752, 208);
+            this.tbx_VO_Code.Size = new System.Drawing.Size(1055, 298);
             this.tbx_VO_Code.TabIndex = 0;
             this.tbx_VO_Code.Text = "";
             // 
@@ -307,9 +792,9 @@
             this.panel1.Controls.Add(this.tbx_VOFile);
             this.panel1.Controls.Add(this.btn_File);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 208);
+            this.panel1.Location = new System.Drawing.Point(0, 298);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(752, 68);
+            this.panel1.Size = new System.Drawing.Size(1055, 68);
             this.panel1.TabIndex = 2;
             // 
             // label6
@@ -318,7 +803,7 @@
             this.label6.Dock = System.Windows.Forms.DockStyle.Top;
             this.label6.Location = new System.Drawing.Point(0, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(752, 1);
+            this.label6.Size = new System.Drawing.Size(1055, 1);
             this.label6.TabIndex = 5;
             // 
             // label3
@@ -362,7 +847,7 @@
             this.tp_DGV.Controls.Add(this.tbx_DGV_Code);
             this.tp_DGV.Location = new System.Drawing.Point(4, 27);
             this.tp_DGV.Name = "tp_DGV";
-            this.tp_DGV.Size = new System.Drawing.Size(752, 276);
+            this.tp_DGV.Size = new System.Drawing.Size(1055, 366);
             this.tp_DGV.TabIndex = 2;
             this.tp_DGV.Text = "DGV";
             this.tp_DGV.UseVisualStyleBackColor = true;
@@ -372,7 +857,7 @@
             this.tbx_DGV_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_DGV_Code.Location = new System.Drawing.Point(0, 0);
             this.tbx_DGV_Code.Name = "tbx_DGV_Code";
-            this.tbx_DGV_Code.Size = new System.Drawing.Size(752, 276);
+            this.tbx_DGV_Code.Size = new System.Drawing.Size(1055, 366);
             this.tbx_DGV_Code.TabIndex = 0;
             this.tbx_DGV_Code.Text = "";
             // 
@@ -381,7 +866,7 @@
             this.tp_Form.Controls.Add(this.tbx_Form_Code);
             this.tp_Form.Location = new System.Drawing.Point(4, 27);
             this.tp_Form.Name = "tp_Form";
-            this.tp_Form.Size = new System.Drawing.Size(752, 276);
+            this.tp_Form.Size = new System.Drawing.Size(1055, 366);
             this.tp_Form.TabIndex = 3;
             this.tp_Form.Text = "Create Form Object";
             this.tp_Form.UseVisualStyleBackColor = true;
@@ -391,7 +876,7 @@
             this.tbx_Form_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_Form_Code.Location = new System.Drawing.Point(0, 0);
             this.tbx_Form_Code.Name = "tbx_Form_Code";
-            this.tbx_Form_Code.Size = new System.Drawing.Size(752, 276);
+            this.tbx_Form_Code.Size = new System.Drawing.Size(1055, 366);
             this.tbx_Form_Code.TabIndex = 0;
             this.tbx_Form_Code.Text = "";
             // 
@@ -400,7 +885,7 @@
             this.tp_Field.Controls.Add(this.tbx_字段列表);
             this.tp_Field.Location = new System.Drawing.Point(4, 27);
             this.tp_Field.Name = "tp_Field";
-            this.tp_Field.Size = new System.Drawing.Size(752, 276);
+            this.tp_Field.Size = new System.Drawing.Size(1055, 366);
             this.tp_Field.TabIndex = 4;
             this.tp_Field.Text = "字段列表";
             this.tp_Field.UseVisualStyleBackColor = true;
@@ -410,7 +895,7 @@
             this.tbx_字段列表.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_字段列表.Location = new System.Drawing.Point(0, 0);
             this.tbx_字段列表.Name = "tbx_字段列表";
-            this.tbx_字段列表.Size = new System.Drawing.Size(752, 276);
+            this.tbx_字段列表.Size = new System.Drawing.Size(1055, 366);
             this.tbx_字段列表.TabIndex = 0;
             this.tbx_字段列表.Text = "";
             // 
@@ -419,7 +904,7 @@
             this.tp_TableName.Controls.Add(this.tbx_表名);
             this.tp_TableName.Location = new System.Drawing.Point(4, 27);
             this.tp_TableName.Name = "tp_TableName";
-            this.tp_TableName.Size = new System.Drawing.Size(752, 276);
+            this.tp_TableName.Size = new System.Drawing.Size(1055, 366);
             this.tp_TableName.TabIndex = 5;
             this.tp_TableName.Text = "表名";
             this.tp_TableName.UseVisualStyleBackColor = true;
@@ -429,7 +914,7 @@
             this.tbx_表名.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_表名.Location = new System.Drawing.Point(0, 0);
             this.tbx_表名.Name = "tbx_表名";
-            this.tbx_表名.Size = new System.Drawing.Size(752, 276);
+            this.tbx_表名.Size = new System.Drawing.Size(1055, 366);
             this.tbx_表名.TabIndex = 0;
             this.tbx_表名.Text = "";
             // 
@@ -439,7 +924,7 @@
             this.tp_常用数据.Controls.Add(this.tbx_常用数据);
             this.tp_常用数据.Location = new System.Drawing.Point(4, 27);
             this.tp_常用数据.Name = "tp_常用数据";
-            this.tp_常用数据.Size = new System.Drawing.Size(752, 276);
+            this.tp_常用数据.Size = new System.Drawing.Size(1055, 366);
             this.tp_常用数据.TabIndex = 6;
             this.tp_常用数据.Text = "常用数据";
             this.tp_常用数据.UseVisualStyleBackColor = true;
@@ -449,12 +934,13 @@
             this.tbx_常用数据.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbx_常用数据.Location = new System.Drawing.Point(0, 0);
             this.tbx_常用数据.Name = "tbx_常用数据";
-            this.tbx_常用数据.Size = new System.Drawing.Size(752, 276);
+            this.tbx_常用数据.Size = new System.Drawing.Size(1055, 366);
             this.tbx_常用数据.TabIndex = 0;
             this.tbx_常用数据.Text = "";
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.panel10);
             this.panel2.Controls.Add(this.btn_aspnet);
             this.panel2.Controls.Add(this.btn_table);
             this.panel2.Controls.Add(this.btn_反向SQL);
@@ -474,7 +960,7 @@
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(6);
-            this.panel2.Size = new System.Drawing.Size(760, 165);
+            this.panel2.Size = new System.Drawing.Size(1063, 165);
             this.panel2.TabIndex = 1;
             // 
             // btn_aspnet
@@ -629,49 +1115,128 @@
             this.showTopPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.showTopPanel.Location = new System.Drawing.Point(0, 37);
             this.showTopPanel.Name = "showTopPanel";
-            this.showTopPanel.Size = new System.Drawing.Size(1100, 38);
+            this.showTopPanel.Size = new System.Drawing.Size(1403, 100);
             this.showTopPanel.TabIndex = 0;
             // 
             // pneFile
             // 
-            this.pneFile.Controls.Add(this.tbx_Text);
+            this.pneFile.Controls.Add(this.tbx_MSSQL_Schema);
+            this.pneFile.Controls.Add(this.tbx_MSSQL_Pwd);
+            this.pneFile.Controls.Add(this.tbx_MSSQL_User);
+            this.pneFile.Controls.Add(this.tbx_MSSQL_Port);
+            this.pneFile.Controls.Add(this.tbx_MSSQL_ServerIP);
+            this.pneFile.Controls.Add(this.label9);
+            this.pneFile.Controls.Add(this.label10);
+            this.pneFile.Controls.Add(this.label11);
+            this.pneFile.Controls.Add(this.label12);
+            this.pneFile.Controls.Add(this.label13);
             this.pneFile.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pneFile.Location = new System.Drawing.Point(109, 1);
             this.pneFile.Name = "pneFile";
             this.pneFile.Padding = new System.Windows.Forms.Padding(9);
-            this.pneFile.Size = new System.Drawing.Size(861, 36);
+            this.pneFile.Size = new System.Drawing.Size(1164, 98);
             this.pneFile.TabIndex = 9;
             // 
-            // tbx_Text
+            // tbx_MSSQL_Schema
             // 
-            this.tbx_Text.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbx_Text.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.tbx_Text.FormattingEnabled = true;
-            this.tbx_Text.Location = new System.Drawing.Point(9, 9);
-            this.tbx_Text.Name = "tbx_Text";
-            this.tbx_Text.Size = new System.Drawing.Size(843, 20);
-            this.tbx_Text.TabIndex = 0;
+            this.tbx_MSSQL_Schema.Location = new System.Drawing.Point(102, 54);
+            this.tbx_MSSQL_Schema.Name = "tbx_MSSQL_Schema";
+            this.tbx_MSSQL_Schema.Size = new System.Drawing.Size(231, 21);
+            this.tbx_MSSQL_Schema.TabIndex = 22;
+            // 
+            // tbx_MSSQL_Pwd
+            // 
+            this.tbx_MSSQL_Pwd.Location = new System.Drawing.Point(766, 14);
+            this.tbx_MSSQL_Pwd.Name = "tbx_MSSQL_Pwd";
+            this.tbx_MSSQL_Pwd.Size = new System.Drawing.Size(254, 21);
+            this.tbx_MSSQL_Pwd.TabIndex = 21;
+            // 
+            // tbx_MSSQL_User
+            // 
+            this.tbx_MSSQL_User.Location = new System.Drawing.Point(578, 14);
+            this.tbx_MSSQL_User.Name = "tbx_MSSQL_User";
+            this.tbx_MSSQL_User.Size = new System.Drawing.Size(118, 21);
+            this.tbx_MSSQL_User.TabIndex = 20;
+            // 
+            // tbx_MSSQL_Port
+            // 
+            this.tbx_MSSQL_Port.Location = new System.Drawing.Point(395, 13);
+            this.tbx_MSSQL_Port.Name = "tbx_MSSQL_Port";
+            this.tbx_MSSQL_Port.Size = new System.Drawing.Size(100, 21);
+            this.tbx_MSSQL_Port.TabIndex = 19;
+            // 
+            // tbx_MSSQL_ServerIP
+            // 
+            this.tbx_MSSQL_ServerIP.Location = new System.Drawing.Point(102, 13);
+            this.tbx_MSSQL_ServerIP.Name = "tbx_MSSQL_ServerIP";
+            this.tbx_MSSQL_ServerIP.Size = new System.Drawing.Size(231, 21);
+            this.tbx_MSSQL_ServerIP.TabIndex = 18;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(19, 57);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "数据库：";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(719, 18);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(41, 12);
+            this.label10.TabIndex = 16;
+            this.label10.Text = "密码：";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(519, 18);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(53, 12);
+            this.label11.TabIndex = 15;
+            this.label11.Text = "用户名：";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(348, 17);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(41, 12);
+            this.label12.TabIndex = 14;
+            this.label12.Text = "端口：";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(19, 17);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(77, 12);
+            this.label13.TabIndex = 13;
+            this.label13.Text = "服务器地址：";
             // 
             // pneButton
             // 
-            this.pneButton.Controls.Add(this.btn_连接);
+            this.pneButton.Controls.Add(this.btn_ConnectMSSQL);
             this.pneButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pneButton.Location = new System.Drawing.Point(970, 1);
+            this.pneButton.Location = new System.Drawing.Point(1273, 1);
             this.pneButton.Name = "pneButton";
             this.pneButton.Padding = new System.Windows.Forms.Padding(6);
-            this.pneButton.Size = new System.Drawing.Size(130, 36);
+            this.pneButton.Size = new System.Drawing.Size(130, 98);
             this.pneButton.TabIndex = 2;
             // 
-            // btn_连接
+            // btn_ConnectMSSQL
             // 
-            this.btn_连接.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_连接.Location = new System.Drawing.Point(6, 6);
-            this.btn_连接.Name = "btn_连接";
-            this.btn_连接.Size = new System.Drawing.Size(118, 24);
-            this.btn_连接.TabIndex = 2;
-            this.btn_连接.Text = "连接数据库";
-            this.btn_连接.UseVisualStyleBackColor = true;
-            this.btn_连接.Click += new System.EventHandler(this.btn_连接_Click);
+            this.btn_ConnectMSSQL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_ConnectMSSQL.Location = new System.Drawing.Point(6, 6);
+            this.btn_ConnectMSSQL.Name = "btn_ConnectMSSQL";
+            this.btn_ConnectMSSQL.Size = new System.Drawing.Size(118, 86);
+            this.btn_ConnectMSSQL.TabIndex = 2;
+            this.btn_ConnectMSSQL.Text = "连接数据库";
+            this.btn_ConnectMSSQL.UseVisualStyleBackColor = true;
+            this.btn_ConnectMSSQL.Click += new System.EventHandler(this.btn_连接_Click);
             // 
             // pneLeft
             // 
@@ -679,7 +1244,7 @@
             this.pneLeft.Dock = System.Windows.Forms.DockStyle.Left;
             this.pneLeft.Location = new System.Drawing.Point(0, 1);
             this.pneLeft.Name = "pneLeft";
-            this.pneLeft.Size = new System.Drawing.Size(109, 36);
+            this.pneLeft.Size = new System.Drawing.Size(109, 98);
             this.pneLeft.TabIndex = 8;
             // 
             // label2
@@ -697,23 +1262,23 @@
             this.label8.Dock = System.Windows.Forms.DockStyle.Top;
             this.label8.Location = new System.Drawing.Point(0, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(1100, 1);
+            this.label8.Size = new System.Drawing.Size(1403, 1);
             this.label8.TabIndex = 4;
             // 
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.DarkGray;
             this.label4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.label4.Location = new System.Drawing.Point(0, 37);
+            this.label4.Location = new System.Drawing.Point(0, 99);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(1100, 1);
+            this.label4.Size = new System.Drawing.Size(1403, 1);
             this.label4.TabIndex = 1;
             // 
             // vline
             // 
-            this.vline.Location = new System.Drawing.Point(0, 75);
+            this.vline.Location = new System.Drawing.Point(0, 137);
             this.vline.Name = "vline";
-            this.vline.Size = new System.Drawing.Size(3, 514);
+            this.vline.Size = new System.Drawing.Size(3, 604);
             this.vline.TabIndex = 1;
             this.vline.TabStop = false;
             // 
@@ -722,9 +1287,9 @@
             this.panel3.Controls.Add(this.btn_授权码管理);
             this.panel3.Controls.Add(this.label5);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel3.Location = new System.Drawing.Point(3, 553);
+            this.panel3.Location = new System.Drawing.Point(3, 705);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1097, 36);
+            this.panel3.Size = new System.Drawing.Size(1400, 36);
             this.panel3.TabIndex = 2;
             // 
             // btn_授权码管理
@@ -743,7 +1308,7 @@
             this.label5.Dock = System.Windows.Forms.DockStyle.Top;
             this.label5.Location = new System.Drawing.Point(0, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(1097, 1);
+            this.label5.Size = new System.Drawing.Size(1400, 1);
             this.label5.TabIndex = 2;
             // 
             // menuStrip1
@@ -753,7 +1318,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.menuStrip1.Size = new System.Drawing.Size(1100, 37);
+            this.menuStrip1.Size = new System.Drawing.Size(1403, 37);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -765,11 +1330,118 @@
             this.menuItem_MySQL.Text = "MySQL Util";
             this.menuItem_MySQL.Click += new System.EventHandler(this.menuItem_MySQL_Click);
             // 
+            // panel8
+            // 
+            this.panel8.Controls.Add(this.dgv_From);
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel8.Location = new System.Drawing.Point(73, 0);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(521, 164);
+            this.panel8.TabIndex = 12;
+            // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.btn_AddJoin);
+            this.panel9.Controls.Add(this.btn_DelJoin);
+            this.panel9.Controls.Add(this.label14);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel9.Location = new System.Drawing.Point(0, 0);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(73, 164);
+            this.panel9.TabIndex = 13;
+            // 
+            // panel10
+            // 
+            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel10.Controls.Add(this.dataGridView1);
+            this.panel10.Location = new System.Drawing.Point(729, 13);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(320, 143);
+            this.panel10.TabIndex = 17;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeColumns = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn3});
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.MultiSelect = false;
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.RowTemplate.Height = 23;
+            this.dataGridView1.Size = new System.Drawing.Size(320, 143);
+            this.dataGridView1.TabIndex = 3;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.HeaderText = "Table name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.HeaderText = "Table nickname";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.ReadOnly = true;
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.AllowUserToAddRows = false;
+            this.dataGridView2.AllowUserToDeleteRows = false;
+            this.dataGridView2.AllowUserToResizeColumns = false;
+            this.dataGridView2.AllowUserToResizeRows = false;
+            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column11,
+            this.Column12,
+            this.Column13});
+            this.dataGridView2.Location = new System.Drawing.Point(127, 0);
+            this.dataGridView2.MultiSelect = false;
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.ReadOnly = true;
+            this.dataGridView2.RowHeadersVisible = false;
+            this.dataGridView2.RowTemplate.Height = 23;
+            this.dataGridView2.Size = new System.Drawing.Size(308, 325);
+            this.dataGridView2.TabIndex = 7;
+            // 
+            // Column11
+            // 
+            this.Column11.HeaderText = "<Func>";
+            this.Column11.Name = "Column11";
+            this.Column11.ReadOnly = true;
+            // 
+            // Column12
+            // 
+            this.Column12.HeaderText = "<Field.Name>";
+            this.Column12.Name = "Column12";
+            this.Column12.ReadOnly = true;
+            // 
+            // Column13
+            // 
+            this.Column13.HeaderText = "<AS>";
+            this.Column13.Name = "Column13";
+            this.Column13.ReadOnly = true;
+            // 
             // Form_MSSQL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1100, 589);
+            this.ClientSize = new System.Drawing.Size(1403, 741);
             this.Controls.Add(this.showContentPanel);
             this.Controls.Add(this.showLeftPanel);
             this.Controls.Add(this.panel3);
@@ -788,6 +1460,27 @@
             this.showContentPanel.ResumeLayout(false);
             this.showPage.ResumeLayout(false);
             this.tp_DAO.ResumeLayout(false);
+            this.tp_selectBuilder.ResumeLayout(false);
+            this.tabControl3.ResumeLayout(false);
+            this.tp_VisualEditor.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_From)).EndInit();
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            this.splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_WhereCondition)).EndInit();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
+            this.tp_TestSQL.ResumeLayout(false);
             this.tp_load.ResumeLayout(false);
             this.tp_save.ResumeLayout(false);
             this.tp_VO.ResumeLayout(false);
@@ -802,12 +1495,18 @@
             this.panel2.PerformLayout();
             this.showTopPanel.ResumeLayout(false);
             this.pneFile.ResumeLayout(false);
+            this.pneFile.PerformLayout();
             this.pneButton.ResumeLayout(false);
             this.pneLeft.ResumeLayout(false);
             this.pneLeft.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.panel8.ResumeLayout(false);
+            this.panel9.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -819,7 +1518,7 @@
         private System.Windows.Forms.Panel showContentPanel;
         private System.Windows.Forms.Panel showTopPanel;
         private System.Windows.Forms.RichTextBox tbx_DAO_Code;
-        private System.Windows.Forms.Button btn_连接;
+        private System.Windows.Forms.Button btn_ConnectMSSQL;
         private System.Windows.Forms.Label txt_类前缀;
         private System.Windows.Forms.TextBox tbx_类前缀;
         private System.Windows.Forms.Button btn_选择文件;
@@ -850,7 +1549,7 @@
         private System.Windows.Forms.TextBox tbx_SavePath_VO;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox lst_表;
+        private System.Windows.Forms.ListBox list_Schema;
         private System.Windows.Forms.Button btn_VO;
         private System.Windows.Forms.Button btn_DAO;
         private System.Windows.Forms.TextBox tbx_VOFile;
@@ -870,7 +1569,7 @@
         private System.Windows.Forms.TabControl showDBPage;
         private System.Windows.Forms.TabPage tp_表;
         private System.Windows.Forms.TabPage tp_存储过程;
-        private System.Windows.Forms.ListBox lst_存储过程;
+        private System.Windows.Forms.ListBox list_StoreProcedure;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuItem_MySQL;
         private System.Windows.Forms.Label label8;
@@ -879,7 +1578,64 @@
         private System.Windows.Forms.RichTextBox tbx_Load;
         private System.Windows.Forms.TabPage tp_save;
         private System.Windows.Forms.RichTextBox tbx_Save;
-        private System.Windows.Forms.ComboBox tbx_Text;
+        private System.Windows.Forms.TextBox tbx_MSSQL_Schema;
+        private System.Windows.Forms.TextBox tbx_MSSQL_Pwd;
+        private System.Windows.Forms.TextBox tbx_MSSQL_User;
+        private System.Windows.Forms.TextBox tbx_MSSQL_Port;
+        private System.Windows.Forms.TextBox tbx_MSSQL_ServerIP;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TabPage tp_selectBuilder;
+        private System.Windows.Forms.TabControl tabControl3;
+        private System.Windows.Forms.TabPage tp_VisualEditor;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.DataGridView dgv_From;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column8;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column9;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column10;
+        private System.Windows.Forms.Button btn_AddJoin;
+        private System.Windows.Forms.Button btn_DelJoin;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.DataGridView dgv_WhereCondition;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Button btn_AddLink;
+        private System.Windows.Forms.Button btn_DelLink;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.RichTextBox rtx_ORDERBY;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Button btn_BuildSQL;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Button btn_TestSQL;
+        private System.Windows.Forms.TabPage tp_TestSQL;
+        private System.Windows.Forms.RichTextBox rtx_SQLCode;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.Panel panel9;
+        private System.Windows.Forms.Panel panel10;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
     }
 }
 

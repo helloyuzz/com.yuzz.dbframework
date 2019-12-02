@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Data.OleDb;
 using System.Data;
-namespace com.yuzz.DbGenerator.vo {
+namespace com.yuzz.dblibrary
+{
     [Serializable]
-    public class SmColumn {
+    public class SmField {
         public virtual string Name {
             get;
             set;

@@ -13,9 +13,12 @@ namespace com.yuzz.DbGenerator {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
             //Application.Run(new Form_Main());
+            //Application.Run(new Form_Startup());
             //Application.Run(new Form_MySQL());
-            Application.Run(new Form_Startup());
+            //Application.Run(new Form_SQLBuilder());
+            Application.Run(new Form_MSSQL());
         }
     }
 }

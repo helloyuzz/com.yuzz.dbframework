@@ -69,5 +69,15 @@ namespace com.yuzz.DbGenerator.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap mysql_512px_1168793_easyicon_net {
+            get {
+                object obj = ResourceManager.GetObject("mysql_512px_1168793_easyicon.net", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
