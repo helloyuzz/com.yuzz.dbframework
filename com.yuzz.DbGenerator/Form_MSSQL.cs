@@ -631,6 +631,7 @@ namespace com.yuzz.DbGenerator {
 
         private void btn_连接_Click(object sender,EventArgs e) {
             this.Cursor = Cursors.WaitCursor;
+            Application.DoEvents();
 
             using(SqlConnection dbConn = new SqlConnection(sqlString)) {
                 try {
@@ -644,6 +645,7 @@ namespace com.yuzz.DbGenerator {
                     tbx_MSSQL_ServerIP.Focus();
                 }
             }
+            Application.DoEvents();
             this.Cursor = Cursors.Default;
         }
 
@@ -1190,6 +1192,13 @@ namespace com.yuzz.DbGenerator {
             tbx_Save.Clear();
             tbx_Save.AppendText(txt_save.ToString());
             showPage.SelectedTab = tp_load;
+        }
+
+        private void list_Schema_DoubleClick(object sender,EventArgs e) {
+            SmTable smTable = smTableList.Find(t => t.TableName.Equals(list_Schema.Text));
+
+            dgv_SourceTable.Rows.Add();
+            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells[0].Value = smTable.TableName;
         }
     }
 }

@@ -25,9 +25,9 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_MSSQL));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.showLeftPanel = new System.Windows.Forms.Panel();
             this.showDBPage = new System.Windows.Forms.TabControl();
             this.tp_表 = new System.Windows.Forms.TabPage();
@@ -39,10 +39,11 @@
             this.showPage = new System.Windows.Forms.TabControl();
             this.tp_DAO = new System.Windows.Forms.TabPage();
             this.tbx_DAO_Code = new System.Windows.Forms.RichTextBox();
-            this.tp_selectBuilder = new System.Windows.Forms.TabPage();
+            this.tp_VisualSQLBuilder = new System.Windows.Forms.TabPage();
             this.tabControl3 = new System.Windows.Forms.TabControl();
             this.tp_VisualEditor = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.panel8 = new System.Windows.Forms.Panel();
             this.dgv_From = new System.Windows.Forms.DataGridView();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -51,6 +52,7 @@
             this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel9 = new System.Windows.Forms.Panel();
             this.btn_AddJoin = new System.Windows.Forms.Button();
             this.btn_DelJoin = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
@@ -71,6 +73,10 @@
             this.label19 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label20 = new System.Windows.Forms.Label();
             this.btn_BuildSQL = new System.Windows.Forms.Button();
             this.label21 = new System.Windows.Forms.Label();
@@ -100,6 +106,10 @@
             this.tp_常用数据 = new System.Windows.Forms.TabPage();
             this.tbx_常用数据 = new System.Windows.Forms.RichTextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.dgv_SourceTable = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btn_aspnet = new System.Windows.Forms.Button();
             this.btn_table = new System.Windows.Forms.Button();
             this.btn_反向SQL = new System.Windows.Forms.Button();
@@ -140,16 +150,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_MySQL = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel8 = new System.Windows.Forms.Panel();
-            this.panel9 = new System.Windows.Forms.Panel();
-            this.panel10 = new System.Windows.Forms.Panel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.showLeftPanel.SuspendLayout();
             this.showDBPage.SuspendLayout();
             this.tp_表.SuspendLayout();
@@ -157,14 +157,16 @@
             this.showContentPanel.SuspendLayout();
             this.showPage.SuspendLayout();
             this.tp_DAO.SuspendLayout();
-            this.tp_selectBuilder.SuspendLayout();
+            this.tp_VisualSQLBuilder.SuspendLayout();
             this.tabControl3.SuspendLayout();
             this.tp_VisualEditor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.panel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_From)).BeginInit();
+            this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
@@ -173,6 +175,7 @@
             this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.tp_TestSQL.SuspendLayout();
             this.tp_load.SuspendLayout();
             this.tp_save.SuspendLayout();
@@ -184,17 +187,14 @@
             this.tp_TableName.SuspendLayout();
             this.tp_常用数据.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_SourceTable)).BeginInit();
             this.showTopPanel.SuspendLayout();
             this.pneFile.SuspendLayout();
             this.pneButton.SuspendLayout();
             this.pneLeft.SuspendLayout();
             this.panel3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.panel8.SuspendLayout();
-            this.panel9.SuspendLayout();
-            this.panel10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // showLeftPanel
@@ -241,6 +241,7 @@
             this.list_Schema.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.list_Schema.Size = new System.Drawing.Size(317, 536);
             this.list_Schema.TabIndex = 8;
+            this.list_Schema.DoubleClick += new System.EventHandler(this.list_Schema_DoubleClick);
             // 
             // tp_存储过程
             // 
@@ -285,7 +286,7 @@
             // showPage
             // 
             this.showPage.Controls.Add(this.tp_DAO);
-            this.showPage.Controls.Add(this.tp_selectBuilder);
+            this.showPage.Controls.Add(this.tp_VisualSQLBuilder);
             this.showPage.Controls.Add(this.tp_load);
             this.showPage.Controls.Add(this.tp_save);
             this.showPage.Controls.Add(this.tp_VO);
@@ -323,16 +324,16 @@
             this.tbx_DAO_Code.TabIndex = 0;
             this.tbx_DAO_Code.Text = "";
             // 
-            // tp_selectBuilder
+            // tp_VisualSQLBuilder
             // 
-            this.tp_selectBuilder.Controls.Add(this.tabControl3);
-            this.tp_selectBuilder.Location = new System.Drawing.Point(4, 27);
-            this.tp_selectBuilder.Name = "tp_selectBuilder";
-            this.tp_selectBuilder.Padding = new System.Windows.Forms.Padding(3);
-            this.tp_selectBuilder.Size = new System.Drawing.Size(1055, 366);
-            this.tp_selectBuilder.TabIndex = 9;
-            this.tp_selectBuilder.Text = "select Builder";
-            this.tp_selectBuilder.UseVisualStyleBackColor = true;
+            this.tp_VisualSQLBuilder.Controls.Add(this.tabControl3);
+            this.tp_VisualSQLBuilder.Location = new System.Drawing.Point(4, 27);
+            this.tp_VisualSQLBuilder.Name = "tp_VisualSQLBuilder";
+            this.tp_VisualSQLBuilder.Padding = new System.Windows.Forms.Padding(3);
+            this.tp_VisualSQLBuilder.Size = new System.Drawing.Size(1055, 366);
+            this.tp_VisualSQLBuilder.TabIndex = 9;
+            this.tp_VisualSQLBuilder.Text = "Visual SQL Builder";
+            this.tp_VisualSQLBuilder.UseVisualStyleBackColor = true;
             // 
             // tabControl3
             // 
@@ -375,6 +376,15 @@
             this.splitContainer2.Size = new System.Drawing.Size(594, 328);
             this.splitContainer2.SplitterDistance = 164;
             this.splitContainer2.TabIndex = 11;
+            // 
+            // panel8
+            // 
+            this.panel8.Controls.Add(this.dgv_From);
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel8.Location = new System.Drawing.Point(73, 0);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(521, 164);
+            this.panel8.TabIndex = 12;
             // 
             // dgv_From
             // 
@@ -446,6 +456,17 @@
             this.Column10.Name = "Column10";
             this.Column10.ReadOnly = true;
             // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.btn_AddJoin);
+            this.panel9.Controls.Add(this.btn_DelJoin);
+            this.panel9.Controls.Add(this.label14);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel9.Location = new System.Drawing.Point(0, 0);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(73, 164);
+            this.panel9.TabIndex = 13;
+            // 
             // btn_AddJoin
             // 
             this.btn_AddJoin.Location = new System.Drawing.Point(11, 53);
@@ -471,6 +492,7 @@
             this.label14.ForeColor = System.Drawing.Color.RoyalBlue;
             this.label14.Location = new System.Drawing.Point(0, 0);
             this.label14.Name = "label14";
+            this.label14.Padding = new System.Windows.Forms.Padding(10, 5, 0, 0);
             this.label14.Size = new System.Drawing.Size(73, 164);
             this.label14.TabIndex = 0;
             this.label14.Text = "FROM";
@@ -522,8 +544,8 @@
             // 
             // Column1
             // 
-            dataGridViewCellStyle25.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column1.DefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle4;
             this.Column1.HeaderText = "<->";
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
@@ -531,8 +553,8 @@
             // 
             // Column2
             // 
-            dataGridViewCellStyle26.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column2.DefaultCellStyle = dataGridViewCellStyle26;
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle5;
             this.Column2.HeaderText = "KeyWord";
             this.Column2.Name = "Column2";
             this.Column2.ReadOnly = true;
@@ -540,8 +562,8 @@
             // 
             // Column3
             // 
-            dataGridViewCellStyle27.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column3.DefaultCellStyle = dataGridViewCellStyle27;
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle6;
             this.Column3.HeaderText = "<->";
             this.Column3.Name = "Column3";
             this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -666,6 +688,49 @@
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(441, 328);
             this.panel7.TabIndex = 12;
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.AllowUserToAddRows = false;
+            this.dataGridView2.AllowUserToDeleteRows = false;
+            this.dataGridView2.AllowUserToResizeColumns = false;
+            this.dataGridView2.AllowUserToResizeRows = false;
+            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column11,
+            this.Column12,
+            this.Column13});
+            this.dataGridView2.Location = new System.Drawing.Point(127, 0);
+            this.dataGridView2.MultiSelect = false;
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.ReadOnly = true;
+            this.dataGridView2.RowHeadersVisible = false;
+            this.dataGridView2.RowTemplate.Height = 23;
+            this.dataGridView2.Size = new System.Drawing.Size(308, 325);
+            this.dataGridView2.TabIndex = 7;
+            // 
+            // Column11
+            // 
+            this.Column11.HeaderText = "<Func>";
+            this.Column11.Name = "Column11";
+            this.Column11.ReadOnly = true;
+            // 
+            // Column12
+            // 
+            this.Column12.HeaderText = "<Field.Name>";
+            this.Column12.Name = "Column12";
+            this.Column12.ReadOnly = true;
+            // 
+            // Column13
+            // 
+            this.Column13.HeaderText = "<AS>";
+            this.Column13.Name = "Column13";
+            this.Column13.ReadOnly = true;
             // 
             // label20
             // 
@@ -962,6 +1027,50 @@
             this.panel2.Padding = new System.Windows.Forms.Padding(6);
             this.panel2.Size = new System.Drawing.Size(1063, 165);
             this.panel2.TabIndex = 1;
+            // 
+            // panel10
+            // 
+            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel10.Controls.Add(this.dgv_SourceTable);
+            this.panel10.Location = new System.Drawing.Point(729, 13);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(320, 143);
+            this.panel10.TabIndex = 17;
+            // 
+            // dgv_SourceTable
+            // 
+            this.dgv_SourceTable.AllowUserToAddRows = false;
+            this.dgv_SourceTable.AllowUserToDeleteRows = false;
+            this.dgv_SourceTable.AllowUserToResizeColumns = false;
+            this.dgv_SourceTable.AllowUserToResizeRows = false;
+            this.dgv_SourceTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgv_SourceTable.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgv_SourceTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgv_SourceTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_SourceTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn3});
+            this.dgv_SourceTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv_SourceTable.Location = new System.Drawing.Point(0, 0);
+            this.dgv_SourceTable.MultiSelect = false;
+            this.dgv_SourceTable.Name = "dgv_SourceTable";
+            this.dgv_SourceTable.ReadOnly = true;
+            this.dgv_SourceTable.RowHeadersVisible = false;
+            this.dgv_SourceTable.RowTemplate.Height = 23;
+            this.dgv_SourceTable.Size = new System.Drawing.Size(320, 143);
+            this.dgv_SourceTable.TabIndex = 3;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.HeaderText = "Table name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.HeaderText = "Table nickname";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.ReadOnly = true;
             // 
             // btn_aspnet
             // 
@@ -1330,113 +1439,6 @@
             this.menuItem_MySQL.Text = "MySQL Util";
             this.menuItem_MySQL.Click += new System.EventHandler(this.menuItem_MySQL_Click);
             // 
-            // panel8
-            // 
-            this.panel8.Controls.Add(this.dgv_From);
-            this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel8.Location = new System.Drawing.Point(73, 0);
-            this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(521, 164);
-            this.panel8.TabIndex = 12;
-            // 
-            // panel9
-            // 
-            this.panel9.Controls.Add(this.btn_AddJoin);
-            this.panel9.Controls.Add(this.btn_DelJoin);
-            this.panel9.Controls.Add(this.label14);
-            this.panel9.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel9.Location = new System.Drawing.Point(0, 0);
-            this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(73, 164);
-            this.panel9.TabIndex = 13;
-            // 
-            // panel10
-            // 
-            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel10.Controls.Add(this.dataGridView1);
-            this.panel10.Location = new System.Drawing.Point(729, 13);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(320, 143);
-            this.panel10.TabIndex = 17;
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeColumns = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn3});
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(320, 143);
-            this.dataGridView1.TabIndex = 3;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Table name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.HeaderText = "Table nickname";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.ReadOnly = true;
-            // 
-            // dataGridView2
-            // 
-            this.dataGridView2.AllowUserToAddRows = false;
-            this.dataGridView2.AllowUserToDeleteRows = false;
-            this.dataGridView2.AllowUserToResizeColumns = false;
-            this.dataGridView2.AllowUserToResizeRows = false;
-            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column11,
-            this.Column12,
-            this.Column13});
-            this.dataGridView2.Location = new System.Drawing.Point(127, 0);
-            this.dataGridView2.MultiSelect = false;
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.RowHeadersVisible = false;
-            this.dataGridView2.RowTemplate.Height = 23;
-            this.dataGridView2.Size = new System.Drawing.Size(308, 325);
-            this.dataGridView2.TabIndex = 7;
-            // 
-            // Column11
-            // 
-            this.Column11.HeaderText = "<Func>";
-            this.Column11.Name = "Column11";
-            this.Column11.ReadOnly = true;
-            // 
-            // Column12
-            // 
-            this.Column12.HeaderText = "<Field.Name>";
-            this.Column12.Name = "Column12";
-            this.Column12.ReadOnly = true;
-            // 
-            // Column13
-            // 
-            this.Column13.HeaderText = "<AS>";
-            this.Column13.Name = "Column13";
-            this.Column13.ReadOnly = true;
-            // 
             // Form_MSSQL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1460,14 +1462,16 @@
             this.showContentPanel.ResumeLayout(false);
             this.showPage.ResumeLayout(false);
             this.tp_DAO.ResumeLayout(false);
-            this.tp_selectBuilder.ResumeLayout(false);
+            this.tp_VisualSQLBuilder.ResumeLayout(false);
             this.tabControl3.ResumeLayout(false);
             this.tp_VisualEditor.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.panel8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_From)).EndInit();
+            this.panel9.ResumeLayout(false);
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel2.ResumeLayout(false);
             this.splitContainer3.Panel2.PerformLayout();
@@ -1480,6 +1484,7 @@
             this.panel6.PerformLayout();
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.tp_TestSQL.ResumeLayout(false);
             this.tp_load.ResumeLayout(false);
             this.tp_save.ResumeLayout(false);
@@ -1493,6 +1498,8 @@
             this.tp_常用数据.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_SourceTable)).EndInit();
             this.showTopPanel.ResumeLayout(false);
             this.pneFile.ResumeLayout(false);
             this.pneFile.PerformLayout();
@@ -1502,11 +1509,6 @@
             this.panel3.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.panel8.ResumeLayout(false);
-            this.panel9.ResumeLayout(false);
-            this.panel10.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1588,7 +1590,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TabPage tp_selectBuilder;
+        private System.Windows.Forms.TabPage tp_VisualSQLBuilder;
         private System.Windows.Forms.TabControl tabControl3;
         private System.Windows.Forms.TabPage tp_VisualEditor;
         private System.Windows.Forms.SplitContainer splitContainer2;
@@ -1629,7 +1631,7 @@
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.Panel panel10;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgv_SourceTable;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.DataGridView dataGridView2;
