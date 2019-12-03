@@ -19,7 +19,7 @@ namespace com.yuzz.dblibrary
             get;
             set;
         }
-        public virtual string Nickname { get; set; }
+        public virtual string Nickname { get; set; } = "";
         public virtual SmField PrimaryKey {
             get;
             set;
@@ -28,5 +28,6 @@ namespace com.yuzz.dblibrary
             get;
             set;
         }
+       public virtual bool ActiveUsing { get; set; }
     }
 }

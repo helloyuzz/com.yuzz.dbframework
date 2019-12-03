@@ -25,9 +25,11 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_MSSQL));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.showLeftPanel = new System.Windows.Forms.Panel();
             this.showDBPage = new System.Windows.Forms.TabControl();
             this.tp_表 = new System.Windows.Forms.TabPage();
@@ -73,10 +75,7 @@
             this.label19 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.panel7 = new System.Windows.Forms.Panel();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.Column11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgv_Select = new System.Windows.Forms.DataGridView();
             this.label20 = new System.Windows.Forms.Label();
             this.btn_BuildSQL = new System.Windows.Forms.Button();
             this.label21 = new System.Windows.Forms.Label();
@@ -108,8 +107,10 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel10 = new System.Windows.Forms.Panel();
             this.dgv_SourceTable = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.id_Cell = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.name_Cell = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nickName_Cell = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.del_Cell = new System.Windows.Forms.DataGridViewLinkColumn();
             this.btn_aspnet = new System.Windows.Forms.Button();
             this.btn_table = new System.Windows.Forms.Button();
             this.btn_反向SQL = new System.Windows.Forms.Button();
@@ -127,6 +128,7 @@
             this.txt_类前缀 = new System.Windows.Forms.Label();
             this.showTopPanel = new System.Windows.Forms.Panel();
             this.pneFile = new System.Windows.Forms.Panel();
+            this.btn_Invoker = new System.Windows.Forms.Button();
             this.tbx_MSSQL_Schema = new System.Windows.Forms.TextBox();
             this.tbx_MSSQL_Pwd = new System.Windows.Forms.TextBox();
             this.tbx_MSSQL_User = new System.Windows.Forms.TextBox();
@@ -150,6 +152,9 @@
             this.label5 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_MySQL = new System.Windows.Forms.ToolStripMenuItem();
+            this.dgv_Select_FuncCell = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.dgv_Select_FieldNameCell = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.dgv_Select_ASCell = new System.Windows.Forms.DataGridViewLinkColumn();
             this.showLeftPanel.SuspendLayout();
             this.showDBPage.SuspendLayout();
             this.tp_表.SuspendLayout();
@@ -175,7 +180,7 @@
             this.panel5.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_Select)).BeginInit();
             this.tp_TestSQL.SuspendLayout();
             this.tp_load.SuspendLayout();
             this.tp_save.SuspendLayout();
@@ -361,7 +366,7 @@
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(444, 3);
+            this.splitContainer2.Location = new System.Drawing.Point(514, 3);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -373,7 +378,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
-            this.splitContainer2.Size = new System.Drawing.Size(594, 328);
+            this.splitContainer2.Size = new System.Drawing.Size(524, 328);
             this.splitContainer2.SplitterDistance = 164;
             this.splitContainer2.TabIndex = 11;
             // 
@@ -383,7 +388,7 @@
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel8.Location = new System.Drawing.Point(73, 0);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(521, 164);
+            this.panel8.Size = new System.Drawing.Size(451, 164);
             this.panel8.TabIndex = 12;
             // 
             // dgv_From
@@ -411,7 +416,7 @@
             this.dgv_From.ReadOnly = true;
             this.dgv_From.RowHeadersVisible = false;
             this.dgv_From.RowTemplate.Height = 23;
-            this.dgv_From.Size = new System.Drawing.Size(521, 164);
+            this.dgv_From.Size = new System.Drawing.Size(451, 164);
             this.dgv_From.TabIndex = 1;
             // 
             // Column4
@@ -515,8 +520,8 @@
             this.splitContainer3.Panel2.Controls.Add(this.textBox2);
             this.splitContainer3.Panel2.Controls.Add(this.label19);
             this.splitContainer3.Panel2.Controls.Add(this.textBox3);
-            this.splitContainer3.Size = new System.Drawing.Size(594, 160);
-            this.splitContainer3.SplitterDistance = 381;
+            this.splitContainer3.Size = new System.Drawing.Size(524, 160);
+            this.splitContainer3.SplitterDistance = 336;
             this.splitContainer3.TabIndex = 0;
             // 
             // dgv_WhereCondition
@@ -539,13 +544,13 @@
             this.dgv_WhereCondition.Name = "dgv_WhereCondition";
             this.dgv_WhereCondition.RowHeadersVisible = false;
             this.dgv_WhereCondition.RowTemplate.Height = 23;
-            this.dgv_WhereCondition.Size = new System.Drawing.Size(308, 160);
+            this.dgv_WhereCondition.Size = new System.Drawing.Size(263, 160);
             this.dgv_WhereCondition.TabIndex = 9;
             // 
             // Column1
             // 
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column1.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle1;
             this.Column1.HeaderText = "<->";
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
@@ -553,8 +558,8 @@
             // 
             // Column2
             // 
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column2.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle2;
             this.Column2.HeaderText = "KeyWord";
             this.Column2.Name = "Column2";
             this.Column2.ReadOnly = true;
@@ -562,8 +567,8 @@
             // 
             // Column3
             // 
-            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column3.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle3;
             this.Column3.HeaderText = "<->";
             this.Column3.Name = "Column3";
             this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -617,7 +622,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(0, 0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(209, 100);
+            this.panel6.Size = new System.Drawing.Size(184, 100);
             this.panel6.TabIndex = 9;
             // 
             // rtx_ORDERBY
@@ -626,7 +631,7 @@
             this.rtx_ORDERBY.Location = new System.Drawing.Point(61, 0);
             this.rtx_ORDERBY.Name = "rtx_ORDERBY";
             this.rtx_ORDERBY.ReadOnly = true;
-            this.rtx_ORDERBY.Size = new System.Drawing.Size(148, 100);
+            this.rtx_ORDERBY.Size = new System.Drawing.Size(123, 100);
             this.rtx_ORDERBY.TabIndex = 2;
             this.rtx_ORDERBY.Text = "";
             // 
@@ -678,7 +683,7 @@
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.dataGridView2);
+            this.panel7.Controls.Add(this.dgv_Select);
             this.panel7.Controls.Add(this.label20);
             this.panel7.Controls.Add(this.btn_BuildSQL);
             this.panel7.Controls.Add(this.label21);
@@ -686,51 +691,41 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel7.Location = new System.Drawing.Point(3, 3);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(441, 328);
+            this.panel7.Size = new System.Drawing.Size(511, 328);
             this.panel7.TabIndex = 12;
             // 
-            // dataGridView2
+            // dgv_Select
             // 
-            this.dataGridView2.AllowUserToAddRows = false;
-            this.dataGridView2.AllowUserToDeleteRows = false;
-            this.dataGridView2.AllowUserToResizeColumns = false;
-            this.dataGridView2.AllowUserToResizeRows = false;
-            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dgv_Select.AllowUserToAddRows = false;
+            this.dgv_Select.AllowUserToDeleteRows = false;
+            this.dgv_Select.AllowUserToResizeColumns = false;
+            this.dgv_Select.AllowUserToResizeRows = false;
+            this.dgv_Select.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.dataGridView2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Column11,
-            this.Column12,
-            this.Column13});
-            this.dataGridView2.Location = new System.Drawing.Point(127, 0);
-            this.dataGridView2.MultiSelect = false;
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.RowHeadersVisible = false;
-            this.dataGridView2.RowTemplate.Height = 23;
-            this.dataGridView2.Size = new System.Drawing.Size(308, 325);
-            this.dataGridView2.TabIndex = 7;
-            // 
-            // Column11
-            // 
-            this.Column11.HeaderText = "<Func>";
-            this.Column11.Name = "Column11";
-            this.Column11.ReadOnly = true;
-            // 
-            // Column12
-            // 
-            this.Column12.HeaderText = "<Field.Name>";
-            this.Column12.Name = "Column12";
-            this.Column12.ReadOnly = true;
-            // 
-            // Column13
-            // 
-            this.Column13.HeaderText = "<AS>";
-            this.Column13.Name = "Column13";
-            this.Column13.ReadOnly = true;
+            this.dgv_Select.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgv_Select.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgv_Select.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgv_Select.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgv_Select.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgv_Select_FuncCell,
+            this.dgv_Select_FieldNameCell,
+            this.dgv_Select_ASCell});
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_Select.DefaultCellStyle = dataGridViewCellStyle5;
+            this.dgv_Select.Location = new System.Drawing.Point(127, 0);
+            this.dgv_Select.MultiSelect = false;
+            this.dgv_Select.Name = "dgv_Select";
+            this.dgv_Select.ReadOnly = true;
+            this.dgv_Select.RowHeadersVisible = false;
+            this.dgv_Select.RowTemplate.Height = 23;
+            this.dgv_Select.Size = new System.Drawing.Size(378, 325);
+            this.dgv_Select.TabIndex = 7;
             // 
             // label20
             // 
@@ -1030,7 +1025,8 @@
             // 
             // panel10
             // 
-            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel10.Controls.Add(this.dgv_SourceTable);
             this.panel10.Location = new System.Drawing.Point(729, 13);
             this.panel10.Name = "panel10";
@@ -1048,29 +1044,46 @@
             this.dgv_SourceTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgv_SourceTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_SourceTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn3});
+            this.id_Cell,
+            this.name_Cell,
+            this.nickName_Cell,
+            this.del_Cell});
             this.dgv_SourceTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv_SourceTable.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgv_SourceTable.Location = new System.Drawing.Point(0, 0);
             this.dgv_SourceTable.MultiSelect = false;
             this.dgv_SourceTable.Name = "dgv_SourceTable";
-            this.dgv_SourceTable.ReadOnly = true;
             this.dgv_SourceTable.RowHeadersVisible = false;
             this.dgv_SourceTable.RowTemplate.Height = 23;
             this.dgv_SourceTable.Size = new System.Drawing.Size(320, 143);
             this.dgv_SourceTable.TabIndex = 3;
+            this.dgv_SourceTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_SourceTable_CellContentClick);
+            this.dgv_SourceTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_SourceTable_CellEndEdit);
             // 
-            // dataGridViewTextBoxColumn1
+            // id_Cell
             // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Table name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.id_Cell.HeaderText = "序号";
+            this.id_Cell.Name = "id_Cell";
+            this.id_Cell.ReadOnly = true;
             // 
-            // dataGridViewTextBoxColumn3
+            // name_Cell
             // 
-            this.dataGridViewTextBoxColumn3.HeaderText = "Table nickname";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.ReadOnly = true;
+            this.name_Cell.HeaderText = "Table name";
+            this.name_Cell.Name = "name_Cell";
+            this.name_Cell.ReadOnly = true;
+            // 
+            // nickName_Cell
+            // 
+            this.nickName_Cell.HeaderText = "Table nickname";
+            this.nickName_Cell.Name = "nickName_Cell";
+            // 
+            // del_Cell
+            // 
+            this.del_Cell.HeaderText = "删除";
+            this.del_Cell.Name = "del_Cell";
+            this.del_Cell.ReadOnly = true;
+            this.del_Cell.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.del_Cell.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // btn_aspnet
             // 
@@ -1229,6 +1242,7 @@
             // 
             // pneFile
             // 
+            this.pneFile.Controls.Add(this.btn_Invoker);
             this.pneFile.Controls.Add(this.tbx_MSSQL_Schema);
             this.pneFile.Controls.Add(this.tbx_MSSQL_Pwd);
             this.pneFile.Controls.Add(this.tbx_MSSQL_User);
@@ -1245,6 +1259,16 @@
             this.pneFile.Padding = new System.Windows.Forms.Padding(9);
             this.pneFile.Size = new System.Drawing.Size(1164, 98);
             this.pneFile.TabIndex = 9;
+            // 
+            // btn_Invoker
+            // 
+            this.btn_Invoker.Location = new System.Drawing.Point(766, 46);
+            this.btn_Invoker.Name = "btn_Invoker";
+            this.btn_Invoker.Size = new System.Drawing.Size(254, 40);
+            this.btn_Invoker.TabIndex = 23;
+            this.btn_Invoker.Text = "Func Invoker";
+            this.btn_Invoker.UseVisualStyleBackColor = true;
+            this.btn_Invoker.Click += new System.EventHandler(this.btn_Invoker_Click);
             // 
             // tbx_MSSQL_Schema
             // 
@@ -1439,6 +1463,32 @@
             this.menuItem_MySQL.Text = "MySQL Util";
             this.menuItem_MySQL.Click += new System.EventHandler(this.menuItem_MySQL_Click);
             // 
+            // dgv_Select_FuncCell
+            // 
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dgv_Select_FuncCell.DefaultCellStyle = dataGridViewCellStyle4;
+            this.dgv_Select_FuncCell.HeaderText = "<Func>";
+            this.dgv_Select_FuncCell.Name = "dgv_Select_FuncCell";
+            this.dgv_Select_FuncCell.ReadOnly = true;
+            this.dgv_Select_FuncCell.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_Select_FuncCell.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // dgv_Select_FieldNameCell
+            // 
+            this.dgv_Select_FieldNameCell.HeaderText = "<Field.Name>";
+            this.dgv_Select_FieldNameCell.Name = "dgv_Select_FieldNameCell";
+            this.dgv_Select_FieldNameCell.ReadOnly = true;
+            this.dgv_Select_FieldNameCell.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_Select_FieldNameCell.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // dgv_Select_ASCell
+            // 
+            this.dgv_Select_ASCell.HeaderText = "<AS>";
+            this.dgv_Select_ASCell.Name = "dgv_Select_ASCell";
+            this.dgv_Select_ASCell.ReadOnly = true;
+            this.dgv_Select_ASCell.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_Select_ASCell.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
             // Form_MSSQL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1450,6 +1500,7 @@
             this.Controls.Add(this.vline);
             this.Controls.Add(this.showTopPanel);
             this.Controls.Add(this.menuStrip1);
+            this.DoubleBuffered = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form_MSSQL";
             this.Text = "Form_Main";
@@ -1484,7 +1535,7 @@
             this.panel6.PerformLayout();
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgv_Select)).EndInit();
             this.tp_TestSQL.ResumeLayout(false);
             this.tp_load.ResumeLayout(false);
             this.tp_save.ResumeLayout(false);
@@ -1632,12 +1683,15 @@
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.Panel panel10;
         private System.Windows.Forms.DataGridView dgv_SourceTable;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private System.Windows.Forms.DataGridView dataGridView2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column11;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column12;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column13;
+        private System.Windows.Forms.DataGridView dgv_Select;
+        private System.Windows.Forms.DataGridViewTextBoxColumn id_Cell;
+        private System.Windows.Forms.DataGridViewTextBoxColumn name_Cell;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nickName_Cell;
+        private System.Windows.Forms.DataGridViewLinkColumn del_Cell;
+        private System.Windows.Forms.Button btn_Invoker;
+        private System.Windows.Forms.DataGridViewLinkColumn dgv_Select_FuncCell;
+        private System.Windows.Forms.DataGridViewLinkColumn dgv_Select_FieldNameCell;
+        private System.Windows.Forms.DataGridViewLinkColumn dgv_Select_ASCell;
     }
 }
 

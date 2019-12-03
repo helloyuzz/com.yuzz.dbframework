@@ -10,6 +10,7 @@ using System.Diagnostics;
 using com.yuzz.DbGenerator.vo;
 using System.Configuration;
 using com.yuzz.dblibrary;
+using System.Drawing;
 
 namespace com.yuzz.DbGenerator {
     public partial class Form_MSSQL:Form {
@@ -303,7 +304,10 @@ namespace com.yuzz.DbGenerator {
 
             return askCode;
         }
-
+        protected override void OnShown(EventArgs e) {
+            base.OnShown(e);
+            showPage.SelectedTab = tp_VisualSQLBuilder;
+        }
 
         // 解析OleDbType为System.Type
         string dbColumnType(SqlDbType getType) {
@@ -339,13 +343,29 @@ namespace com.yuzz.DbGenerator {
 
             return dbTypeString;
         }
-
+        
+        private void btn_Invoker_Click(object sender,EventArgs e) {
+            init_DefaultVisualSQLEditor();
+        }
         private void Form_Main_Load(object sender,EventArgs e) {
             tbx_MSSQL_ServerIP.Text = ConfigurationManager.AppSettings["MSSQL_ServerIP"];
             tbx_MSSQL_Port.Text = ConfigurationManager.AppSettings["MSSQL_Port"];
             tbx_MSSQL_User.Text = ConfigurationManager.AppSettings["MSSQL_User"];
             tbx_MSSQL_Pwd.Text = ConfigurationManager.AppSettings["MSSQL_Pwd"];
             tbx_MSSQL_Schema.Text = ConfigurationManager.AppSettings["MSSQL_Schema"];
+
+            init_DefaultVisualSQLEditor();
+        }
+
+        private void init_DefaultVisualSQLEditor() {
+            dgv_Select.Columns["dgv_Select_FuncCell"].Width = dgv_Select.Width / 5;
+            dgv_Select.Columns["dgv_Select_AsCell"].Width = dgv_Select.Width / 4;
+
+            dgv_Select.Rows.Add();
+            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FuncCell"].Value = "<->";
+            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FieldNameCell"].Value = "<点击这里添加字段>";
+            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_AsCell"].Value = "<->";
+            
         }
 
         private void SaveConfig() {
@@ -410,7 +430,7 @@ namespace com.yuzz.DbGenerator {
                     if(smColumn.Name.Equals("ModifyTime")) {
                         continue;
                     }
-                    temp.Append("       getItem.").Append(smColumn.Name).Append(" = ").Append(typeToControl("getRow.Cells[\"","_Column\"].Value",smColumn,true)).Append("\r\n");
+                    temp.Append("       getItem.").Append(smColumn.Name).Append(" = ").Append(dbTypeToControl("getRow.Cells[\"","_Column\"].Value",smColumn,true)).Append("\r\n");
                 }
                 temp.Append("       getList.Add(getItem);\r\n");
                 temp.Append("   }\r\n");
@@ -438,7 +458,7 @@ namespace com.yuzz.DbGenerator {
                     if(smColumn.Name.Equals("ModifyTime")) {
                         continue;
                     }
-                    temp.Append("getValue.").Append(smColumn.Name).Append(" = ").Append(typeToControl("tbx_",".Text.Trim()",smColumn,false)).Append("\r\n");
+                    temp.Append("getValue.").Append(smColumn.Name).Append(" = ").Append(dbTypeToControl("tbx_",".Text.Trim()",smColumn,false)).Append("\r\n");
                 }
                 temp.Append("\r\n");
                 temp.Append("bool saveResult = DBToolkit.Save").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(getValue);\r\n");
@@ -473,7 +493,7 @@ namespace com.yuzz.DbGenerator {
             return ".Text = ";
         }
 
-        string typeToControl(string prefix,string flowfix,SmField smColumn,bool getAction) {
+        string dbTypeToControl(string prefix,string flowfix,SmField smColumn,bool getAction) {
             string temp = "";
 
             if(smColumn.DbType.Equals(typeof(string))) {
@@ -631,6 +651,8 @@ namespace com.yuzz.DbGenerator {
 
         private void btn_连接_Click(object sender,EventArgs e) {
             this.Cursor = Cursors.WaitCursor;
+            list_Schema.DataSource = null;
+            smTableList.Clear();
             Application.DoEvents();
 
             using(SqlConnection dbConn = new SqlConnection(sqlString)) {
@@ -1196,9 +1218,61 @@ namespace com.yuzz.DbGenerator {
 
         private void list_Schema_DoubleClick(object sender,EventArgs e) {
             SmTable smTable = smTableList.Find(t => t.TableName.Equals(list_Schema.Text));
+            if(smTable.ActiveUsing == true) {
+                return;
+            }
+
+            smTable.ActiveUsing = true; // 标记为正在使用
 
             dgv_SourceTable.Rows.Add();
-            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells[0].Value = smTable.TableName;
+            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["id_Cell"].Value = dgv_SourceTable.Rows.Count;
+            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["name_Cell"].Value = smTable.TableName;
+            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["nickName_Cell"].Value = smTable.Nickname;
+            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["del_Cell"].Value = "删除";
+
+            if(showPage.SelectedTab.Name.Equals(tp_VisualSQLBuilder.Name) == false) {
+                showPage.SelectedTab = tp_VisualSQLBuilder;
+            }
+        }
+
+        private void dgv_SourceTable_CellEndEdit(object sender,DataGridViewCellEventArgs e) {
+            string name_Cell = dgv_SourceTable["name_Cell",e.RowIndex].Value.ToString();
+            string inputNickname = MyToolkit.IngoreNull(dgv_SourceTable[e.ColumnIndex,e.RowIndex].Value);
+
+            if(string.IsNullOrEmpty(inputNickname)) {
+                return;
+            }
+            SmTable smTable = smTableList.Find(t => t.Nickname.Equals(inputNickname));
+            
+            if(smTable != null && smTable.TableName.Equals(name_Cell) == false) {  // 已存在同名的昵称
+                dgv_SourceTable[e.ColumnIndex,e.RowIndex].Value = "";
+                MessageBox.Show("昵称已经存在。");
+                return;
+            }
+
+            smTableList.Find(t => t.TableName.Equals(name_Cell)).Nickname = inputNickname;  // 更新昵称
+        }
+
+        private void dgv_SourceTable_CellContentClick(object sender,DataGridViewCellEventArgs e) {
+            if(e.RowIndex < 0) {
+                return;
+            }
+
+            if(dgv_SourceTable.Columns[e.ColumnIndex].Name.Equals("del_Cell")) {
+                string dgvCellName = MyToolkit.IngoreNull(dgv_SourceTable["name_Cell",e.RowIndex].Value);
+                smTableList.Find(t => t.TableName.Equals(dgvCellName)).ActiveUsing = false;
+
+                dgv_SourceTable.Rows.RemoveAt(e.RowIndex);
+                reorderDgvColumnIndex(e.RowIndex);
+            }
+        }
+
+        private void reorderDgvColumnIndex(int rowIndex) {
+            for(int n = rowIndex;n < dgv_SourceTable.Rows.Count;n++) {
+                int newIndex = MyToolkit.ParseInt(dgv_SourceTable["id_Cell",n].Value);
+                dgv_SourceTable["id_Cell",n].Value = newIndex - 1;
+            }
+            dgv_SourceTable.Refresh();
         }
     }
 }
