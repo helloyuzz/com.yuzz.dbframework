@@ -4,11 +4,12 @@ using System.Data;
 namespace com.yuzz.dblibrary
 {
     [Serializable]
-    public class SmField {
+    public class SmField
+    {
         public virtual string Name {
             get;
             set;
-        } 
+        }
         public virtual SqlDbType DbType {
             get;
             set;
@@ -29,5 +30,8 @@ namespace com.yuzz.dblibrary
             get;
             set;
         }
+        public bool ActiveUsing { get; set; }
+        public SelectFunction Func { get; set; }
+        public string FieldAs { get; set; }
     }
 }

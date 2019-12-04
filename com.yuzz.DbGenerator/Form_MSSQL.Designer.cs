@@ -25,11 +25,11 @@
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_MSSQL));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.showLeftPanel = new System.Windows.Forms.Panel();
             this.showDBPage = new System.Windows.Forms.TabControl();
             this.tp_表 = new System.Windows.Forms.TabPage();
@@ -155,6 +155,8 @@
             this.dgv_Select_FuncCell = new System.Windows.Forms.DataGridViewLinkColumn();
             this.dgv_Select_FieldNameCell = new System.Windows.Forms.DataGridViewLinkColumn();
             this.dgv_Select_ASCell = new System.Windows.Forms.DataGridViewLinkColumn();
+            this.ctxMenu_Select = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxMenu_Select_ImageList = new System.Windows.Forms.ImageList(this.components);
             this.showLeftPanel.SuspendLayout();
             this.showDBPage.SuspendLayout();
             this.tp_表.SuspendLayout();
@@ -549,8 +551,8 @@
             // 
             // Column1
             // 
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle6;
             this.Column1.HeaderText = "<->";
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
@@ -558,8 +560,8 @@
             // 
             // Column2
             // 
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column2.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle7;
             this.Column2.HeaderText = "KeyWord";
             this.Column2.Name = "Column2";
             this.Column2.ReadOnly = true;
@@ -567,8 +569,8 @@
             // 
             // Column3
             // 
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.Column3.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle8;
             this.Column3.HeaderText = "<->";
             this.Column3.Name = "Column3";
             this.Column3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -710,14 +712,14 @@
             this.dgv_Select_FuncCell,
             this.dgv_Select_FieldNameCell,
             this.dgv_Select_ASCell});
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgv_Select.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgv_Select.DefaultCellStyle = dataGridViewCellStyle10;
             this.dgv_Select.Location = new System.Drawing.Point(127, 0);
             this.dgv_Select.MultiSelect = false;
             this.dgv_Select.Name = "dgv_Select";
@@ -726,6 +728,7 @@
             this.dgv_Select.RowTemplate.Height = 23;
             this.dgv_Select.Size = new System.Drawing.Size(378, 325);
             this.dgv_Select.TabIndex = 7;
+            this.dgv_Select.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Select_CellContentClick);
             // 
             // label20
             // 
@@ -1465,8 +1468,8 @@
             // 
             // dgv_Select_FuncCell
             // 
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.dgv_Select_FuncCell.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.dgv_Select_FuncCell.DefaultCellStyle = dataGridViewCellStyle9;
             this.dgv_Select_FuncCell.HeaderText = "<Func>";
             this.dgv_Select_FuncCell.Name = "dgv_Select_FuncCell";
             this.dgv_Select_FuncCell.ReadOnly = true;
@@ -1488,6 +1491,17 @@
             this.dgv_Select_ASCell.ReadOnly = true;
             this.dgv_Select_ASCell.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.dgv_Select_ASCell.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // ctxMenu_Select
+            // 
+            this.ctxMenu_Select.Name = "ctxMenu_Select";
+            this.ctxMenu_Select.Size = new System.Drawing.Size(61, 4);
+            // 
+            // ctxMenu_Select_ImageList
+            // 
+            this.ctxMenu_Select_ImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ctxMenu_Select_ImageList.ImageStream")));
+            this.ctxMenu_Select_ImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.ctxMenu_Select_ImageList.Images.SetKeyName(0, "png_pk.png");
             // 
             // Form_MSSQL
             // 
@@ -1692,6 +1706,8 @@
         private System.Windows.Forms.DataGridViewLinkColumn dgv_Select_FuncCell;
         private System.Windows.Forms.DataGridViewLinkColumn dgv_Select_FieldNameCell;
         private System.Windows.Forms.DataGridViewLinkColumn dgv_Select_ASCell;
+        private System.Windows.Forms.ContextMenuStrip ctxMenu_Select;
+        private System.Windows.Forms.ImageList ctxMenu_Select_ImageList;
     }
 }
 

@@ -358,15 +358,11 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void init_DefaultVisualSQLEditor() {
-            dgv_Select.Columns["dgv_Select_FuncCell"].Width = dgv_Select.Width / 5;
-            dgv_Select.Columns["dgv_Select_AsCell"].Width = dgv_Select.Width / 4;
-
-            dgv_Select.Rows.Add();
-            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FuncCell"].Value = "<->";
-            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FieldNameCell"].Value = "<点击这里添加字段>";
-            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_AsCell"].Value = "<->";
+            init_SelectDataGridView();            
             
         }
+
+        
 
         private void SaveConfig() {
             Configuration cm = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -1225,15 +1221,18 @@ namespace com.yuzz.DbGenerator {
             smTable.ActiveUsing = true; // 标记为正在使用
 
             dgv_SourceTable.Rows.Add();
-            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["id_Cell"].Value = dgv_SourceTable.Rows.Count;
+            int usingIndex = dgv_SourceTable.Rows.Count;
+            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["id_Cell"].Value = usingIndex;
             dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["name_Cell"].Value = smTable.TableName;
             dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["nickName_Cell"].Value = smTable.Nickname;
             dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["del_Cell"].Value = "删除";
 
+            smTable.UsingIndex = usingIndex;    // 更新显示次序
             if(showPage.SelectedTab.Name.Equals(tp_VisualSQLBuilder.Name) == false) {
                 showPage.SelectedTab = tp_VisualSQLBuilder;
             }
         }
+        #region SourceTable操作代码
 
         private void dgv_SourceTable_CellEndEdit(object sender,DataGridViewCellEventArgs e) {
             string name_Cell = dgv_SourceTable["name_Cell",e.RowIndex].Value.ToString();
@@ -1251,6 +1250,7 @@ namespace com.yuzz.DbGenerator {
             }
 
             smTableList.Find(t => t.TableName.Equals(name_Cell)).Nickname = inputNickname;  // 更新昵称
+            SyncSelectToDataGridView();
         }
 
         private void dgv_SourceTable_CellContentClick(object sender,DataGridViewCellEventArgs e) {
@@ -1263,16 +1263,106 @@ namespace com.yuzz.DbGenerator {
                 smTableList.Find(t => t.TableName.Equals(dgvCellName)).ActiveUsing = false;
 
                 dgv_SourceTable.Rows.RemoveAt(e.RowIndex);
-                reorderDgvColumnIndex(e.RowIndex);
+                reorderUsingIndex(e.RowIndex);
             }
         }
+        #endregion
 
-        private void reorderDgvColumnIndex(int rowIndex) {
+        private void reorderUsingIndex(int rowIndex) {
             for(int n = rowIndex;n < dgv_SourceTable.Rows.Count;n++) {
                 int newIndex = MyToolkit.ParseInt(dgv_SourceTable["id_Cell",n].Value);
-                dgv_SourceTable["id_Cell",n].Value = newIndex - 1;
+                string nameCell = MyToolkit.IngoreNull(dgv_SourceTable["name_Cell",n].Value);
+                int usingIndex = newIndex - 1;
+
+                dgv_SourceTable["id_Cell",n].Value = usingIndex;
+                smTableList.Find(t => t.TableName.Equals(nameCell)).UsingIndex = usingIndex;
             }
             dgv_SourceTable.Refresh();
         }
+
+        #region Select操作代码
+        private void dgv_Select_CellContentClick(object sender,DataGridViewCellEventArgs e) {
+            if(e.RowIndex < 0) {
+                return;
+            }
+
+            string cellName = dgv_Select.Columns[e.ColumnIndex].Name;
+            switch(cellName) {
+                case "dgv_Select_FieldNameCell":
+                    ctxMenu_Select.Items.Clear();
+                    List<SmTable> smTables = smTableList.FindAll(t => t.ActiveUsing == true);
+                    foreach(SmTable smTable in smTables) {
+                        ToolStripMenuItem menu = new ToolStripMenuItem();
+                        menu.Text = smTable.TableName;
+                        foreach(SmField smField in smTable.Fields) {
+                            ToolStripMenuItem subMenu = new ToolStripMenuItem();
+                            subMenu.ToolTipText = smTable.TableName;    // TooltipText缓存表名称
+                            subMenu.Name = smField.Name;                // Text缓存字段名称
+                            subMenu.Text = smField.Name;                // + "\t(" + smField.DbType.ToString() + ")";
+                            subMenu.ImageKey = "png_pk";
+                            subMenu.Click += ctxMenu_Select_SubMenu_Click;
+                            menu.DropDownItems.Add(subMenu);
+                        }
+                        ctxMenu_Select.Items.Add(menu);
+                    }
+                    ctxMenu_Select.Show(dgv_Select,dgv_Select.PointToClient(MousePosition));
+                    break;
+            }
+        }
+
+        private void ctxMenu_Select_SubMenu_Click(object sender,EventArgs e) {
+            ToolStripMenuItem menu = (ToolStripMenuItem)sender;
+            string smTableName = menu.ToolTipText;
+            string smFieldName = menu.Name;
+
+            // 标记该字段为正在使用中，ActiveUsing=true
+            if(smTableList.Find(t => t.TableName.Equals(smTableName)).Fields.Find(t => t.Name.Equals(smFieldName)).ActiveUsing == true) {
+                return;
+            }
+            smTableList.Find(t => t.TableName.Equals(smTableName)).Fields.Find(t => t.Name.Equals(smFieldName)).ActiveUsing = true;
+
+            SyncSelectToDataGridView();
+        }
+
+        private void SyncSelectToDataGridView() {
+            IEnumerable<SmTable> list = from w in smTableList
+                                        where w.ActiveUsing == true
+                                        orderby w.UsingIndex ascending
+                                        select w;
+
+            List<SmTable> _list = list.ToList();
+            while(dgv_Select.Rows.Count > 1) {
+                dgv_Select.Rows.RemoveAt(0);
+            }
+            foreach(SmTable smTable in _list) {
+                foreach(SmField smField in smTable.Fields) {
+                    if(smField.ActiveUsing == false) {
+                        continue;
+                    }
+
+                    dgv_Select.Rows.Insert(dgv_Select.Rows.Count - 1,1);
+                    DataGridViewRow newRow = dgv_Select.Rows[dgv_Select.Rows.Count - 2];
+                    string func = "<->";
+                    string fieldName = (string.IsNullOrEmpty(smTable.Nickname) ? smTable.TableName : smTable.Nickname) + "." + smField.Name;
+                    string fieldAs = smField.FieldAs;
+
+                    newRow.Cells["dgv_Select_FuncCell"].Value = func;
+                    newRow.Cells["dgv_Select_FieldNameCell"].Value = fieldName;
+                    newRow.Cells["dgv_Select_AsCell"].Value = fieldAs;
+                }
+            }
+        }
+
+        private void init_SelectDataGridView() {
+            ctxMenu_Select.ImageList = ctxMenu_Select_ImageList;
+            dgv_Select.Columns["dgv_Select_FuncCell"].Width = dgv_Select.Width / 6;
+            dgv_Select.Columns["dgv_Select_AsCell"].Width = dgv_Select.Width / 4;
+
+            dgv_Select.Rows.Add();
+            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FuncCell"].Value = "<->";
+            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FieldNameCell"].Value = "<点击这里添加字段>";
+            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_AsCell"].Value = "<->";
+        }
+        #endregion
     }
 }

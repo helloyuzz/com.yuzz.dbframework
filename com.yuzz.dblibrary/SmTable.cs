@@ -28,6 +28,10 @@ namespace com.yuzz.dblibrary
             get;
             set;
         }
-       public virtual bool ActiveUsing { get; set; }
+        public virtual bool ActiveUsing { get; set; }
+        /// <summary>
+        /// 使用的索引次序
+        /// </summary>
+        public virtual int UsingIndex { get; set; }
     }
 }
