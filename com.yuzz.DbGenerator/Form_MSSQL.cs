@@ -1286,31 +1286,87 @@ namespace com.yuzz.DbGenerator {
                 return;
             }
 
+            // 点击右键构建菜单
             string cellName = dgv_Select.Columns[e.ColumnIndex].Name;
+            string cellValue = MyToolkit.IngoreNull(dgv_Select[e.ColumnIndex,e.RowIndex].Value);
+            string tableName = dgv_Select["dgv_Select_ValueCell",e.RowIndex].ToolTipText;       // ToolTipText缓存的是TableName
+            string fieldName = dgv_Select["dgv_Select_ValueCell",e.RowIndex].ErrorText;         // ErrorText缓存的是FieldName
+            ctxMenu_Select.Items.Clear();
             switch(cellName) {
-                case "dgv_Select_FieldNameCell":
-                    ctxMenu_Select.Items.Clear();
-                    List<SmTable> smTables = smTableList.FindAll(t => t.ActiveUsing == true);
-                    foreach(SmTable smTable in smTables) {
-                        ToolStripMenuItem menu = new ToolStripMenuItem();
-                        menu.Text = smTable.TableName;
-                        foreach(SmField smField in smTable.Fields) {
-                            ToolStripMenuItem subMenu = new ToolStripMenuItem();
-                            subMenu.ToolTipText = smTable.TableName;    // TooltipText缓存表名称
-                            subMenu.Name = smField.Name;                // Text缓存字段名称
-                            subMenu.Text = smField.Name;                // + "\t(" + smField.DbType.ToString() + ")";
-                            subMenu.ImageKey = "png_pk";
-                            subMenu.Click += ctxMenu_Select_SubMenu_Click;
-                            menu.DropDownItems.Add(subMenu);
+                case "dgv_Select_FieldNameCell":    // 选择字段菜单
+                    if("<点击这里添加字段>".Equals(cellValue)) {
+                        List<SmTable> smTables = smTableList.FindAll(t => t.ActiveUsing == true);
+                        foreach(SmTable smTable in smTables) {
+                            ToolStripMenuItem menu = new ToolStripMenuItem();
+                            menu.Text = string.IsNullOrEmpty(smTable.Nickname) ? smTable.TableName : smTable.Nickname;
+                            foreach(SmField smField in smTable.Fields) {
+                                ToolStripMenuItem subMenu = new ToolStripMenuItem();
+                                subMenu.ToolTipText = smTable.TableName;    // TooltipText缓存表名称
+                                subMenu.Name = smField.Name;                // Text缓存字段名称
+                                subMenu.Text = smField.Name;                // + "\t(" + smField.DbType.ToString() + ")";
+                                subMenu.ImageKey = "png_pk";
+                                subMenu.Click += ctxMenu_Select_AddMenu_Click;
+                                menu.DropDownItems.Add(subMenu);
+                            }
+                            ctxMenu_Select.Items.Add(menu);
                         }
+                    } else {    // 删除菜单
+                        ToolStripMenuItem menu = new ToolStripMenuItem();                        
+                        menu.Text = "删除(&D)";
+                        menu.Click += ctxMenu_Select_DelMenu_Click;
                         ctxMenu_Select.Items.Add(menu);
                     }
-                    ctxMenu_Select.Show(dgv_Select,dgv_Select.PointToClient(MousePosition));
                     break;
+                case "dgv_Select_FuncCell": // 数据库函数菜单
+                    string[] getFunc = Enum.GetNames(typeof(SelectFunction));
+                    foreach(string item in getFunc) {
+                        ToolStripMenuItem menu = new ToolStripMenuItem();
+                        
+                        if("Default".Equals(item)) {
+                            menu.Text = "<->";
+                        } else {
+                            menu.Text = item;
+                        }
+
+                        menu.Click += ctxMenu_Select_FuncMenu_Click;
+                        ctxMenu_Select.Items.Add(menu);
+                    }
+                    break;
+            }
+            if(ctxMenu_Select.Items.Count > 0) {
+                ctxMenu_Select.Show(dgv_Select,dgv_Select.PointToClient(MousePosition));
             }
         }
 
-        private void ctxMenu_Select_SubMenu_Click(object sender,EventArgs e) {
+        private void ctxMenu_Select_FuncMenu_Click(object sender,EventArgs e) {
+            ToolStripMenuItem menu = (ToolStripMenuItem)sender;
+            int rowIndex = dgv_Select.CurrentCell.RowIndex;
+
+            string tableName = dgv_Select["dgv_Select_ValueCell",rowIndex].ToolTipText;       // ToolTipText缓存的是TableName
+            string fieldName = dgv_Select["dgv_Select_ValueCell",rowIndex].ErrorText;         // ErrorText缓存的是FieldName
+
+            SelectFunction selectFunction;
+            if("<->".Equals(menu.Text)) {
+                Enum.TryParse("Default",out selectFunction);
+            } else {
+                Enum.TryParse(menu.Text,out selectFunction);
+            }
+
+            smTableList.Find(t => t.TableName.Equals(tableName)).Fields.Find(t => t.Name.Equals(fieldName)).Func = selectFunction;
+
+            SyncSelectToDataGridView();
+        }
+
+        private void ctxMenu_Select_DelMenu_Click(object sender,EventArgs e) {
+            int rowIndex = dgv_Select.CurrentCell.RowIndex;
+            string tableName = dgv_Select["dgv_Select_ValueCell",rowIndex].ToolTipText;       // ToolTipText缓存的是TableName
+            string fieldName = dgv_Select["dgv_Select_ValueCell",rowIndex].ErrorText;         // ErrorText缓存的是FieldName
+
+            smTableList.Find(t => t.TableName.Equals(tableName)).Fields.Find(t => t.Name.Equals(fieldName)).ActiveUsing = false;
+            SyncSelectToDataGridView();
+        }
+
+        private void ctxMenu_Select_AddMenu_Click(object sender,EventArgs e) {
             ToolStripMenuItem menu = (ToolStripMenuItem)sender;
             string smTableName = menu.ToolTipText;
             string smFieldName = menu.Name;
@@ -1342,13 +1398,19 @@ namespace com.yuzz.DbGenerator {
 
                     dgv_Select.Rows.Insert(dgv_Select.Rows.Count - 1,1);
                     DataGridViewRow newRow = dgv_Select.Rows[dgv_Select.Rows.Count - 2];
-                    string func = "<->";
+                    string funcString = "<->"; 
                     string fieldName = (string.IsNullOrEmpty(smTable.Nickname) ? smTable.TableName : smTable.Nickname) + "." + smField.Name;
                     string fieldAs = smField.FieldAs;
 
-                    newRow.Cells["dgv_Select_FuncCell"].Value = func;
+                    if(smField.Func.Equals(SelectFunction.Default) == false) {
+                        funcString = Enum.GetName(typeof(SelectFunction),smField.Func);
+                    }
+
+                    newRow.Cells["dgv_Select_FuncCell"].Value = funcString;
                     newRow.Cells["dgv_Select_FieldNameCell"].Value = fieldName;
                     newRow.Cells["dgv_Select_AsCell"].Value = fieldAs;
+                    newRow.Cells["dgv_Select_ValueCell"].ErrorText = smField.Name;
+                    newRow.Cells["dgv_Select_ValueCell"].ToolTipText = smTable.TableName;
                 }
             }
         }

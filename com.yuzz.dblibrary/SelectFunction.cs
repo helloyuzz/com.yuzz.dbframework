@@ -9,6 +9,6 @@ namespace com.yuzz.dblibrary
     [Serializable]
     public enum SelectFunction
     {
-        Max,Sum,Min,Count,Avg
+        Default,Sum, Max, Min,Count,Avg
     }
 }
