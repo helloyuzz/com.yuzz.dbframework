@@ -748,7 +748,7 @@ namespace com.yuzz.DbGenerator {
         "UUID","ShopId","ModifyTime","ShowIndex"};
 
         private string buildValueObject(string sechemaName) {
-            SmTable smTable = getSmTable(sechemaName);
+            SmTable smTable = smTableList.Find(t => t.TableName.Equals(sechemaName));//  getSmTable(sechemaName);
 
             StringBuilder temp = new StringBuilder();
 
