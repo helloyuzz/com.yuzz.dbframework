@@ -14,7 +14,12 @@ namespace com.yuzz.dblibrary
         public SmTable(string tableName) {
             TableName = tableName;
         }
+        public SmTable(string tableId,string tableName) {
+            TableId = tableId;
+            TableName = tableName;
+        }
 
+        public virtual string TableId { get; set; }
         public virtual string TableName {
             get;
             set;

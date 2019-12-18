@@ -15,9 +15,9 @@ using System.Drawing;
 namespace com.yuzz.DbGenerator {
     public partial class Form_MSSQL:Form {
         List<SmTable> smTableList = new List<SmTable>();
-        List<SmStoredProcedure> smStoredProcedures = new List<SmStoredProcedure>();
+        List<SmProcedure> smProcedures = new List<SmProcedure>();
 
-        delegate void OnSaveFileCallback(string filePath);
+        delegate void OnSaveFileCallback(string filePath,int currentIndex = 0,int fileCount = 0);
 
         public Form_MSSQL() {
             InitializeComponent();
@@ -25,69 +25,50 @@ namespace com.yuzz.DbGenerator {
 
 
         // 加载数据库表列表
-        private List<SmTable> load_SchemaAndSPList() {
-            List<SmTable> _list = new List<SmTable>();
-
-            SqlCommand dbCmd = new SqlCommand();
-            using(SqlConnection dbConn = new SqlConnection(sqlString)) {
-                dbConn.Open();
-                dbCmd.Connection = dbConn;
-                // 表
-                dbCmd.CommandText = "select [Id],[Name] from [SysObjects] where type='u' order by [name] asc"; // refdate
-                DataTable dt_forDisplay = new DataTable();
-                dt_forDisplay.Columns.Add("Id");
-                dt_forDisplay.Columns.Add("Name");
-
-                SqlDataReader dbReader = dbCmd.ExecuteReader();
-                while(dbReader.Read()) {
-                    DataRow newRow = dt_forDisplay.NewRow();
-                    string tableName = MyToolkit.IngoreNull(dbReader["Name"]);
-                    newRow["Id"] = MyToolkit.IngoreNull(dbReader["Id"]);
-                    newRow["Name"] = tableName;
-
-                    dt_forDisplay.Rows.Add(newRow);
-                }
-                dbReader.Close();
-                dbReader = null;
-                list_Schema.DataSource = dt_forDisplay;
-                list_Schema.DisplayMember = "Name";
-                list_Schema.ValueMember = "Id";
-
-                foreach(DataRow row in dt_forDisplay.Rows) {
-                    string tableName = MyToolkit.IngoreNull(row["Name"]);
-                    SmTable smTable = getSmTable(tableName,dbConn);
-                    _list.Add(smTable);
-                }
-
-                DataTable dt_sp = new DataTable();
-                dt_sp.Columns.Add("Id");
-                dt_sp.Columns.Add("Name");
-
-                // 存储过程
-                dbCmd.CommandText = "select [Id],[Name] from [SysObjects] where type='p' order by [name] asc";  //  and name like 'sp_%'
-                dbReader = dbCmd.ExecuteReader();
-                while(dbReader.Read()) {
-                    DataRow newRow = dt_sp.NewRow();
-                    newRow["Id"] = MyToolkit.IngoreNull(dbReader["Id"]);
-                    newRow["Name"] = MyToolkit.IngoreNull(dbReader["Name"]);
-
-                    dt_sp.Rows.Add(newRow);
-                }
-                dbReader.Close();
-                dbReader = null;
-                dbConn.Close();
-
-                list_StoreProcedure.DataSource = dt_sp;
-                list_StoreProcedure.DisplayMember = "Name";
-                list_StoreProcedure.ValueMember = "Id";
+        private void load_SchemaAndSPList(SqlConnection dbConn) {
+            SqlCommand dbCmd = new SqlCommand("select [Id],[Name] from [SysObjects] where type='u' order by [name] asc",dbConn);          
+            // 表
+            SqlDataReader dbReader = dbCmd.ExecuteReader();
+            while(dbReader.Read()) {
+                string tableId = MyToolkit.IngoreNull(dbReader["Id"]);
+                string tableName = MyToolkit.IngoreNull(dbReader["Name"]);
+                SmTable smTable = new SmTable(tableId,tableName);
+                smTableList.Add(smTable);                
             }
-            return _list;
+            dbReader.Close();
+            dbReader = null;
+
+            list_Schema.DisplayMember = "TableName";
+            list_Schema.ValueMember = "TableId";
+            foreach(SmTable smTable in smTableList) {
+                list_Schema.Items.Add(smTable);
+            }
+
+            // 存储过程
+            dbCmd.CommandText = "select [Id],[Name] from [SysObjects] where type='p' order by [name] asc";  //  and name like 'sp_%'
+            dbReader = dbCmd.ExecuteReader();
+            while(dbReader.Read()) {
+                string p_Id = MyToolkit.IngoreNull(dbReader["Id"]);
+                string p_Name = MyToolkit.IngoreNull(dbReader["Name"]);
+                SmProcedure smProcedure = new SmProcedure(p_Id,p_Name);      
+
+                smProcedures.Add(smProcedure);
+            }
+            dbReader.Close();
+            dbReader = null;
+            dbConn.Close();
+
+            list_StoreProcedure.ValueMember = "ProcedureId";
+            list_StoreProcedure.DisplayMember = "ProcedureName";
+            foreach(SmProcedure smProcedure in smProcedures) {
+                list_StoreProcedure.Items.Add(smProcedure);
+            }
         }
 
 
         private SmTable getSmTable(string tableName,SqlConnection dbConn = null) {
             SmTable smTable = new SmTable(tableName);
-
+            
             // 获取描述信息
             SqlCommand selectCommand = new SqlCommand();
             selectCommand.Connection = dbConn;
@@ -159,8 +140,8 @@ namespace com.yuzz.DbGenerator {
             StringBuilder getMethod = new StringBuilder();
 
             getMethod.Append("\r\n");
-            getMethod.Append("public static ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" Get").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(string sqlCondition,bool getVoContent) {\r\n");
-            getMethod.Append("   List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("> getList = Get").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(sqlCondition,getVoContent,\"\");").Append("\r\n");
+            getMethod.Append("public static ").Append(tbx_Prefix.Text).Append(smTable.TableName).Append(" Get").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("(string sqlCondition,bool getVoContent) {\r\n");
+            getMethod.Append("   List<").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("> getList = Get").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("(sqlCondition,getVoContent,\"\");").Append("\r\n");
             getMethod.Append("   if(getList.Count > 0) {\r\n");
             getMethod.Append("      return getList[0];\r\n");
             getMethod.Append("   }else{\r\n");
@@ -178,9 +159,9 @@ namespace com.yuzz.DbGenerator {
             getMethod.Append("// sqlCondition=查询条件\r\n");
             getMethod.Append("// getVoContent=true仅查询VoContent，=false查询展示字段（不包括VoContent）\r\n");
             getMethod.Append("// sortCodtion=排序条件\r\n");
-            getMethod.Append("public static List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("> Get").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(string sqlCondition,bool getVoContent,string sortCondition){\r\n");
+            getMethod.Append("public static List<").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("> Get").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("(string sqlCondition,bool getVoContent,string sortCondition){\r\n");
 
-            getMethod.Append("  List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("> getList = new List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(">();\r\n");
+            getMethod.Append("  List<").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("> getList = new List<").Append(tbx_Prefix.Text).Append(smTable.TableName).Append(">();\r\n");
             getMethod.Append("  SqlCommand dbCmd = new SqlCommand();\r\n");
             getMethod.Append("  try{\r\n");
             getMethod.Append("      using(SqlConnection dbConn = new SqlConnection(DBUtil.MSSQLConnectionString)){\r\n");
@@ -198,12 +179,12 @@ namespace com.yuzz.DbGenerator {
             getMethod.Append("  \r\n");
             getMethod.Append("          SqlDataReader dbReader = dbCmd.ExecuteReader();\r\n");
             getMethod.Append("          while(dbReader.Read()) {\r\n");
-            getMethod.Append("              ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("   getValue = new ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("();\r\n");
+            getMethod.Append("              ").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("   getValue = new ").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("();\r\n");
             getMethod.Append("              if(getVoContent == true) {\r\n");
             getMethod.Append("                  string getXMLString = BIMPUtil.IngoreNull(dbReader[\"VoContent\"]);\r\n");
-            getMethod.Append("                  getValue = (").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(")BIMPUtil.ParseObjectFromXMLString(getXMLString,typeof(").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("));\r\n");
+            getMethod.Append("                  getValue = (").Append(tbx_Prefix.Text).Append(smTable.TableName).Append(")BIMPUtil.ParseObjectFromXMLString(getXMLString,typeof(").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("));\r\n");
             getMethod.Append("              }else{\r\n");
-            getMethod.Append("                  getValue = new ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("();\r\n");
+            getMethod.Append("                  getValue = new ").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("();\r\n");
             getMethod.Append(getChaXunFields(smTable.Fields));
             getMethod.Append("              }\r\n");
             getMethod.Append("              getList.Add(getValue);\r\n");
@@ -306,7 +287,7 @@ namespace com.yuzz.DbGenerator {
         }
         protected override void OnShown(EventArgs e) {
             base.OnShown(e);
-            showPage.SelectedTab = tp_VisualSQLBuilder;
+            //showPage.SelectedTab = tp_VisualSQLBuilder;
         }
 
         // 解析OleDbType为System.Type
@@ -347,30 +328,36 @@ namespace com.yuzz.DbGenerator {
         private void btn_Invoker_Click(object sender,EventArgs e) {
             init_DefaultVisualSQLEditor();
         }
-        private void Form_Main_Load(object sender,EventArgs e) {
-            tbx_MSSQL_ServerIP.Text = ConfigurationManager.AppSettings["MSSQL_ServerIP"];
-            tbx_MSSQL_Port.Text = ConfigurationManager.AppSettings["MSSQL_Port"];
-            tbx_MSSQL_User.Text = ConfigurationManager.AppSettings["MSSQL_User"];
-            tbx_MSSQL_Pwd.Text = ConfigurationManager.AppSettings["MSSQL_Pwd"];
-            tbx_MSSQL_Schema.Text = ConfigurationManager.AppSettings["MSSQL_Schema"];
-
-            init_DefaultVisualSQLEditor();
-        }
 
         private void init_DefaultVisualSQLEditor() {
             init_SelectDataGridView();            
             
         }
 
-        
 
-        private void SaveConfig() {
+
+        private void Form_Main_Load(object sender,EventArgs e) {
+            tbx_MSSQL_ServerIP.Text = ConfigurationManager.AppSettings["MSSQL_ServerIP"];
+            tbx_MSSQL_Port.Text = ConfigurationManager.AppSettings["MSSQL_Port"];
+            tbx_MSSQL_User.Text = ConfigurationManager.AppSettings["MSSQL_User"];
+            tbx_MSSQL_Pwd.Text = ConfigurationManager.AppSettings["MSSQL_Pwd"];
+            tbx_MSSQL_Schema.Text = ConfigurationManager.AppSettings["MSSQL_Schema"];
+            tbx_Project_SavePath.Text = ConfigurationManager.AppSettings["Project_SavePath"];
+
+            //init_DefaultVisualSQLEditor();
+        }
+        private void SaveConfig(bool saveServerConfig = true,bool saveProjectConfig = false) {
             Configuration cm = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            cm.AppSettings.Settings["MSSQL_ServerIP"].Value = tbx_MSSQL_ServerIP.Text;
-            cm.AppSettings.Settings["MSSQL_Port"].Value = tbx_MSSQL_Port.Text;
-            cm.AppSettings.Settings["MSSQL_User"].Value = tbx_MSSQL_User.Text;
-            cm.AppSettings.Settings["MSSQL_Pwd"].Value = tbx_MSSQL_Pwd.Text;
-            cm.AppSettings.Settings["MSSQL_Schema"].Value = tbx_MSSQL_Schema.Text;
+            if(saveServerConfig == true) {
+                cm.AppSettings.Settings["MSSQL_ServerIP"].Value = tbx_MSSQL_ServerIP.Text;
+                cm.AppSettings.Settings["MSSQL_Port"].Value = tbx_MSSQL_Port.Text;
+                cm.AppSettings.Settings["MSSQL_User"].Value = tbx_MSSQL_User.Text;
+                cm.AppSettings.Settings["MSSQL_Pwd"].Value = tbx_MSSQL_Pwd.Text;
+                cm.AppSettings.Settings["MSSQL_Schema"].Value = tbx_MSSQL_Schema.Text;
+            }
+            if(saveProjectConfig == true) {
+                cm.AppSettings.Settings["Project_SavePath"].Value = tbx_Project_SavePath.Text;
+            }
             cm.Save(ConfigurationSaveMode.Modified);
         }
         private void btn_选择文件_Click(object sender,EventArgs e) {
@@ -380,106 +367,106 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void uc_Build_Dgv(object sender,EventArgs e) {
-            StringBuilder temp = new StringBuilder();
-            foreach(DataRow getRow in list_Schema.SelectedIndices) {
-                SmTable smTable = getSmTable(getRow["Name"].ToString(),null);
+            //StringBuilder temp = new StringBuilder();
+            //foreach(DataRow getRow in list_Schema.SelectedIndices) {
+            //    SmTable smTable = getSmTable(getRow["Name"].ToString(),null);
 
 
-                if(smTable == null) {
-                    continue;
-                }
-                temp.Append("void loadList(){\r\n");
-                temp.Append("   dgv.Rows.Clear();\r\n");
-                temp.Append("\r\n");
-                temp.Append("   string sqlCondition = \"\";\r\n");
-                temp.Append("   string sortCondition = \"\";\r\n");
-                temp.Append("   IList getList = DAOUtil.GetList(typeof(").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("),sqlCondition,sortCondition);\r\n");
-                //temp.Append("   List<").Append(tbx_类前缀.Text).Append(smTable.Name).Append("> getList = DBToolkit.Get").Append(tbx_类前缀.Text).Append(smTable.Name).Append("(sqlCondition,false,sortCondition);\r\n");
-                temp.Append("   foreach(").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getItem in getList) {\r\n");
-                temp.Append("       dgv.Rows.Add();\r\n");
+            //    if(smTable == null) {
+            //        continue;
+            //    }
+            //    temp.Append("void loadList(){\r\n");
+            //    temp.Append("   dgv.Rows.Clear();\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("   string sqlCondition = \"\";\r\n");
+            //    temp.Append("   string sortCondition = \"\";\r\n");
+            //    temp.Append("   IList getList = DAOUtil.GetList(typeof(").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("),sqlCondition,sortCondition);\r\n");
+            //    //temp.Append("   List<").Append(tbx_类前缀.Text).Append(smTable.Name).Append("> getList = DBToolkit.Get").Append(tbx_类前缀.Text).Append(smTable.Name).Append("(sqlCondition,false,sortCondition);\r\n");
+            //    temp.Append("   foreach(").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getItem in getList) {\r\n");
+            //    temp.Append("       dgv.Rows.Add();\r\n");
 
-                foreach(SmField smColumn in smTable.Fields) {
-                    if(smColumn.Name.Equals("VoContent")) {
-                        continue;
-                    }
-                    if(smColumn.Name.Equals("ModifyTime")) {
-                        continue;
-                    }
-                    temp.Append("       dgv.Rows[dgv.Rows.Count - 1].Cells[\"").Append(smColumn.Name).Append("_Column\"].Value = getItem.").Append(smColumn.Name).Append(";\r\n");
-                }
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        if(smColumn.Name.Equals("VoContent")) {
+            //            continue;
+            //        }
+            //        if(smColumn.Name.Equals("ModifyTime")) {
+            //            continue;
+            //        }
+            //        temp.Append("       dgv.Rows[dgv.Rows.Count - 1].Cells[\"").Append(smColumn.Name).Append("_Column\"].Value = getItem.").Append(smColumn.Name).Append(";\r\n");
+            //    }
 
-                temp.Append("   }\r\n");
-                temp.Append("}\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
+            //    temp.Append("   }\r\n");
+            //    temp.Append("}\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
 
-                temp.Append("   List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("> getList = new List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(">();\r\n");
-                temp.Append("   foreach(DataGridViewRow getRow in dgv.Rows) {\r\n");
-                temp.Append("       ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getItem = new ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("();\r\n");
-                temp.Append("\r\n");
-                foreach(SmField smColumn in smTable.Fields) {
-                    if(smColumn.Name.Equals("VoContent")) {
-                        continue;
-                    }
-                    if(smColumn.Name.Equals("ModifyTime")) {
-                        continue;
-                    }
-                    temp.Append("       getItem.").Append(smColumn.Name).Append(" = ").Append(dbTypeToControl("getRow.Cells[\"","_Column\"].Value",smColumn,true)).Append("\r\n");
-                }
-                temp.Append("       getList.Add(getItem);\r\n");
-                temp.Append("   }\r\n");
-            }
-            tbx_DGV_Code.Text = temp.ToString();
-            showPage.SelectedTab = tp_DGV;
+            //    temp.Append("   List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("> getList = new List<").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(">();\r\n");
+            //    temp.Append("   foreach(DataGridViewRow getRow in dgv.Rows) {\r\n");
+            //    temp.Append("       ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getItem = new ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("();\r\n");
+            //    temp.Append("\r\n");
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        if(smColumn.Name.Equals("VoContent")) {
+            //            continue;
+            //        }
+            //        if(smColumn.Name.Equals("ModifyTime")) {
+            //            continue;
+            //        }
+            //        temp.Append("       getItem.").Append(smColumn.Name).Append(" = ").Append(dbTypeToControl("getRow.Cells[\"","_Column\"].Value",smColumn,true)).Append("\r\n");
+            //    }
+            //    temp.Append("       getList.Add(getItem);\r\n");
+            //    temp.Append("   }\r\n");
+            //}
+            //tbx_DGV_Code.Text = temp.ToString();
+            //showPage.SelectedTab = tp_DGV;
         }
 
         private void uc_Build_Form(object sender,EventArgs e) {
-            StringBuilder temp = new StringBuilder();
-            foreach(DataRow getRow in list_Schema.SelectedIndices) {
-                SmTable smTable = getSmTable(getRow["Name"].ToString());
+            //StringBuilder temp = new StringBuilder();
+            //foreach(DataRow getRow in list_Schema.SelectedIndices) {
+            //    SmTable smTable = getSmTable(getRow["Name"].ToString());
 
-                if(smTable == null) {
-                    return;
-                }
+            //    if(smTable == null) {
+            //        return;
+            //    }
 
-                temp.Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getValue = new ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("();\r\n");
-                temp.Append("\r\n");
+            //    temp.Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getValue = new ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("();\r\n");
+            //    temp.Append("\r\n");
 
-                foreach(SmField smColumn in smTable.Fields) {
-                    if(smColumn.Name.Equals("VoContent")) {
-                        continue;
-                    }
-                    if(smColumn.Name.Equals("ModifyTime")) {
-                        continue;
-                    }
-                    temp.Append("getValue.").Append(smColumn.Name).Append(" = ").Append(dbTypeToControl("tbx_",".Text.Trim()",smColumn,false)).Append("\r\n");
-                }
-                temp.Append("\r\n");
-                temp.Append("bool saveResult = DBToolkit.Save").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(getValue);\r\n");
-                temp.Append("\r\n");
-                temp.Append("if(saveResult == true) {\r\n");
-                temp.Append("   MessageBox.Show(this,\"操作成功\",\"系统提示\",MessageBoxButtons.OK,MessageBoxIcon.Information);\r\n");
-                temp.Append("   loadList();\r\n");
-                temp.Append("}\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        if(smColumn.Name.Equals("VoContent")) {
+            //            continue;
+            //        }
+            //        if(smColumn.Name.Equals("ModifyTime")) {
+            //            continue;
+            //        }
+            //        temp.Append("getValue.").Append(smColumn.Name).Append(" = ").Append(dbTypeToControl("tbx_",".Text.Trim()",smColumn,false)).Append("\r\n");
+            //    }
+            //    temp.Append("\r\n");
+            //    temp.Append("bool saveResult = DBToolkit.Save").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(getValue);\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("if(saveResult == true) {\r\n");
+            //    temp.Append("   MessageBox.Show(this,\"操作成功\",\"系统提示\",MessageBoxButtons.OK,MessageBoxIcon.Information);\r\n");
+            //    temp.Append("   loadList();\r\n");
+            //    temp.Append("}\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
 
-                temp.Append("string uuid = BIMPUtil.IngoreNull(dgv.Rows[e.RowIndex].Cells[\"UUID_Column\"].Value);\r\n");
-                temp.Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getItem = DBToolkit.Get").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(uuid,false);\r\n");
-                temp.Append("\r\n");
+            //    temp.Append("string uuid = BIMPUtil.IngoreNull(dgv.Rows[e.RowIndex].Cells[\"UUID_Column\"].Value);\r\n");
+            //    temp.Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getItem = DBToolkit.Get").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(uuid,false);\r\n");
+            //    temp.Append("\r\n");
 
-                foreach(SmField smColumn in smTable.Fields) {
-                    string flowfix = getControlValuefix(smColumn.DbType);
-                    temp.Append("tbx_").Append(smColumn.Name).Append(flowfix).Append("getItem.").Append(smColumn.Name).Append(";\r\n");
-                }
-            }
-            //temp.Append("}\r\n");
-            tbx_Form_Code.Text = temp.ToString();
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        string flowfix = getControlValuefix(smColumn.DbType);
+            //        temp.Append("tbx_").Append(smColumn.Name).Append(flowfix).Append("getItem.").Append(smColumn.Name).Append(";\r\n");
+            //    }
+            //}
+            ////temp.Append("}\r\n");
+            //tbx_Form_Code.Text = temp.ToString();
         }
 
         private string getControlValuefix(SqlDbType type) {
@@ -523,33 +510,33 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void btn_BuildFiled_Click(object sender,EventArgs e) {
-            StringBuilder temp = new StringBuilder();
-            foreach(DataRow getRow in list_Schema.SelectedIndices) {
-                SmTable smTable = getSmTable(getRow["Name"].ToString());
-                if(smTable == null) {
-                    continue;
-                }
-                foreach(SmField smColumn in smTable.Fields) {
-                    temp.Append(smColumn.Name).Append("\r\n");
-                }
+            //StringBuilder temp = new StringBuilder();
+            //foreach(DataRow getRow in list_Schema.SelectedIndices) {
+            //    SmTable smTable = getSmTable(getRow["Name"].ToString());
+            //    if(smTable == null) {
+            //        continue;
+            //    }
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        temp.Append(smColumn.Name).Append("\r\n");
+            //    }
 
-                temp.Append("\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
 
-                foreach(SmField smColumn in smTable.Fields) {
-                    temp.Append(smColumn.Name).Append("_Column\r\n");
-                }
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        temp.Append(smColumn.Name).Append("_Column\r\n");
+            //    }
 
-                temp.Append("\r\n");
-                temp.Append("\r\n");
-                temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
+            //    temp.Append("\r\n");
 
-                foreach(SmField smColumn in smTable.Fields) {
-                    temp.Append("tbx_").Append(smColumn.Name).Append("\r\n");
-                }
-            }
-            tbx_字段列表.Text = temp.ToString();
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        temp.Append("tbx_").Append(smColumn.Name).Append("\r\n");
+            //    }
+            //}
+            //tbx_字段列表.Text = temp.ToString();
         }
 
         private void btn_Create_Click(object sender,EventArgs e) {
@@ -557,45 +544,45 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void uc_Build_TableName(object sender,EventArgs e) {
-            StringBuilder temp = new StringBuilder();
+            //StringBuilder temp = new StringBuilder();
 
-            temp.Append("using System;\r\n");
-            temp.Append("namespace com.cgWorkstudio.BIMP.Client.vo {\r\n");
-            temp.Append("   [Serializable]\r\n");
-            temp.Append("   internal class BIMPDict_Sechma {\r\n");
+            //temp.Append("using System;\r\n");
+            //temp.Append("namespace com.cgWorkstudio.BIMP.Client.vo {\r\n");
+            //temp.Append("   [Serializable]\r\n");
+            //temp.Append("   internal class BIMPDict_Sechma {\r\n");
 
-            int n = 0;
-            foreach(DataRow node in list_Schema.SelectedIndices) {
-                string getText = node["Name"].ToString();
+            //int n = 0;
+            //foreach(DataRow node in list_Schema.SelectedIndices) {
+            //    string getText = node["Name"].ToString();
 
-                Console.WriteLine(getText);
-                if(getText.StartsWith("App_") || getText.StartsWith("Log_")) {
-                } else {
-                    char getChar;
-                    char.TryParse(getText,out getChar);
+            //    Console.WriteLine(getText);
+            //    if(getText.StartsWith("App_") || getText.StartsWith("Log_")) {
+            //    } else {
+            //        char getChar;
+            //        char.TryParse(getText,out getChar);
 
-                    if((getChar >= 'a' && getChar <= 'z') || getChar >= 'A' && getChar <= 'Z') {
-                        continue;
-                    }
-                }
+            //        if((getChar >= 'a' && getChar <= 'z') || getChar >= 'A' && getChar <= 'Z') {
+            //            continue;
+            //        }
+            //    }
 
-                temp.Append("   static string temp").Append(n).Append(" = string.Empty;\r\n");
-                temp.Append("   internal static string ").Append(getText).Append(" {\r\n");
-                temp.Append("       get {\r\n");
-                temp.Append("           if(string.IsNullOrEmpty(temp").Append(n).Append(")) {\r\n");
-                temp.Append("               temp").Append(n).Append(" = \"").Append(getText).Append("\";\r\n");
-                temp.Append("           }\r\n");
-                temp.Append("           return temp").Append(n).Append(";\r\n");
-                temp.Append("       }\r\n");
-                temp.Append("   }\r\n");
-                n++;
-            }
-            temp.Append("    }\r\n");
-            temp.Append("}\r\n");
+            //    temp.Append("   static string temp").Append(n).Append(" = string.Empty;\r\n");
+            //    temp.Append("   internal static string ").Append(getText).Append(" {\r\n");
+            //    temp.Append("       get {\r\n");
+            //    temp.Append("           if(string.IsNullOrEmpty(temp").Append(n).Append(")) {\r\n");
+            //    temp.Append("               temp").Append(n).Append(" = \"").Append(getText).Append("\";\r\n");
+            //    temp.Append("           }\r\n");
+            //    temp.Append("           return temp").Append(n).Append(";\r\n");
+            //    temp.Append("       }\r\n");
+            //    temp.Append("   }\r\n");
+            //    n++;
+            //}
+            //temp.Append("    }\r\n");
+            //temp.Append("}\r\n");
 
-            tbx_表名.Text = temp.ToString();
+            //tbx_表名.Text = temp.ToString();
 
-            showPage.SelectedTab = tp_TableName;
+            //showPage.SelectedTab = tp_TableName;
         }
 
         private void dbmenu_Click(object sender,EventArgs e) {
@@ -603,41 +590,41 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void menuItem_ChangYong_Click(object sender,EventArgs e) {
-            showPage.SelectedTab = tp_常用数据;
+            //showPage.SelectedTab = tp_常用数据;
 
-            StringBuilder tmp = new StringBuilder();
-            tmp.Append("using System;\r\n");
-            tmp.Append("using System.Collections.Generic;\r\n");
-            tmp.Append("using System.Text;\r\n");
+            //StringBuilder tmp = new StringBuilder();
+            //tmp.Append("using System;\r\n");
+            //tmp.Append("using System.Collections.Generic;\r\n");
+            //tmp.Append("using System.Text;\r\n");
 
-            tmp.Append("namespace com.cgWorkstudio.BIMP.Client.vo {\r\n");
-            tmp.Append("    /// <summary>\r\n");
-            tmp.Append("    /// 常量定义常用资料（基础数据）\r\n");
-            tmp.Append("    /// </summary>\r\n");
-            tmp.Append("    [Serializable]\r\n");
-            tmp.Append("    public class BIMPDict_Common {\r\n");
+            //tmp.Append("namespace com.cgWorkstudio.BIMP.Client.vo {\r\n");
+            //tmp.Append("    /// <summary>\r\n");
+            //tmp.Append("    /// 常量定义常用资料（基础数据）\r\n");
+            //tmp.Append("    /// </summary>\r\n");
+            //tmp.Append("    [Serializable]\r\n");
+            //tmp.Append("    public class BIMPDict_Common {\r\n");
 
-            SqlCommand dbCmd = new SqlCommand();
-            using(SqlConnection dbConn = new SqlConnection(sqlString)) {
-                dbConn.Open();
-                dbCmd.Connection = dbConn;
-                dbCmd.CommandText = "select [Code],[Text] from [基础数据_常用资料] where [Type] = 'Group'";
+            //SqlCommand dbCmd = new SqlCommand();
+            //using(SqlConnection dbConn = new SqlConnection(sqlString)) {
+            //    dbConn.Open();
+            //    dbCmd.Connection = dbConn;
+            //    dbCmd.CommandText = "select [Code],[Text] from [基础数据_常用资料] where [Type] = 'Group'";
 
-                SqlDataReader dbReader = dbCmd.ExecuteReader();
-                while(dbReader.Read()) {
-                    string uuid = MyToolkit.IngoreNull(dbReader["Code"]);
-                    string txt = MyToolkit.IngoreNull(dbReader["Text"]);
+            //    SqlDataReader dbReader = dbCmd.ExecuteReader();
+            //    while(dbReader.Read()) {
+            //        string uuid = MyToolkit.IngoreNull(dbReader["Code"]);
+            //        string txt = MyToolkit.IngoreNull(dbReader["Text"]);
 
-                    tmp.Append("            public static string ").Append(txt).Append(" = \"").Append(uuid).Append("\";\r\n");
-                }
-                dbReader.Close();
-                dbReader = null;
+            //        tmp.Append("            public static string ").Append(txt).Append(" = \"").Append(uuid).Append("\";\r\n");
+            //    }
+            //    dbReader.Close();
+            //    dbReader = null;
 
-                tmp.Append("    }\r\n");
-                tmp.Append("}\r\n");
-                dbConn.Close();
-            }
-            tbx_常用数据.Text = tmp.ToString();
+            //    tmp.Append("    }\r\n");
+            //    tmp.Append("}\r\n");
+            //    dbConn.Close();
+            //}
+            //tbx_常用数据.Text = tmp.ToString();
         }
         string sqlString {
             get {
@@ -654,9 +641,7 @@ namespace com.yuzz.DbGenerator {
             using(SqlConnection dbConn = new SqlConnection(sqlString)) {
                 try {
                     dbConn.Open();
-                    dbConn.Close();
-
-                    smTableList = load_SchemaAndSPList();
+                    load_SchemaAndSPList(dbConn);
                     SaveConfig();
                 } catch(Exception ex) {
                     MessageBox.Show(this,ex.ToString(),"系统提示",MessageBoxButtons.OK,MessageBoxIcon.Warning);
@@ -670,52 +655,73 @@ namespace com.yuzz.DbGenerator {
 
         private void btn_Build_Clicked(object sender,EventArgs e) {
             Button btn = (Button)sender;
-            uc_BuildAction(btn.Name,true);
+            uc_BuildAction(btn.Name);
         }
 
-        private void uc_BuildAction(string buildType,bool showConfirm) {
-            tbx_DAO_Code.Clear();
+        private void uc_BuildAction(string buildType) {
+            //tbx_DAO_Code.Clear();
             tbx_VO_Code.Clear();
 
-            foreach(DataRowView getRow in list_Schema.SelectedItems) {
-                string schemaName = getRow["Name"].ToString();
+            bool signleVo = list_Schema.SelectedItems.Count <= 1 ? true : false;
+            foreach(SmTable smTable in list_Schema.SelectedItems) {
+                string schemaName = smTable.TableName;
                 string getBuildString = string.Empty;
 
                 switch(buildType) {
                     case "btn_DAO":
                         getBuildString = createDAO(schemaName);
 
-                        tbx_DAO_Code.AppendText(getBuildString);
-                        tbx_DAO_Code.AppendText("\n\n");
+                        //tbx_DAO_Code.AppendText(getBuildString);
+                        //tbx_DAO_Code.AppendText("\n\n");
 
-                        showPage.SelectedTab = tp_DAO;
+                        //showPage.SelectedTab = tp_DAO;
                         break;
                     case "btn_VO":
                         getBuildString = buildValueObject(schemaName);
 
-                        if(showConfirm == false) {
-                            string filePath = tbx_SavePath_VO.Text + "\\" + tbx_类前缀.Text + schemaName + ".cs";
-                            bool saveResult = uc_SaveFile(filePath,getBuildString);
-
-                            this.Invoke(new OnSaveFileCallback(showSaveFileMessage),new object[] { filePath });
-                            Application.DoEvents();
-                        } else {
+                        if(signleVo == true) {  // 单文件操作才添加到界面显示
                             tbx_VO_Code.AppendText(getBuildString);
                             tbx_VO_Code.AppendText("\n\n");
+                        }
+
+                        if(cbx_AutoSaveToFile.Checked == true) {
+                            if(Directory.Exists(tbx_Project_SavePath.Text) == false) {
+                                MessageBox.Show(this,"工程文件夹不存在。","系统提示");
+                                tbx_Project_SavePath.Focus();
+                                return;
+                            }
+                            string filePath = tbx_Project_SavePath.Text + "\\" + tbx_Prefix.Text + schemaName + ".cs";
+                            bool saveResult = uc_SaveFile(filePath,getBuildString);
+
+                            this.Invoke(new OnSaveFileCallback(showSaveFileMessage),new object[] { filePath,list_Schema.SelectedItems.IndexOf(smTable),list_Schema.SelectedItems.Count });
+
+                            Application.DoEvents();
+                        }
+                        if(signleVo == true) {  // 单文件操作才添加到界面显示
+                            tp_VO.Text = string.Format("Model Generato - {0}.cs",schemaName);
                         }
                         showPage.SelectedTab = tp_VO;
                         break;
                 }
             }
-
-            if(showConfirm == false) {
-                MessageBox.Show("操作完成");
-            }
         }
 
-        void showSaveFileMessage(string filePath) {
-            tbx_VO_Code.AppendText(filePath);
-            tbx_VO_Code.AppendText(" - 已生成\n");
+        void showSaveFileMessage(string filePath,int currentIndex = 0,int fileCount = 0) {
+            if(fileCount > 0) {
+                currentIndex++;
+            }
+            //tbx_VO_Code.SelectionStart = tbx_VO_Code.TextLength;
+            //tbx_VO_Code.SelectedRtf = @"{\rtf1\ansi " + filePath + @"\v #" + filePath + @"\v0}";
+            //tbx_VO_Code.Select(tbx_VO_Code.TextLength,filePath.Length + filePath.Length + 1);
+            //tbx_VO_Code.SetSelectionLink(true);
+
+            tbx_VO_Code.AppendText(currentIndex+ "." + filePath);
+            tbx_VO_Code.AppendText(" - 已生成\r\n");
+            tbx_VO_Code.ScrollToCaret();
+
+            if(currentIndex > 0) {
+                tp_VO.Text = string.Format("Model Generato - {0}/{1} files.",currentIndex,fileCount);
+            }
         }
 
         private bool uc_SaveFile(string filePath,string getBuildString) {
@@ -735,11 +741,18 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void btn_File_Click(object sender,EventArgs e) {
-            string vofilepath = tbx_SavePath_VO.Text + "\\" + tbx_VOFile.Text.Trim();
-            bool saveResult = uc_SaveFile(vofilepath,tbx_VO_Code.Text);
-            if(saveResult == true) {
-                if(MessageBox.Show(this,"文件已保存，是否打开文件夹？","系统提示",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes) {
-                    Process.Start(tbx_SavePath_VO.Text);
+            //string vofilepath = tbx_SavePath_VO.Text + "\\" + tbx_VOFile.Text.Trim();
+            //bool saveResult = uc_SaveFile(vofilepath,tbx_VO_Code.Text);
+            //if(saveResult == true) {
+            //    if(MessageBox.Show(this,"文件已保存，是否打开文件夹？","系统提示",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes) {
+            //        Process.Start(tbx_SavePath_VO.Text);
+            //    }
+            //}
+
+            if(folderBrowserDialog1.ShowDialog() == DialogResult.OK) {
+                if(Directory.Exists(folderBrowserDialog1.SelectedPath) == true) {
+                    tbx_Project_SavePath.Text = folderBrowserDialog1.SelectedPath;
+                    SaveConfig(false,true);
                 }
             }
         }
@@ -749,67 +762,83 @@ namespace com.yuzz.DbGenerator {
 
         private string buildValueObject(string sechemaName) {
             SmTable smTable = smTableList.Find(t => t.TableName.Equals(sechemaName));//  getSmTable(sechemaName);
+            if(smTable.Fields == null) {
+                int pos = smTableList.IndexOf(smTable);
+                using(SqlConnection dbConn = new SqlConnection(sqlString)) {
+                    try {
+                        dbConn.Open();
+                        smTable = getSmTable(smTable.TableName,dbConn);
+                        smTableList[pos] = smTable;
+                    } catch(Exception ex) {
+                        MessageBox.Show(this,ex.ToString(),"系统提示",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                        tbx_MSSQL_ServerIP.Focus();
+                    }
+                }
+            }
 
             StringBuilder temp = new StringBuilder();
 
-            string vofile = tbx_类前缀.Text + smTable.TableName;
-            tbx_VOFile.Text = vofile + ".cs";
-            temp.Append("using System;\r\n");
-            temp.Append("using System.Collections.Generic;\r\n");
-            temp.Append("using System.Text;\r\n");
-            temp.Append("using com.yuzz.dbframework;\r\n");
-            temp.Append("using System.Data;\r\n");
+            string vofile = tbx_Prefix.Text + smTable.TableName;
+            tbx_VO_Filename.Text = vofile + ".cs";
+            //temp.Append("using CSSD.Web.API.Dapper.vo;\r\n");
+            temp.Append("using System;\r\n\r\n");
+            //temp.Append("using System.Collections.Generic;\r\n");
+            //temp.Append("using System.Data;\r\n");
+            //temp.Append("using System.Linq;\r\n");
+            //temp.Append("using System.Threading.Tasks;\r\n");
 
-            //temp.Append("namespace com.jlkj.webapp {\r\n");
+            temp.Append("namespace CSSD.Web.API.Dapper.vo {\r\n");
             temp.Append("   [Serializable]\r\n");
-            temp.Append("   public class ").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" {\r\n");//.Append(":DBItem{\r\n");
+            temp.Append("   public class ").Append(tbx_Prefix.Text).Append(smTable.TableName).Append(" {\r\n");//.Append(":DBItem{\r\n");
             //temp.Append("   public class ").Append(smTable.Name).Append(":DBItem{\r\n");
-            temp.Append("      private string _TableName = string.Empty;\r\n");
-            temp.Append("      public virtual string TableName {\r\n");
-            temp.Append("          get{\r\n");
-            temp.Append("              if(string.IsNullOrEmpty(_TableName)){\r\n");
-            temp.Append("                  _TableName = \"" + smTable.TableName + "\";\r\n");
-            temp.Append("              }\r\n");
-            temp.Append("              return _TableName;\r\n");
-            temp.Append("          }\r\n");
-            temp.Append("      }\r\n");
+            if(false) {
+                temp.Append("      private string _TableName = string.Empty;\r\n");
+                temp.Append("      public virtual string TableName {\r\n");
+                temp.Append("          get{\r\n");
+                temp.Append("              if(string.IsNullOrEmpty(_TableName)){\r\n");
+                temp.Append("                  _TableName = \"" + smTable.TableName + "\";\r\n");
+                temp.Append("              }\r\n");
+                temp.Append("              return _TableName;\r\n");
+                temp.Append("          }\r\n");
+                temp.Append("      }\r\n");
 
-            foreach(SmField smColumn in smTable.Fields) {
-                if(smColumn.PrimaryKey) {
-                    temp.Append("      private string _PkFieldName = string.Empty;\r\n");
-                    temp.Append("      public virtual string PkFieldName {\r\n");
-                    temp.Append("          get{\r\n");
-                    temp.Append("              if(string.IsNullOrEmpty(_PkFieldName)){\r\n");
-                    temp.Append("                  _PkFieldName = \"" + smColumn.Name + "\";\r\n");
-                    temp.Append("              }\r\n");
-                    temp.Append("              return _PkFieldName;\r\n");
-                    temp.Append("          }\r\n");
-                    temp.Append("      }\r\n");
-                    break;
+                foreach(SmField smColumn in smTable.Fields) {
+                    if(smColumn.PrimaryKey) {
+                        temp.Append("      private string _PkFieldName = string.Empty;\r\n");
+                        temp.Append("      public virtual string PkFieldName {\r\n");
+                        temp.Append("          get{\r\n");
+                        temp.Append("              if(string.IsNullOrEmpty(_PkFieldName)){\r\n");
+                        temp.Append("                  _PkFieldName = \"" + smColumn.Name + "\";\r\n");
+                        temp.Append("              }\r\n");
+                        temp.Append("              return _PkFieldName;\r\n");
+                        temp.Append("          }\r\n");
+                        temp.Append("      }\r\n");
+                        break;
+                    }
                 }
-            }
 
-            temp.Append("      private List<SQLField> _Fields = null;\r\n");
-            temp.Append("      public List<SQLField> Fields{\r\n");
-            temp.Append("          get{\r\n");
-            temp.Append("              if(_Fields == null){\r\n");
-            temp.Append("                  _Fields = new List<SQLField>();\r\n");
+                temp.Append("      private List<SQLField> _Fields = null;\r\n");
+                temp.Append("      public List<SQLField> Fields{\r\n");
+                temp.Append("          get{\r\n");
+                temp.Append("              if(_Fields == null){\r\n");
+                temp.Append("                  _Fields = new List<SQLField>();\r\n");
 
-            string pkFieldType = string.Empty;
-            foreach(SmField smColumn in smTable.Fields) {
-                pkFieldType = MyToolkit.ParseToDbTypeString(smColumn.DbType);
-                if(smColumn.PrimaryKey) {
-                    temp.Append("                  _Fields.Add(new SQLField(\"" + smColumn.Name + "\"," + pkFieldType + ",true));\r\n");
-                } else if(string.IsNullOrEmpty(smColumn.Remarks) == false) {
-                    temp.Append("                  _Fields.Add(new SQLField(\"" + smColumn.Name + "\"," + pkFieldType + ",false,\"" + smColumn.Remarks.Trim().Replace("\r","").Replace("\n","") + "\"));\r\n");
-                } else {
-                    temp.Append("                  _Fields.Add(new SQLField(\"" + smColumn.Name + "\"," + pkFieldType + "));\r\n");
+                string pkFieldType = string.Empty;
+                foreach(SmField smColumn in smTable.Fields) {
+                    pkFieldType = MyToolkit.ParseToDbTypeString(smColumn.DbType);
+                    if(smColumn.PrimaryKey) {
+                        temp.Append("                  _Fields.Add(new SQLField(\"" + smColumn.Name + "\"," + pkFieldType + ",true));\r\n");
+                    } else if(string.IsNullOrEmpty(smColumn.Remarks) == false) {
+                        temp.Append("                  _Fields.Add(new SQLField(\"" + smColumn.Name + "\"," + pkFieldType + ",false,\"" + smColumn.Remarks.Trim().Replace("\r","").Replace("\n","") + "\"));\r\n");
+                    } else {
+                        temp.Append("                  _Fields.Add(new SQLField(\"" + smColumn.Name + "\"," + pkFieldType + "));\r\n");
+                    }
                 }
+                temp.Append("              }\r\n");
+                temp.Append("              return _Fields;\r\n");
+                temp.Append("          }\r\n");
+                temp.Append("      }\r\n");
             }
-            temp.Append("              }\r\n");
-            temp.Append("              return _Fields;\r\n");
-            temp.Append("          }\r\n");
-            temp.Append("      }\r\n");
             foreach(SmField smColumn in smTable.Fields) {
                 switch(smColumn.Name) {
                     case "UUID":
@@ -823,8 +852,8 @@ namespace com.yuzz.DbGenerator {
                 temp.Append("          set;\r\n");
                 temp.Append("      }\r\n");
             }
-            temp.Append("   }");
-            //temp.Append("}");
+            temp.Append("   }\r\n");
+            temp.Append("}");
 
             //if(saveToFile) {
             //    string filePath = Application.StartupPath + "\\makefile\\BIMP_" + smTable.Name + ".cs";
@@ -847,7 +876,7 @@ namespace com.yuzz.DbGenerator {
 
             code.Append(" #region -------------------------------------------------------------------").Append(smTable.TableName).Append("-------------------------------------------------------------------\r\n");
 
-            code.Append("public static bool Save").Append(tbx_类前缀.Text).Append(smTable.TableName).Append("(").Append(tbx_类前缀.Text).Append(smTable.TableName).Append(" getValue){\r\n");
+            code.Append("public static bool Save").Append(tbx_Prefix.Text).Append(smTable.TableName).Append("(").Append(tbx_Prefix.Text).Append(smTable.TableName).Append(" getValue){\r\n");
             code.Append("   bool saveResult = false;\r\n");
             code.Append("   \r\n");
             code.Append("   SqlCommand dbCmd = new SqlCommand();\r\n");
@@ -999,53 +1028,53 @@ namespace com.yuzz.DbGenerator {
                 return;
             }
 
-            if(MessageBox.Show(this,"批量生成vo类，生成的vo类将直接写入本地文件。\r\n\r\n文件保存路径：" + tbx_SavePath_VO.Text + "\r\n类前缀：" + tbx_类前缀.Text + "\r\n共计：" + list_Schema.SelectedItems.Count + "张表\r\n\r\n是否继续？","系统提示",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes) {
-                uc_BuildAction("btn_VO",false);
+            if(MessageBox.Show(this,"批量生成vo类，生成的vo类将直接写入本地文件。\r\n\r\n文件保存路径：" + tbx_Project_SavePath.Text + "\r\n类前缀：" + tbx_Prefix.Text + "\r\n共计：" + list_Schema.SelectedItems.Count + "张表\r\n\r\n是否继续？","系统提示",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes) {
+                uc_BuildAction("btn_VO");
             }
         }
 
         private void btn_SoapTypes_Click(object sender,EventArgs e) {
-            StringBuilder stringBuilder = new StringBuilder();
+            //StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.Append("using System;\r\n");
-            stringBuilder.Append("using BIMP.Win.WinUI.bimp_CloudPro;\r\n");
-            stringBuilder.Append("namespace BIMP.Win.WinUI {\r\n");
-            stringBuilder.Append("    public class SoapString {\r\n");
+            //stringBuilder.Append("using System;\r\n");
+            //stringBuilder.Append("using BIMP.Win.WinUI.bimp_CloudPro;\r\n");
+            //stringBuilder.Append("namespace BIMP.Win.WinUI {\r\n");
+            //stringBuilder.Append("    public class SoapString {\r\n");
 
-            foreach(DataRowView getRow in list_Schema.SelectedItems) {
-                string schemaName = getRow["Name"].ToString();
+            //foreach(DataRowView getRow in list_Schema.SelectedItems) {
+            //    string schemaName = getRow["Name"].ToString();
 
-                stringBuilder.Append("\t").Append("public static string ").Append(schemaName.Replace("bimp_","")).Append(" {get {return typeof(").Append(schemaName).Append(").Name;}}").Append("\r\n");
+            //    stringBuilder.Append("\t").Append("public static string ").Append(schemaName.Replace("bimp_","")).Append(" {get {return typeof(").Append(schemaName).Append(").Name;}}").Append("\r\n");
 
-            }
+            //}
 
-            foreach(DataRowView getRow in list_StoreProcedure.Items) {
-                string getSp = getRow["Name"].ToString();
-                stringBuilder.Append("\t").Append("public static string " + getSp + " {\r\n");
-                stringBuilder.Append("\t").Append("    get {\r\n");
-                stringBuilder.Append("\t").Append("        return \"" + getSp + "\";\r\n");
-                stringBuilder.Append("\t").Append("    }\r\n");
-                stringBuilder.Append("\t").Append("}   \r\n");
-            }
+            //foreach(DataRowView getRow in list_StoreProcedure.Items) {
+            //    string getSp = getRow["Name"].ToString();
+            //    stringBuilder.Append("\t").Append("public static string " + getSp + " {\r\n");
+            //    stringBuilder.Append("\t").Append("    get {\r\n");
+            //    stringBuilder.Append("\t").Append("        return \"" + getSp + "\";\r\n");
+            //    stringBuilder.Append("\t").Append("    }\r\n");
+            //    stringBuilder.Append("\t").Append("}   \r\n");
+            //}
 
-            stringBuilder.Append("}}");
-            tbx_DAO_Code.Clear();
-            tbx_DAO_Code.Text = stringBuilder.ToString();
-            showPage.SelectedTab = tp_DAO;
+            //stringBuilder.Append("}}");
+            //tbx_DAO_Code.Clear();
+            //tbx_DAO_Code.Text = stringBuilder.ToString();
+            //showPage.SelectedTab = tp_DAO;
 
             //uc_SaveFile(textBox1.Text,tbx_DAO_Code.Text);
         }
 
         private void btn_XmlInclude_Click(object sender,EventArgs e) {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach(DataRowView getRow in list_Schema.SelectedItems) {
-                string schemaName = getRow["Name"].ToString();
-                stringBuilder.Append("[XmlInclude(typeof(").Append(schemaName).Append("))]\r\n");
-            }
+            //StringBuilder stringBuilder = new StringBuilder();
+            //foreach(DataRowView getRow in list_Schema.SelectedItems) {
+            //    string schemaName = getRow["Name"].ToString();
+            //    stringBuilder.Append("[XmlInclude(typeof(").Append(schemaName).Append("))]\r\n");
+            //}
 
-            tbx_DAO_Code.Clear();
-            tbx_DAO_Code.Text = stringBuilder.ToString();
-            showPage.SelectedTab = tp_DAO;
+            //tbx_DAO_Code.Clear();
+            //tbx_DAO_Code.Text = stringBuilder.ToString();
+            //showPage.SelectedTab = tp_DAO;
         }
 
         private void btn_授权码管理_Click(object sender,EventArgs e) {
@@ -1085,46 +1114,46 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void btn_table_Click(object sender,EventArgs e) {
-            if(list_Schema.SelectedItems.Count > 1) {
-                MessageBox.Show("只支持单表。");
-                return;
-            }
+            //if(list_Schema.SelectedItems.Count > 1) {
+            //    MessageBox.Show("只支持单表。");
+            //    return;
+            //}
 
-            StringBuilder txt = new StringBuilder();
+            //StringBuilder txt = new StringBuilder();
 
-            //txt.Append("<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\r\n");
-            //txt.Append("\t<tr>\r\n");
-            //txt.Append("\t\t<td><asp:Button ID=\"btn_submit\" Text=\"保存\"  runat=\"server\"/><asp:Button ID=\"btn_cancel\" Text=\"取消\"  runat=\"server\"/></td>\r\n");
-            //txt.Append("\t</tr>\r\n");
-            //txt.Append("</table>\r\n");
+            ////txt.Append("<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\r\n");
+            ////txt.Append("\t<tr>\r\n");
+            ////txt.Append("\t\t<td><asp:Button ID=\"btn_submit\" Text=\"保存\"  runat=\"server\"/><asp:Button ID=\"btn_cancel\" Text=\"取消\"  runat=\"server\"/></td>\r\n");
+            ////txt.Append("\t</tr>\r\n");
+            ////txt.Append("</table>\r\n");
 
-            txt.Append("<fieldset>\r\n");
-            txt.Append("\t<legend>xxx详细信息：</legend>\r\n");
+            //txt.Append("<fieldset>\r\n");
+            //txt.Append("\t<legend>xxx详细信息：</legend>\r\n");
 
-            txt.Append("\t<table id=\"editTable\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\r\n");
-            foreach(DataRowView getRow in list_Schema.SelectedItems) {
-                string schemaName = getRow["Name"].ToString();
-                SmTable smTable = getSmTable(schemaName);
-                foreach(SmField smColumn in smTable.Fields) {
-                    string title = smColumn.Remarks;
-                    if(string.IsNullOrEmpty(title)) {
-                        title = smColumn.Name;
-                    }
-                    txt.Append("\t\t<tr>\r\n");
-                    txt.Append("\t\t\t<td width=\"100px\" style=\"text-align:center;\">").Append(title).Append("：</td>\r\n");
-                    txt.Append("\t\t\t<td>").Append("<asp:TextBox ID=\"tbx_").Append(smColumn.Name).Append("\" runat=\"server\" CssClass=\"tbx\"></asp:TextBox></td>\r\n");
-                    //txt.Append("\t\t\t<td>").Append(smColumn.Name).Append("</td>\r\n");
-                    txt.Append("\t\t</tr>\r\n");
-                }
-                //txt.Append("\t\t<tr>\r\n");
-                //txt.Append("\t\t\t<td></td>\r\n");
-                //txt.Append("\t\t\t<td>").Append(smTable.Columns.Count).Append("</td>\r\n");
-                //txt.Append("\t\t</tr>\r\n");
-            }
-            txt.Append("\t</table>\r\n");
-            txt.Append("</fieldset> ");
-            tbx_DAO_Code.Clear();
-            tbx_DAO_Code.AppendText(txt.ToString());
+            //txt.Append("\t<table id=\"editTable\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\r\n");
+            //foreach(DataRowView getRow in list_Schema.SelectedItems) {
+            //    string schemaName = getRow["Name"].ToString();
+            //    SmTable smTable = getSmTable(schemaName);
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        string title = smColumn.Remarks;
+            //        if(string.IsNullOrEmpty(title)) {
+            //            title = smColumn.Name;
+            //        }
+            //        txt.Append("\t\t<tr>\r\n");
+            //        txt.Append("\t\t\t<td width=\"100px\" style=\"text-align:center;\">").Append(title).Append("：</td>\r\n");
+            //        txt.Append("\t\t\t<td>").Append("<asp:TextBox ID=\"tbx_").Append(smColumn.Name).Append("\" runat=\"server\" CssClass=\"tbx\"></asp:TextBox></td>\r\n");
+            //        //txt.Append("\t\t\t<td>").Append(smColumn.Name).Append("</td>\r\n");
+            //        txt.Append("\t\t</tr>\r\n");
+            //    }
+            //    //txt.Append("\t\t<tr>\r\n");
+            //    //txt.Append("\t\t\t<td></td>\r\n");
+            //    //txt.Append("\t\t\t<td>").Append(smTable.Columns.Count).Append("</td>\r\n");
+            //    //txt.Append("\t\t</tr>\r\n");
+            //}
+            //txt.Append("\t</table>\r\n");
+            //txt.Append("</fieldset> ");
+            //tbx_DAO_Code.Clear();
+            //tbx_DAO_Code.AppendText(txt.ToString());
         }
 
         /// <summary>
@@ -1133,237 +1162,239 @@ namespace com.yuzz.DbGenerator {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btn_aspnet_Click(object sender,EventArgs e) {
-            if(list_Schema.SelectedItems.Count > 1) {
-                MessageBox.Show("只支持单表。");
-                return;
-            }
+            //if(list_Schema.SelectedItems.Count > 1) {
+            //    MessageBox.Show("只支持单表。");
+            //    return;
+            //}
 
-            // Asp.net Code
-            StringBuilder txt_load = new StringBuilder();
-            StringBuilder txt_save = new StringBuilder();
-            txt_load.Append("int id = -1;\r\n");
+            //// Asp.net Code
+            //StringBuilder txt_load = new StringBuilder();
+            //StringBuilder txt_save = new StringBuilder();
+            //txt_load.Append("int id = -1;\r\n");
 
-            foreach(DataRowView getRow in list_Schema.SelectedItems) {
-                string schemaName = getRow["Name"].ToString();
-                SmTable smTable = getSmTable(schemaName);
+            //foreach(DataRowView getRow in list_Schema.SelectedItems) {
+            //    string schemaName = getRow["Name"].ToString();
+            //    SmTable smTable = getSmTable(schemaName);
 
-                // txt_load
-                txt_load.Append("protected void Page_Load(object sender,EventArgs e) {\r\n");
-                txt_load.Append("\t  id = WebUtil.ParseRequestInt(Request,\"id\");\r\n");
-                txt_load.Append("\t  if(!Page.IsPostBack) {\r\n");
-                txt_load.Append("\t\t    if(id > 0) {\r\n");
-                txt_load.Append("\t\t\t      ").Append(schemaName).Append(" item = DBUtil.GetItem<").Append(schemaName).Append(">(id);\r\n");
+            //    // txt_load
+            //    txt_load.Append("protected void Page_Load(object sender,EventArgs e) {\r\n");
+            //    txt_load.Append("\t  id = WebUtil.ParseRequestInt(Request,\"id\");\r\n");
+            //    txt_load.Append("\t  if(!Page.IsPostBack) {\r\n");
+            //    txt_load.Append("\t\t    if(id > 0) {\r\n");
+            //    txt_load.Append("\t\t\t      ").Append(schemaName).Append(" item = DBUtil.GetItem<").Append(schemaName).Append(">(id);\r\n");
 
-                // txt_save
-                txt_save.Append("id = WebUtil.ParseRequestInt(Request,\"id\");\r\n");
-                txt_save.Append(schemaName).Append(" saveItem = null;\r\n");
-                txt_save.Append("if(id > 0) {\r\n");
-                txt_save.Append("\t     saveItem = DBUtil.GetItem<").Append(schemaName).Append(">(id);\r\n");
-                txt_save.Append("} else {\r\n");
-                txt_save.Append("\t     saveItem = new ").Append(schemaName).Append("();\r\n");
-                txt_save.Append("\t     saveItem.shopid = shopid;\r\n");
-                txt_save.Append("}\r\n");
+            //    // txt_save
+            //    txt_save.Append("id = WebUtil.ParseRequestInt(Request,\"id\");\r\n");
+            //    txt_save.Append(schemaName).Append(" saveItem = null;\r\n");
+            //    txt_save.Append("if(id > 0) {\r\n");
+            //    txt_save.Append("\t     saveItem = DBUtil.GetItem<").Append(schemaName).Append(">(id);\r\n");
+            //    txt_save.Append("} else {\r\n");
+            //    txt_save.Append("\t     saveItem = new ").Append(schemaName).Append("();\r\n");
+            //    txt_save.Append("\t     saveItem.shopid = shopid;\r\n");
+            //    txt_save.Append("}\r\n");
 
                 
 
-                foreach(SmField smColumn in smTable.Fields) {
-                    string loadString = "item." + smColumn.Name;
-                    string saveString = "tbx_" + smColumn.Name + ".Text.Trim()";
-                    switch(smColumn.DbType) {
-                        case SqlDbType.Int:
-                            loadString += ".ToString()";
-                            saveString = "WebUtil.ParseInt(" + saveString + ")";
-                            break;
-                        case SqlDbType.Float:
-                        case SqlDbType.Real:
-                            loadString += ".ToString()";
-                            saveString = "WebUtil.ParseFloat(" + saveString + ")";
-                            break;
-                        case SqlDbType.Date:
-                            loadString += ".ToString(\"yyyy-MM-dd\")";
-                            saveString = "WebUtil.ParseDate(" + saveString + ")";
-                            break;
-                        case SqlDbType.DateTime:
-                            loadString += ".ToString(\"yyyy-MM-dd HH:mm:ss\")";
-                            saveString = "WebUtil.ParseDateTime(" + saveString + ")";
-                            break;
-                    }
-                    txt_load.Append("\t\t\t      tbx_").Append(smColumn.Name).Append(".Text = ").Append(loadString).Append(";\r\n");
+            //    foreach(SmField smColumn in smTable.Fields) {
+            //        string loadString = "item." + smColumn.Name;
+            //        string saveString = "tbx_" + smColumn.Name + ".Text.Trim()";
+            //        switch(smColumn.DbType) {
+            //            case SqlDbType.Int:
+            //                loadString += ".ToString()";
+            //                saveString = "WebUtil.ParseInt(" + saveString + ")";
+            //                break;
+            //            case SqlDbType.Float:
+            //            case SqlDbType.Real:
+            //                loadString += ".ToString()";
+            //                saveString = "WebUtil.ParseFloat(" + saveString + ")";
+            //                break;
+            //            case SqlDbType.Date:
+            //                loadString += ".ToString(\"yyyy-MM-dd\")";
+            //                saveString = "WebUtil.ParseDate(" + saveString + ")";
+            //                break;
+            //            case SqlDbType.DateTime:
+            //                loadString += ".ToString(\"yyyy-MM-dd HH:mm:ss\")";
+            //                saveString = "WebUtil.ParseDateTime(" + saveString + ")";
+            //                break;
+            //        }
+            //        txt_load.Append("\t\t\t      tbx_").Append(smColumn.Name).Append(".Text = ").Append(loadString).Append(";\r\n");
 
-                    txt_save.Append(" saveItem.").Append(smColumn.Name).Append(" = ").Append(saveString).Append(";\r\n");
-                }
+            //        txt_save.Append(" saveItem.").Append(smColumn.Name).Append(" = ").Append(saveString).Append(";\r\n");
+            //    }
 
-                // txt_load
-                txt_load.Append("\t\t    }\r\n");
-                txt_load.Append("\t  }\r\n");
-                txt_load.Append("}\r\n");
+            //    // txt_load
+            //    txt_load.Append("\t\t    }\r\n");
+            //    txt_load.Append("\t  }\r\n");
+            //    txt_load.Append("}\r\n");
 
-                // txt_save
-                txt_save.Append("\r\nSaveResult result = DBUtil.Save(saveItem);\r\n");
-                txt_save.Append("if(result.Id > 0) {\r\n");
-                txt_save.Append("\t     Response.Write(\"<script>alert('操作成功。');window.location='XXX.aspx';</script>\");\r\n");
-                txt_save.Append("}\r\n");
-            }
-            tbx_Load.Clear();
-            tbx_Load.AppendText(txt_load.ToString());
+            //    // txt_save
+            //    txt_save.Append("\r\nSaveResult result = DBUtil.Save(saveItem);\r\n");
+            //    txt_save.Append("if(result.Id > 0) {\r\n");
+            //    txt_save.Append("\t     Response.Write(\"<script>alert('操作成功。');window.location='XXX.aspx';</script>\");\r\n");
+            //    txt_save.Append("}\r\n");
+            //}
+            //tbx_Load.Clear();
+            //tbx_Load.AppendText(txt_load.ToString());
 
-            tbx_Save.Clear();
-            tbx_Save.AppendText(txt_save.ToString());
-            showPage.SelectedTab = tp_load;
+            //tbx_Save.Clear();
+            //tbx_Save.AppendText(txt_save.ToString());
+            //showPage.SelectedTab = tp_load;
         }
 
         private void list_Schema_DoubleClick(object sender,EventArgs e) {
-            SmTable smTable = smTableList.Find(t => t.TableName.Equals(list_Schema.Text));
-            if(smTable.ActiveUsing == true) {
-                return;
-            }
+            uc_BuildAction("btn_VO");
 
-            smTable.ActiveUsing = true; // 标记为正在使用
+            //SmTable smTable = smTableList.Find(t => t.TableName.Equals(list_Schema.Text));
+            //if(smTable.ActiveUsing == true) {
+            //    return;
+            //}
 
-            dgv_SourceTable.Rows.Add();
-            int usingIndex = dgv_SourceTable.Rows.Count;
-            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["id_Cell"].Value = usingIndex;
-            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["name_Cell"].Value = smTable.TableName;
-            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["nickName_Cell"].Value = smTable.Nickname;
-            dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["del_Cell"].Value = "删除";
+            //smTable.ActiveUsing = true; // 标记为正在使用
 
-            smTable.UsingIndex = usingIndex;    // 更新显示次序
-            if(showPage.SelectedTab.Name.Equals(tp_VisualSQLBuilder.Name) == false) {
-                showPage.SelectedTab = tp_VisualSQLBuilder;
-            }
+            //dgv_SourceTable.Rows.Add();
+            //int usingIndex = dgv_SourceTable.Rows.Count;
+            //dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["id_Cell"].Value = usingIndex;
+            //dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["name_Cell"].Value = smTable.TableName;
+            //dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["nickName_Cell"].Value = smTable.Nickname;
+            //dgv_SourceTable.Rows[dgv_SourceTable.Rows.Count - 1].Cells["del_Cell"].Value = "删除";
+
+            //smTable.UsingIndex = usingIndex;    // 更新显示次序
+            //if(showPage.SelectedTab.Name.Equals(tp_VisualSQLBuilder.Name) == false) {
+            //    showPage.SelectedTab = tp_VisualSQLBuilder;
+            //}
         }
         #region SourceTable操作代码
 
         private void dgv_SourceTable_CellEndEdit(object sender,DataGridViewCellEventArgs e) {
-            string name_Cell = dgv_SourceTable["name_Cell",e.RowIndex].Value.ToString();
-            string inputNickname = MyToolkit.IngoreNull(dgv_SourceTable[e.ColumnIndex,e.RowIndex].Value);
+            //string name_Cell = dgv_SourceTable["name_Cell",e.RowIndex].Value.ToString();
+            //string inputNickname = MyToolkit.IngoreNull(dgv_SourceTable[e.ColumnIndex,e.RowIndex].Value);
 
-            if(string.IsNullOrEmpty(inputNickname)) {
-                return;
-            }
-            SmTable smTable = smTableList.Find(t => t.Nickname.Equals(inputNickname));
+            //if(string.IsNullOrEmpty(inputNickname)) {
+            //    return;
+            //}
+            //SmTable smTable = smTableList.Find(t => t.Nickname.Equals(inputNickname));
             
-            if(smTable != null && smTable.TableName.Equals(name_Cell) == false) {  // 已存在同名的昵称
-                dgv_SourceTable[e.ColumnIndex,e.RowIndex].Value = "";
-                MessageBox.Show("昵称已经存在。");
-                return;
-            }
+            //if(smTable != null && smTable.TableName.Equals(name_Cell) == false) {  // 已存在同名的昵称
+            //    dgv_SourceTable[e.ColumnIndex,e.RowIndex].Value = "";
+            //    MessageBox.Show("昵称已经存在。");
+            //    return;
+            //}
 
-            smTableList.Find(t => t.TableName.Equals(name_Cell)).Nickname = inputNickname;  // 更新昵称
-            SyncSelectToDataGridView();
+            //smTableList.Find(t => t.TableName.Equals(name_Cell)).Nickname = inputNickname;  // 更新昵称
+            //SyncSelectToDataGridView();
         }
 
         private void dgv_SourceTable_CellContentClick(object sender,DataGridViewCellEventArgs e) {
-            if(e.RowIndex < 0) {
-                return;
-            }
+            //if(e.RowIndex < 0) {
+            //    return;
+            //}
 
-            if(dgv_SourceTable.Columns[e.ColumnIndex].Name.Equals("del_Cell")) {
-                string dgvCellName = MyToolkit.IngoreNull(dgv_SourceTable["name_Cell",e.RowIndex].Value);
-                smTableList.Find(t => t.TableName.Equals(dgvCellName)).ActiveUsing = false;
+            //if(dgv_SourceTable.Columns[e.ColumnIndex].Name.Equals("del_Cell")) {
+            //    string dgvCellName = MyToolkit.IngoreNull(dgv_SourceTable["name_Cell",e.RowIndex].Value);
+            //    smTableList.Find(t => t.TableName.Equals(dgvCellName)).ActiveUsing = false;
 
-                dgv_SourceTable.Rows.RemoveAt(e.RowIndex);
-                reorderUsingIndex(e.RowIndex);
-            }
+            //    dgv_SourceTable.Rows.RemoveAt(e.RowIndex);
+            //    reorderUsingIndex(e.RowIndex);
+            //}
         }
         #endregion
 
         private void reorderUsingIndex(int rowIndex) {
-            for(int n = rowIndex;n < dgv_SourceTable.Rows.Count;n++) {
-                int newIndex = MyToolkit.ParseInt(dgv_SourceTable["id_Cell",n].Value);
-                string nameCell = MyToolkit.IngoreNull(dgv_SourceTable["name_Cell",n].Value);
-                int usingIndex = newIndex - 1;
+            //for(int n = rowIndex;n < dgv_SourceTable.Rows.Count;n++) {
+            //    int newIndex = MyToolkit.ParseInt(dgv_SourceTable["id_Cell",n].Value);
+            //    string nameCell = MyToolkit.IngoreNull(dgv_SourceTable["name_Cell",n].Value);
+            //    int usingIndex = newIndex - 1;
 
-                dgv_SourceTable["id_Cell",n].Value = usingIndex;
-                smTableList.Find(t => t.TableName.Equals(nameCell)).UsingIndex = usingIndex;
-            }
-            dgv_SourceTable.Refresh();
+            //    dgv_SourceTable["id_Cell",n].Value = usingIndex;
+            //    smTableList.Find(t => t.TableName.Equals(nameCell)).UsingIndex = usingIndex;
+            //}
+            //dgv_SourceTable.Refresh();
         }
 
         #region Select操作代码
         private void dgv_Select_CellContentClick(object sender,DataGridViewCellEventArgs e) {
-            if(e.RowIndex < 0) {
-                return;
-            }
+            //if(e.RowIndex < 0) {
+            //    return;
+            //}
 
-            // 点击右键构建菜单
-            string cellName = dgv_Select.Columns[e.ColumnIndex].Name;
-            string cellValue = MyToolkit.IngoreNull(dgv_Select[e.ColumnIndex,e.RowIndex].Value);
-            string tableName = dgv_Select["dgv_Select_ValueCell",e.RowIndex].ToolTipText;       // ToolTipText缓存的是TableName
-            string fieldName = dgv_Select["dgv_Select_ValueCell",e.RowIndex].ErrorText;         // ErrorText缓存的是FieldName
-            ctxMenu_Select.Items.Clear();
-            switch(cellName) {
-                case "dgv_Select_FieldNameCell":    // 选择字段菜单
-                    if("<点击这里添加字段>".Equals(cellValue)) {
-                        List<SmTable> smTables = smTableList.FindAll(t => t.ActiveUsing == true);
-                        foreach(SmTable smTable in smTables) {
-                            ToolStripMenuItem menu = new ToolStripMenuItem();
-                            menu.Text = string.IsNullOrEmpty(smTable.Nickname) ? smTable.TableName : smTable.Nickname;
-                            foreach(SmField smField in smTable.Fields) {
-                                ToolStripMenuItem subMenu = new ToolStripMenuItem();
-                                subMenu.ToolTipText = smTable.TableName;    // TooltipText缓存表名称
-                                subMenu.Name = smField.Name;                // Text缓存字段名称
-                                subMenu.Text = smField.Name;                // + "\t(" + smField.DbType.ToString() + ")";
-                                subMenu.ImageKey = "png_pk";
-                                subMenu.Click += ctxMenu_Select_AddMenu_Click;
-                                menu.DropDownItems.Add(subMenu);
-                            }
-                            ctxMenu_Select.Items.Add(menu);
-                        }
-                    } else {    // 删除菜单
-                        ToolStripMenuItem menu = new ToolStripMenuItem();                        
-                        menu.Text = "删除(&D)";
-                        menu.Click += ctxMenu_Select_DelMenu_Click;
-                        ctxMenu_Select.Items.Add(menu);
-                    }
-                    break;
-                case "dgv_Select_FuncCell": // 数据库函数菜单
-                    string[] getFunc = Enum.GetNames(typeof(SelectFunction));
-                    foreach(string item in getFunc) {
-                        ToolStripMenuItem menu = new ToolStripMenuItem();
+            //// 点击右键构建菜单
+            //string cellName = dgv_Select.Columns[e.ColumnIndex].Name;
+            //string cellValue = MyToolkit.IngoreNull(dgv_Select[e.ColumnIndex,e.RowIndex].Value);
+            //string tableName = dgv_Select["dgv_Select_ValueCell",e.RowIndex].ToolTipText;       // ToolTipText缓存的是TableName
+            //string fieldName = dgv_Select["dgv_Select_ValueCell",e.RowIndex].ErrorText;         // ErrorText缓存的是FieldName
+            //ctxMenu_Select.Items.Clear();
+            //switch(cellName) {
+            //    case "dgv_Select_FieldNameCell":    // 选择字段菜单
+            //        if("<点击这里添加字段>".Equals(cellValue)) {
+            //            List<SmTable> smTables = smTableList.FindAll(t => t.ActiveUsing == true);
+            //            foreach(SmTable smTable in smTables) {
+            //                ToolStripMenuItem menu = new ToolStripMenuItem();
+            //                menu.Text = string.IsNullOrEmpty(smTable.Nickname) ? smTable.TableName : smTable.Nickname;
+            //                foreach(SmField smField in smTable.Fields) {
+            //                    ToolStripMenuItem subMenu = new ToolStripMenuItem();
+            //                    subMenu.ToolTipText = smTable.TableName;    // TooltipText缓存表名称
+            //                    subMenu.Name = smField.Name;                // Text缓存字段名称
+            //                    subMenu.Text = smField.Name;                // + "\t(" + smField.DbType.ToString() + ")";
+            //                    subMenu.ImageKey = "png_pk";
+            //                    subMenu.Click += ctxMenu_Select_AddMenu_Click;
+            //                    menu.DropDownItems.Add(subMenu);
+            //                }
+            //                ctxMenu_Select.Items.Add(menu);
+            //            }
+            //        } else {    // 删除菜单
+            //            ToolStripMenuItem menu = new ToolStripMenuItem();                        
+            //            menu.Text = "删除(&D)";
+            //            menu.Click += ctxMenu_Select_DelMenu_Click;
+            //            ctxMenu_Select.Items.Add(menu);
+            //        }
+            //        break;
+            //    case "dgv_Select_FuncCell": // 数据库函数菜单
+            //        string[] getFunc = Enum.GetNames(typeof(SelectFunction));
+            //        foreach(string item in getFunc) {
+            //            ToolStripMenuItem menu = new ToolStripMenuItem();
                         
-                        if("Default".Equals(item)) {
-                            menu.Text = "<->";
-                        } else {
-                            menu.Text = item;
-                        }
+            //            if("Default".Equals(item)) {
+            //                menu.Text = "<->";
+            //            } else {
+            //                menu.Text = item;
+            //            }
 
-                        menu.Click += ctxMenu_Select_FuncMenu_Click;
-                        ctxMenu_Select.Items.Add(menu);
-                    }
-                    break;
-            }
-            if(ctxMenu_Select.Items.Count > 0) {
-                ctxMenu_Select.Show(dgv_Select,dgv_Select.PointToClient(MousePosition));
-            }
+            //            menu.Click += ctxMenu_Select_FuncMenu_Click;
+            //            ctxMenu_Select.Items.Add(menu);
+            //        }
+            //        break;
+            //}
+            //if(ctxMenu_Select.Items.Count > 0) {
+            //    ctxMenu_Select.Show(dgv_Select,dgv_Select.PointToClient(MousePosition));
+            //}
         }
 
         private void ctxMenu_Select_FuncMenu_Click(object sender,EventArgs e) {
-            ToolStripMenuItem menu = (ToolStripMenuItem)sender;
-            int rowIndex = dgv_Select.CurrentCell.RowIndex;
+            //ToolStripMenuItem menu = (ToolStripMenuItem)sender;
+            //int rowIndex = dgv_Select.CurrentCell.RowIndex;
 
-            string tableName = dgv_Select["dgv_Select_ValueCell",rowIndex].ToolTipText;       // ToolTipText缓存的是TableName
-            string fieldName = dgv_Select["dgv_Select_ValueCell",rowIndex].ErrorText;         // ErrorText缓存的是FieldName
+            //string tableName = dgv_Select["dgv_Select_ValueCell",rowIndex].ToolTipText;       // ToolTipText缓存的是TableName
+            //string fieldName = dgv_Select["dgv_Select_ValueCell",rowIndex].ErrorText;         // ErrorText缓存的是FieldName
 
-            SelectFunction selectFunction;
-            if("<->".Equals(menu.Text)) {
-                Enum.TryParse("Default",out selectFunction);
-            } else {
-                Enum.TryParse(menu.Text,out selectFunction);
-            }
+            //SelectFunction selectFunction;
+            //if("<->".Equals(menu.Text)) {
+            //    Enum.TryParse("Default",out selectFunction);
+            //} else {
+            //    Enum.TryParse(menu.Text,out selectFunction);
+            //}
 
-            smTableList.Find(t => t.TableName.Equals(tableName)).Fields.Find(t => t.Name.Equals(fieldName)).Func = selectFunction;
+            //smTableList.Find(t => t.TableName.Equals(tableName)).Fields.Find(t => t.Name.Equals(fieldName)).Func = selectFunction;
 
-            SyncSelectToDataGridView();
+            //SyncSelectToDataGridView();
         }
 
         private void ctxMenu_Select_DelMenu_Click(object sender,EventArgs e) {
-            int rowIndex = dgv_Select.CurrentCell.RowIndex;
-            string tableName = dgv_Select["dgv_Select_ValueCell",rowIndex].ToolTipText;       // ToolTipText缓存的是TableName
-            string fieldName = dgv_Select["dgv_Select_ValueCell",rowIndex].ErrorText;         // ErrorText缓存的是FieldName
+            //int rowIndex = dgv_Select.CurrentCell.RowIndex;
+            //string tableName = dgv_Select["dgv_Select_ValueCell",rowIndex].ToolTipText;       // ToolTipText缓存的是TableName
+            //string fieldName = dgv_Select["dgv_Select_ValueCell",rowIndex].ErrorText;         // ErrorText缓存的是FieldName
 
-            smTableList.Find(t => t.TableName.Equals(tableName)).Fields.Find(t => t.Name.Equals(fieldName)).ActiveUsing = false;
-            SyncSelectToDataGridView();
+            //smTableList.Find(t => t.TableName.Equals(tableName)).Fields.Find(t => t.Name.Equals(fieldName)).ActiveUsing = false;
+            //SyncSelectToDataGridView();
         }
 
         private void ctxMenu_Select_AddMenu_Click(object sender,EventArgs e) {
@@ -1381,50 +1412,68 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void SyncSelectToDataGridView() {
-            IEnumerable<SmTable> list = from w in smTableList
-                                        where w.ActiveUsing == true
-                                        orderby w.UsingIndex ascending
-                                        select w;
+            //IEnumerable<SmTable> list = from w in smTableList
+            //                            where w.ActiveUsing == true
+            //                            orderby w.UsingIndex ascending
+            //                            select w;
 
-            List<SmTable> _list = list.ToList();
-            while(dgv_Select.Rows.Count > 1) {
-                dgv_Select.Rows.RemoveAt(0);
-            }
-            foreach(SmTable smTable in _list) {
-                foreach(SmField smField in smTable.Fields) {
-                    if(smField.ActiveUsing == false) {
-                        continue;
-                    }
+            //List<SmTable> _list = list.ToList();
+            //while(dgv_Select.Rows.Count > 1) {
+            //    dgv_Select.Rows.RemoveAt(0);
+            //}
+            //foreach(SmTable smTable in _list) {
+            //    foreach(SmField smField in smTable.Fields) {
+            //        if(smField.ActiveUsing == false) {
+            //            continue;
+            //        }
 
-                    dgv_Select.Rows.Insert(dgv_Select.Rows.Count - 1,1);
-                    DataGridViewRow newRow = dgv_Select.Rows[dgv_Select.Rows.Count - 2];
-                    string funcString = "<->"; 
-                    string fieldName = (string.IsNullOrEmpty(smTable.Nickname) ? smTable.TableName : smTable.Nickname) + "." + smField.Name;
-                    string fieldAs = smField.FieldAs;
+            //        dgv_Select.Rows.Insert(dgv_Select.Rows.Count - 1,1);
+            //        DataGridViewRow newRow = dgv_Select.Rows[dgv_Select.Rows.Count - 2];
+            //        string funcString = "<->"; 
+            //        string fieldName = (string.IsNullOrEmpty(smTable.Nickname) ? smTable.TableName : smTable.Nickname) + "." + smField.Name;
+            //        string fieldAs = smField.FieldAs;
 
-                    if(smField.Func.Equals(SelectFunction.Default) == false) {
-                        funcString = Enum.GetName(typeof(SelectFunction),smField.Func);
-                    }
+            //        if(smField.Func.Equals(SelectFunction.Default) == false) {
+            //            funcString = Enum.GetName(typeof(SelectFunction),smField.Func);
+            //        }
 
-                    newRow.Cells["dgv_Select_FuncCell"].Value = funcString;
-                    newRow.Cells["dgv_Select_FieldNameCell"].Value = fieldName;
-                    newRow.Cells["dgv_Select_AsCell"].Value = fieldAs;
-                    newRow.Cells["dgv_Select_ValueCell"].ErrorText = smField.Name;
-                    newRow.Cells["dgv_Select_ValueCell"].ToolTipText = smTable.TableName;
-                }
-            }
+            //        newRow.Cells["dgv_Select_FuncCell"].Value = funcString;
+            //        newRow.Cells["dgv_Select_FieldNameCell"].Value = fieldName;
+            //        newRow.Cells["dgv_Select_AsCell"].Value = fieldAs;
+            //        newRow.Cells["dgv_Select_ValueCell"].ErrorText = smField.Name;
+            //        newRow.Cells["dgv_Select_ValueCell"].ToolTipText = smTable.TableName;
+            //    }
+            //}
         }
 
         private void init_SelectDataGridView() {
-            ctxMenu_Select.ImageList = ctxMenu_Select_ImageList;
-            dgv_Select.Columns["dgv_Select_FuncCell"].Width = dgv_Select.Width / 6;
-            dgv_Select.Columns["dgv_Select_AsCell"].Width = dgv_Select.Width / 4;
+            //ctxMenu_Select.ImageList = ctxMenu_Select_ImageList;
+            //dgv_Select.Columns["dgv_Select_FuncCell"].Width = dgv_Select.Width / 6;
+            //dgv_Select.Columns["dgv_Select_AsCell"].Width = dgv_Select.Width / 4;
 
-            dgv_Select.Rows.Add();
-            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FuncCell"].Value = "<->";
-            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FieldNameCell"].Value = "<点击这里添加字段>";
-            dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_AsCell"].Value = "<->";
+            //dgv_Select.Rows.Add();
+            //dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FuncCell"].Value = "<->";
+            //dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_FieldNameCell"].Value = "<点击这里添加字段>";
+            //dgv_Select.Rows[dgv_Select.Rows.Count - 1].Cells["dgv_Select_AsCell"].Value = "<->";
         }
         #endregion
+
+        private void btn_OpenFolder_Click(object sender,EventArgs e) {
+            Process.Start(tbx_Project_SavePath.Text);
+        }
+
+        private void list_Schema_SelectedIndexChanged(object sender,EventArgs e) {
+            if(list_Schema.SelectedItems.Count > 1) {
+                btn_BatchExec.Enabled = true;
+            } else {
+                btn_BatchExec.Enabled = false;
+            }
+        }
+
+        private void cbx_AutoSaveToFile_CheckedChanged(object sender,EventArgs e) {
+            tbx_Project_SavePath.Enabled = cbx_AutoSaveToFile.Checked;
+            tbx_VO_Filename.Enabled = cbx_AutoSaveToFile.Checked;
+            btn_SelectFolder.Enabled = cbx_AutoSaveToFile.Checked;
+        }
     }
 }
