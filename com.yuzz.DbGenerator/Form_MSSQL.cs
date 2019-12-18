@@ -654,55 +654,46 @@ namespace com.yuzz.DbGenerator {
 
 
         private void btn_Build_Clicked(object sender,EventArgs e) {
-            Button btn = (Button)sender;
-            uc_BuildAction(btn.Name);
+            uc_BuildAction();
         }
 
-        private void uc_BuildAction(string buildType) {
-            //tbx_DAO_Code.Clear();
+        private void uc_BuildAction() {
             tbx_VO_Code.Clear();
 
-            bool signleVo = list_Schema.SelectedItems.Count <= 1 ? true : false;
-            foreach(SmTable smTable in list_Schema.SelectedItems) {
-                string schemaName = smTable.TableName;
-                string getBuildString = string.Empty;
+            if(showDBPage.SelectedTab.Name.Equals(tp_Schema.Name)) {    // tp_Schema
+                bool signleVo = list_Schema.SelectedItems.Count <= 1 ? true : false;
+                foreach(SmTable smTable in list_Schema.SelectedItems) {
+                    string schemaName = smTable.TableName;
+                    string getBuildString = string.Empty;
 
-                switch(buildType) {
-                    case "btn_DAO":
-                        getBuildString = createDAO(schemaName);
+                    getBuildString = buildValueObject(schemaName);
 
-                        //tbx_DAO_Code.AppendText(getBuildString);
-                        //tbx_DAO_Code.AppendText("\n\n");
+                    if(signleVo == true) {  // 单文件操作才添加到界面显示
+                        tbx_VO_Code.AppendText(getBuildString);
+                        tbx_VO_Code.AppendText("\n\n");
+                    }
 
-                        //showPage.SelectedTab = tp_DAO;
-                        break;
-                    case "btn_VO":
-                        getBuildString = buildValueObject(schemaName);
-
-                        if(signleVo == true) {  // 单文件操作才添加到界面显示
-                            tbx_VO_Code.AppendText(getBuildString);
-                            tbx_VO_Code.AppendText("\n\n");
+                    if(cbx_AutoSaveToFile.Checked == true) {
+                        if(Directory.Exists(tbx_Project_SavePath.Text) == false) {
+                            MessageBox.Show(this,"工程文件夹不存在。","系统提示");
+                            tbx_Project_SavePath.Focus();
+                            return;
                         }
+                        string filePath = tbx_Project_SavePath.Text + "\\" + tbx_Prefix.Text + schemaName + ".cs";
+                        bool saveResult = uc_SaveFile(filePath,getBuildString);
 
-                        if(cbx_AutoSaveToFile.Checked == true) {
-                            if(Directory.Exists(tbx_Project_SavePath.Text) == false) {
-                                MessageBox.Show(this,"工程文件夹不存在。","系统提示");
-                                tbx_Project_SavePath.Focus();
-                                return;
-                            }
-                            string filePath = tbx_Project_SavePath.Text + "\\" + tbx_Prefix.Text + schemaName + ".cs";
-                            bool saveResult = uc_SaveFile(filePath,getBuildString);
+                        this.Invoke(new OnSaveFileCallback(showSaveFileMessage),new object[] { filePath,list_Schema.SelectedItems.IndexOf(smTable),list_Schema.SelectedItems.Count });
 
-                            this.Invoke(new OnSaveFileCallback(showSaveFileMessage),new object[] { filePath,list_Schema.SelectedItems.IndexOf(smTable),list_Schema.SelectedItems.Count });
+                        Application.DoEvents();
+                    }
+                    if(signleVo == true) {  // 单文件操作才添加到界面显示
+                        tp_VO.Text = string.Format("Model Generato - {0}.cs",schemaName);
+                    }
+                    showPage.SelectedTab = tp_VO;
 
-                            Application.DoEvents();
-                        }
-                        if(signleVo == true) {  // 单文件操作才添加到界面显示
-                            tp_VO.Text = string.Format("Model Generato - {0}.cs",schemaName);
-                        }
-                        showPage.SelectedTab = tp_VO;
-                        break;
                 }
+            } else {    // Procedure
+
             }
         }
 
@@ -1029,7 +1020,7 @@ namespace com.yuzz.DbGenerator {
             }
 
             if(MessageBox.Show(this,"批量生成vo类，生成的vo类将直接写入本地文件。\r\n\r\n文件保存路径：" + tbx_Project_SavePath.Text + "\r\n类前缀：" + tbx_Prefix.Text + "\r\n共计：" + list_Schema.SelectedItems.Count + "张表\r\n\r\n是否继续？","系统提示",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes) {
-                uc_BuildAction("btn_VO");
+                uc_BuildAction();
             }
         }
 
@@ -1242,7 +1233,7 @@ namespace com.yuzz.DbGenerator {
         }
 
         private void list_Schema_DoubleClick(object sender,EventArgs e) {
-            uc_BuildAction("btn_VO");
+            uc_BuildAction();            
 
             //SmTable smTable = smTableList.Find(t => t.TableName.Equals(list_Schema.Text));
             //if(smTable.ActiveUsing == true) {

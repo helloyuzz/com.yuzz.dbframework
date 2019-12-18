@@ -27,9 +27,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_MSSQL));
             this.showLeftPanel = new System.Windows.Forms.Panel();
             this.showDBPage = new System.Windows.Forms.TabControl();
-            this.tp_表 = new System.Windows.Forms.TabPage();
+            this.tp_Schema = new System.Windows.Forms.TabPage();
             this.list_Schema = new System.Windows.Forms.ListBox();
-            this.tp_存储过程 = new System.Windows.Forms.TabPage();
+            this.tp_Procedure = new System.Windows.Forms.TabPage();
             this.list_StoreProcedure = new System.Windows.Forms.ListBox();
             this.img = new System.Windows.Forms.ImageList(this.components);
             this.showContentPanel = new System.Windows.Forms.Panel();
@@ -76,8 +76,8 @@
             this.cbx_AutoSaveToFile = new System.Windows.Forms.CheckBox();
             this.showLeftPanel.SuspendLayout();
             this.showDBPage.SuspendLayout();
-            this.tp_表.SuspendLayout();
-            this.tp_存储过程.SuspendLayout();
+            this.tp_Schema.SuspendLayout();
+            this.tp_Procedure.SuspendLayout();
             this.showContentPanel.SuspendLayout();
             this.showPage.SuspendLayout();
             this.tp_VO.SuspendLayout();
@@ -102,8 +102,8 @@
             // 
             // showDBPage
             // 
-            this.showDBPage.Controls.Add(this.tp_表);
-            this.showDBPage.Controls.Add(this.tp_存储过程);
+            this.showDBPage.Controls.Add(this.tp_Schema);
+            this.showDBPage.Controls.Add(this.tp_Procedure);
             this.showDBPage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.showDBPage.Location = new System.Drawing.Point(3, 3);
             this.showDBPage.Name = "showDBPage";
@@ -111,15 +111,15 @@
             this.showDBPage.Size = new System.Drawing.Size(325, 649);
             this.showDBPage.TabIndex = 9;
             // 
-            // tp_表
+            // tp_Schema
             // 
-            this.tp_表.Controls.Add(this.list_Schema);
-            this.tp_表.Location = new System.Drawing.Point(4, 22);
-            this.tp_表.Name = "tp_表";
-            this.tp_表.Size = new System.Drawing.Size(317, 623);
-            this.tp_表.TabIndex = 0;
-            this.tp_表.Text = "表";
-            this.tp_表.UseVisualStyleBackColor = true;
+            this.tp_Schema.Controls.Add(this.list_Schema);
+            this.tp_Schema.Location = new System.Drawing.Point(4, 22);
+            this.tp_Schema.Name = "tp_Schema";
+            this.tp_Schema.Size = new System.Drawing.Size(317, 623);
+            this.tp_Schema.TabIndex = 0;
+            this.tp_Schema.Text = "表";
+            this.tp_Schema.UseVisualStyleBackColor = true;
             // 
             // list_Schema
             // 
@@ -136,15 +136,15 @@
             this.list_Schema.SelectedIndexChanged += new System.EventHandler(this.list_Schema_SelectedIndexChanged);
             this.list_Schema.DoubleClick += new System.EventHandler(this.list_Schema_DoubleClick);
             // 
-            // tp_存储过程
+            // tp_Procedure
             // 
-            this.tp_存储过程.Controls.Add(this.list_StoreProcedure);
-            this.tp_存储过程.Location = new System.Drawing.Point(4, 22);
-            this.tp_存储过程.Name = "tp_存储过程";
-            this.tp_存储过程.Size = new System.Drawing.Size(317, 623);
-            this.tp_存储过程.TabIndex = 1;
-            this.tp_存储过程.Text = "存储过程";
-            this.tp_存储过程.UseVisualStyleBackColor = true;
+            this.tp_Procedure.Controls.Add(this.list_StoreProcedure);
+            this.tp_Procedure.Location = new System.Drawing.Point(4, 22);
+            this.tp_Procedure.Name = "tp_Procedure";
+            this.tp_Procedure.Size = new System.Drawing.Size(317, 623);
+            this.tp_Procedure.TabIndex = 1;
+            this.tp_Procedure.Text = "存储过程";
+            this.tp_Procedure.UseVisualStyleBackColor = true;
             // 
             // list_StoreProcedure
             // 
@@ -156,6 +156,8 @@
             this.list_StoreProcedure.Name = "list_StoreProcedure";
             this.list_StoreProcedure.Size = new System.Drawing.Size(317, 623);
             this.list_StoreProcedure.TabIndex = 10;
+            this.list_StoreProcedure.SelectedIndexChanged += new System.EventHandler(this.list_Schema_SelectedIndexChanged);
+            this.list_StoreProcedure.DoubleClick += new System.EventHandler(this.list_Schema_DoubleClick);
             // 
             // img
             // 
@@ -569,8 +571,8 @@
             this.Load += new System.EventHandler(this.Form_Main_Load);
             this.showLeftPanel.ResumeLayout(false);
             this.showDBPage.ResumeLayout(false);
-            this.tp_表.ResumeLayout(false);
-            this.tp_存储过程.ResumeLayout(false);
+            this.tp_Schema.ResumeLayout(false);
+            this.tp_Procedure.ResumeLayout(false);
             this.showContentPanel.ResumeLayout(false);
             this.showPage.ResumeLayout(false);
             this.tp_VO.ResumeLayout(false);
@@ -616,8 +618,8 @@
         private System.Windows.Forms.Button btn_BatchExec;
         private System.Windows.Forms.Button btn_授权码管理;
         private System.Windows.Forms.TabControl showDBPage;
-        private System.Windows.Forms.TabPage tp_表;
-        private System.Windows.Forms.TabPage tp_存储过程;
+        private System.Windows.Forms.TabPage tp_Schema;
+        private System.Windows.Forms.TabPage tp_Procedure;
         private System.Windows.Forms.ListBox list_StoreProcedure;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem smenuItem_MySQL;
