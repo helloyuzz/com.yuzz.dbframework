@@ -11,6 +11,7 @@ using com.yuzz.DbGenerator.vo;
 using System.Configuration;
 using com.yuzz.dblibrary;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace com.yuzz.DbGenerator {
     public partial class Form_MSSQL:Form {
@@ -50,7 +51,7 @@ namespace com.yuzz.DbGenerator {
             while(dbReader.Read()) {
                 string p_Id = MyToolkit.IngoreNull(dbReader["Id"]);
                 string p_Name = MyToolkit.IngoreNull(dbReader["Name"]);
-                SmProcedure smProcedure = new SmProcedure(p_Id,p_Name);      
+                SmProcedure smProcedure = new SmProcedure(p_Name);      
 
                 smProcedures.Add(smProcedure);
             }
@@ -65,6 +66,35 @@ namespace com.yuzz.DbGenerator {
             }
         }
 
+        private SmProcedure getSmProcedure(string p_Name,SqlConnection dbConn = null) {
+            SmProcedure smProcedure = new SmProcedure(p_Name);
+
+            SqlCommand sqlCommand = new SqlCommand();
+            sqlCommand.Connection = dbConn;
+            sqlCommand.CommandText = string.Format("select t.text from syscomments t left join sysobjects j ON t.id = j.id where j.name ='{0}' and type='p'",p_Name);
+            smProcedure.SQLText = sqlCommand.ExecuteScalar() as string;
+            smProcedure.SQLText = smProcedure.SQLText.Replace("\r\n","");
+            smProcedure.SQLText = smProcedure.SQLText.Remove(0,smProcedure.SQLText.IndexOf("SET XACT_ABORT ON") + "SET XACT_ABORT ON".Length);
+
+            //string sqlReslut = @"--==================================================--Create Author: HuangLong--Create Date: 20171204--==================================================CREATE PROCEDURE P_DASHBOARD_GET_COLLECT_INFO_REPORT		@ActionUserID int,		@ProductID int,		@StartTime datetime,		@EndTime datetime,		@OrgID INTASBEGINSET XACT_ABORT ONSELECT TU.UserFullName AS ActionName,TC.CreatedTime AS ActionTime,TP.ProductName,TBF.FlowBarcode,1 AS Quantity ,TU2.UserFullName AS CollectUser,TS.SectionName AS SectionNameFROM TFlowCollect TCINNER JOIN TFlowPoductInFlow TPF ON TC.FlowID=TPF.FlowID INNER JOIN TFlowIssue ION I.FlowID = TPF.FlowIDINNER JOIN TMasterProduct TP ON TP.ProductID =TPF.ProductID INNER JOIN TMasterUser TUON TU.UserID =TC.IssueUserID LEFT JOIN TFlowBarcodeInFlow TBF ON TBF.FlowID =TC.FlowID INNER JOIN TMasterUser TU2ON TC.CollectUserID=TU2.UserIDINNER JOIN TMasterSection TSON TC.SectionID=TS.SectionIDWHERE TP.ProductID =ISNULL(@ProductID,TP.ProductID)AND TC.IssueUserID =ISNULL(@ActionUserID,TC.IssueUserID)AND DATEDIFF(DAY,  ISNULL(@StartTime, TC.CreatedTime) , TC.CreatedTime) >= 0AND DATEDIFF(DAY,  ISNULL(@EndTime, TC.CreatedTime) , TC.CreatedTime) <= 0AND TPF.IsDeleted =0AND I.IssueOrgID = ISNULL(@OrgID, I.IssueOrgID)END;";
+            Regex regex = new Regex(@"select\s.*\sfrom",RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            MatchCollection mc = regex.Matches(smProcedure.SQLText);
+            foreach(Match match1 in mc) {
+                Console.WriteLine(match1.Value);
+
+                MatchCollection mc1 = regex.Matches(match1.Value.Remove(0,6));
+            }
+
+
+            string line = "lane=1;speed=30.3mph;acceleration=2.5mph/s";
+            Regex reg = new Regex(@"speeds*=\s*([\d\.]+)\s*(mph|km/h|m/s)*");
+            Match match = reg.Match(line);
+
+            //MatchCollection mc = reg.Matches(line);
+
+
+            return smProcedure;
+        }
 
         private SmTable getSmTable(string tableName,SqlConnection dbConn = null) {
             SmTable smTable = new SmTable(tableName);
@@ -72,20 +102,29 @@ namespace com.yuzz.DbGenerator {
             // 获取描述信息
             SqlCommand selectCommand = new SqlCommand();
             selectCommand.Connection = dbConn;
-            selectCommand.CommandText = "select t.name,e.value from sys.extended_properties e ,syscolumns t where e.name = 'MS_Description' and t.id = (select object_id('" + tableName + "')) and e.major_id = t.id and e.minor_id = t.colorder";
+            //selectCommand.CommandText = "select t.name,e.value from sys.extended_properties e ,syscolumns t where e.name = 'MS_Description' and t.id = (select object_id('" + tableName + "')) and e.major_id = t.id and e.minor_id = t.colorder";
+            selectCommand.CommandText = string.Format(@"
+                                SELECT t.name,e.value FROM sys.extended_properties e left join syscolumns t on e.minor_id = t.colorder WHERE t.id = object_id( '{0}' )	
+                                UNION
+                                SELECT '_SchemaName' as name, [value] FROM sys.extended_properties t  WHERE t.major_id= object_id('{1}') and t.minor_id =0
+                                ",tableName,tableName);
 
             DataTable dt_Comment = new DataTable();
             SqlDataAdapter comment = new SqlDataAdapter();
             comment.SelectCommand = selectCommand;
             comment.Fill(dt_Comment);
+            DataRow[] schemaComment = dt_Comment.Select("name='_SchemaName'");
+            if(schemaComment.Length > 0) {
+                smTable.Remarks = MyToolkit.IngoreNull(schemaComment[0]["value"]);
+            }
 
             // 获取所有的字属性信息
             SqlDataAdapter dbAdapter = new SqlDataAdapter() {
                 //SelectCommand = new SqlCommand(String.Format("select * from [{0}]",sechma_Name),dbConn)
                 SelectCommand = new SqlCommand("sp_columns " + tableName,dbConn)
             };
-            DataTable dt = new DataTable();
-            int getCount = dbAdapter.Fill(dt);
+            DataTable dt_Columns = new DataTable();
+            int getCount = dbAdapter.Fill(dt_Columns);
 
             // 获取主键信息
             SqlDataAdapter dbpk = new SqlDataAdapter() {
@@ -99,7 +138,7 @@ namespace com.yuzz.DbGenerator {
             }
 
             smTable.TableName = tableName;
-            foreach(DataRow getRow in dt.Rows) {
+            foreach(DataRow getRow in dt_Columns.Rows) {
                 if(smTable.Fields == null) {
                     smTable.Fields = new List<SmField>();
                 }
@@ -659,12 +698,12 @@ namespace com.yuzz.DbGenerator {
 
         private void uc_BuildAction() {
             tbx_VO_Code.Clear();
+            string getBuildString = string.Empty;
 
             if(showDBPage.SelectedTab.Name.Equals(tp_Schema.Name)) {    // tp_Schema
                 bool signleVo = list_Schema.SelectedItems.Count <= 1 ? true : false;
                 foreach(SmTable smTable in list_Schema.SelectedItems) {
                     string schemaName = smTable.TableName;
-                    string getBuildString = string.Empty;
 
                     getBuildString = buildValueObject(schemaName);
 
@@ -693,7 +732,11 @@ namespace com.yuzz.DbGenerator {
 
                 }
             } else {    // Procedure
+                string p_Name = (list_StoreProcedure.SelectedItem as SmProcedure).ProcedureName;
+                getBuildString = buildProcedureObject(p_Name);
 
+                tbx_VO_Code.Clear();
+                tbx_VO_Code.AppendText(getBuildString);
             }
         }
 
@@ -751,6 +794,19 @@ namespace com.yuzz.DbGenerator {
         List<string> ingoreList = new List<string>() {
         "UUID","ShopId","ModifyTime","ShowIndex"};
 
+        private string buildProcedureObject(string p_Name) {
+            SmProcedure smProcedure = smProcedures.Find(t => t.ProcedureName.Equals(p_Name));
+            if(string.IsNullOrEmpty(smProcedure.SQLText)) {
+                int pos = smProcedures.IndexOf(smProcedure);
+                using(SqlConnection dbConn = new SqlConnection(sqlString)) {
+                    dbConn.Open();
+                    smProcedure = getSmProcedure(p_Name,dbConn);
+                    smProcedures[pos] = smProcedure;
+                }
+            }
+            return smProcedure.SQLText;
+        }
+
         private string buildValueObject(string sechemaName) {
             SmTable smTable = smTableList.Find(t => t.TableName.Equals(sechemaName));//  getSmTable(sechemaName);
             if(smTable.Fields == null) {
@@ -772,14 +828,17 @@ namespace com.yuzz.DbGenerator {
             string vofile = tbx_Prefix.Text + smTable.TableName;
             tbx_VO_Filename.Text = vofile + ".cs";
             //temp.Append("using CSSD.Web.API.Dapper.vo;\r\n");
-            temp.Append("using System;\r\n\r\n");
-            //temp.Append("using System.Collections.Generic;\r\n");
-            //temp.Append("using System.Data;\r\n");
+            temp.Append("using System;\r\n");
+            temp.Append("using Ljk.Dapper;\r\n");
+            temp.Append("using System.Data;\r\n\r\n");
             //temp.Append("using System.Linq;\r\n");
             //temp.Append("using System.Threading.Tasks;\r\n");
 
             temp.Append("namespace CSSD.Web.API.Dapper.vo {\r\n");
             temp.Append("   [Serializable]\r\n");
+            if(string.IsNullOrEmpty(smTable.Remarks) == false) {
+                temp.Append(string.Format("   [LjkDapperFlag(Remarks=\"{0}\")]\r\n",smTable.Remarks));
+            }
             temp.Append("   public class ").Append(tbx_Prefix.Text).Append(smTable.TableName).Append(" {\r\n");//.Append(":DBItem{\r\n");
             //temp.Append("   public class ").Append(smTable.Name).Append(":DBItem{\r\n");
             if(false) {
@@ -831,13 +890,8 @@ namespace com.yuzz.DbGenerator {
                 temp.Append("      }\r\n");
             }
             foreach(SmField smColumn in smTable.Fields) {
-                switch(smColumn.Name) {
-                    case "UUID":
-                    case "ModifyTime":
-                    //case "ShopId":
-                    case "ShowIndex":
-                        continue;
-                }
+                temp.Append("      ");
+                temp.Append(ParseDapperFlag(smColumn)).Append("\r\n");
                 temp.Append("      public virtual ").Append(dbColumnType(smColumn.DbType)).Append(" ").Append(smColumn.Name).Append(" {\r\n");
                 temp.Append("          get;\r\n");
                 temp.Append("          set;\r\n");
@@ -858,6 +912,26 @@ namespace com.yuzz.DbGenerator {
             //}
 
             return temp.ToString();
+        }
+
+        private string ParseDapperFlag(SmField smColumn) {
+            string getDapperFlag = "SqlDbType=SqlDbType." + Enum.GetName(typeof(SqlDbType),smColumn.DbType);
+
+            if(smColumn.PrimaryKey) {
+                getDapperFlag += ",IsPrimaryKey = true";
+            }
+            if(smColumn.AllowDBNull == false) {
+                getDapperFlag += ",AllowDBNull =false";
+            }
+            if(smColumn.MaxLength > 0) {
+                getDapperFlag += ",MaxLength=" + smColumn.MaxLength;
+            }
+            if(string.IsNullOrEmpty(smColumn.Remarks) == false) {
+                getDapperFlag += ",Remarks=\"" + smColumn.Remarks+"\"";
+            }
+
+
+            return string.Format("[LjkDapperFlag({0})]",getDapperFlag);
         }
 
         private string createDAO(string sechemaName) {

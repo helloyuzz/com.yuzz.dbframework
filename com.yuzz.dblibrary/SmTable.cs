@@ -38,5 +38,6 @@ namespace com.yuzz.dblibrary
         /// 使用的索引次序
         /// </summary>
         public virtual int UsingIndex { get; set; }
+        public string Remarks { get; set; }
     }
 }

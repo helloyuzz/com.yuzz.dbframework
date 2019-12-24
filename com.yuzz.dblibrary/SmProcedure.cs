@@ -10,11 +10,10 @@ namespace com.yuzz.dblibrary
     {
         public SmProcedure() {
         }
-        public SmProcedure(string p_Id,String p_Name) {
-            ProcedureId = p_Id;
+        public SmProcedure(String p_Name) {
             ProcedureName = p_Name;
         }
-        public virtual string ProcedureId { get; set; }
         public virtual string ProcedureName { get; set; }
+        public string SQLText { get; set; }
     }
 }
