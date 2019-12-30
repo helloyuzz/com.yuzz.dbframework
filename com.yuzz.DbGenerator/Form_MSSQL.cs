@@ -133,8 +133,10 @@ namespace com.yuzz.DbGenerator {
             DataTable dt_pk = new DataTable();
             dbpk.Fill(dt_pk);
             string pkname = "";
+            int key_SEQ = -1;
             if(dt_pk != null && dt_pk.Rows.Count > 0) {
                 pkname = MyToolkit.IngoreNull(dt_pk.Rows[0]["Column_name"]);
+                key_SEQ = MyToolkit.ParseInt(dt_pk.Rows[0]["KEY_SEQ"]);
             }
 
             smTable.TableName = tableName;
@@ -144,7 +146,6 @@ namespace com.yuzz.DbGenerator {
                 }
 
                 string typeName = MyToolkit.IngoreNull(getRow["Type_Name"]);
-                string isNullAble = MyToolkit.IngoreNull(getRow["Is_Nullable"]);
 
                 SmField smColumn = new SmField();
                 smColumn.Name = MyToolkit.IngoreNull(getRow["Column_Name"]);
@@ -159,9 +160,10 @@ namespace com.yuzz.DbGenerator {
 
                 if(typeName.IndexOf("identity") != -1 || smColumn.Name.Equals(pkname,StringComparison.CurrentCultureIgnoreCase)) {
                     smColumn.PrimaryKey = true;
+                smColumn.KEY_SEQ = key_SEQ;
                 }
 
-                smColumn.AllowDBNull = isNullAble.Equals("NO",StringComparison.CurrentCultureIgnoreCase) ? true : false;
+                smColumn.Is_Nullable = MyToolkit.ParseBool(getRow["Is_Nullable"]);                 
 
                 if(smColumn.PrimaryKey == true) {   // 主键放在最开始的位置
                     smTable.PrimaryKey = smColumn;
@@ -330,39 +332,7 @@ namespace com.yuzz.DbGenerator {
         }
 
         // 解析OleDbType为System.Type
-        string dbColumnType(SqlDbType getType) {
-            string dbTypeString = "";
-
-            switch(getType) {
-                case SqlDbType.VarChar:
-                case SqlDbType.NVarChar:
-                case SqlDbType.Text:
-                case SqlDbType.NText:
-                    dbTypeString = "string";
-                    break;
-                case SqlDbType.Int:
-                    dbTypeString = "int";
-                    break;
-                case SqlDbType.Real:
-                case SqlDbType.Money:
-                    dbTypeString = "float";
-                    break;
-                case SqlDbType.DateTime:
-                    dbTypeString = "DateTime";
-                    break;
-                case SqlDbType.Bit:
-                    dbTypeString = "bool";
-                    break;
-                case SqlDbType.Decimal:
-                    dbTypeString = "Decimal";
-                    break;
-                case SqlDbType.BigInt:
-                    dbTypeString = "long";
-                    break;
-            }
-
-            return dbTypeString;
-        }
+        
         
         private void btn_Invoker_Click(object sender,EventArgs e) {
             init_DefaultVisualSQLEditor();
@@ -372,8 +342,6 @@ namespace com.yuzz.DbGenerator {
             init_SelectDataGridView();            
             
         }
-
-
 
         private void Form_Main_Load(object sender,EventArgs e) {
             tbx_MSSQL_ServerIP.Text = ConfigurationManager.AppSettings["MSSQL_ServerIP"];
@@ -836,9 +804,7 @@ namespace com.yuzz.DbGenerator {
 
             temp.Append("namespace CSSD.Web.API.Dapper.vo {\r\n");
             temp.Append("   [Serializable]\r\n");
-            if(string.IsNullOrEmpty(smTable.Remarks) == false) {
-                temp.Append(string.Format("   [LjkDapperFlag(Remarks=\"{0}\")]\r\n",smTable.Remarks));
-            }
+            temp.Append(string.Format("   [LjkDapperField(Name=\"{0}\",Remarks=\"{1}\")]\r\n",smTable.TableName,smTable.Remarks));            
             temp.Append("   public class ").Append(tbx_Prefix.Text).Append(smTable.TableName).Append(" {\r\n");//.Append(":DBItem{\r\n");
             //temp.Append("   public class ").Append(smTable.Name).Append(":DBItem{\r\n");
             if(false) {
@@ -889,10 +855,12 @@ namespace com.yuzz.DbGenerator {
                 temp.Append("          }\r\n");
                 temp.Append("      }\r\n");
             }
+
+
             foreach(SmField smColumn in smTable.Fields) {
                 temp.Append("      ");
-                temp.Append(ParseDapperFlag(smColumn)).Append("\r\n");
-                temp.Append("      public virtual ").Append(dbColumnType(smColumn.DbType)).Append(" ").Append(smColumn.Name).Append(" {\r\n");
+                temp.Append(ParseDapperFieldAttribute(smColumn)).Append("\r\n");
+                temp.Append("      public virtual ").Append(MyToolkit.ParseRunTimeDbTypeString(smColumn.DbType)).Append(" ").Append(smColumn.Name).Append(" {\r\n");
                 temp.Append("          get;\r\n");
                 temp.Append("          set;\r\n");
                 temp.Append("      }\r\n");
@@ -914,13 +882,16 @@ namespace com.yuzz.DbGenerator {
             return temp.ToString();
         }
 
-        private string ParseDapperFlag(SmField smColumn) {
-            string getDapperFlag = "SqlDbType=SqlDbType." + Enum.GetName(typeof(SqlDbType),smColumn.DbType);
+        private string ParseDapperFieldAttribute(SmField smColumn) {
+            string getDapperFlag = string.Format("Name=\"{0}\",SqlDbType=SqlDbType.{1}",smColumn.Name,Enum.GetName(typeof(SqlDbType),smColumn.DbType));
 
             if(smColumn.PrimaryKey) {
                 getDapperFlag += ",IsPrimaryKey = true";
             }
-            if(smColumn.AllowDBNull == false) {
+            if(smColumn.KEY_SEQ > 0) {
+                getDapperFlag += ",KEY_SEQ=" + smColumn.KEY_SEQ;
+            }
+            if(smColumn.Is_Nullable == false) {
                 getDapperFlag += ",AllowDBNull =false";
             }
             if(smColumn.MaxLength > 0) {
@@ -931,7 +902,7 @@ namespace com.yuzz.DbGenerator {
             }
 
 
-            return string.Format("[LjkDapperFlag({0})]",getDapperFlag);
+            return string.Format("[LjkDapperField({0})]",getDapperFlag);
         }
 
         private string createDAO(string sechemaName) {
@@ -1057,7 +1028,7 @@ namespace com.yuzz.DbGenerator {
                     tmp.Append("        get{\r\n");
                     tmp.Append("            if(_").Append(smColumn.Name).Append(" == null){\r\n");
                     tmp.Append("                _").Append(smColumn.Name).Append(" = new SmColumn();\r\n");
-                    tmp.Append("                _").Append(smColumn.Name).Append(".AllowDBNull = ").Append(smColumn.AllowDBNull.ToString().ToLower()).Append(";\r\n");
+                    tmp.Append("                _").Append(smColumn.Name).Append(".AllowDBNull = ").Append(smColumn.Is_Nullable.ToString().ToLower()).Append(";\r\n");
                     //tmp.Append("                _").Append(smColumn.Name).Append(".Caption = \"").Append(smColumn.Caption).Append("\";\r\n");
                     //tmp.Append("                _").Append(smColumn.Name).Append(".DateTimeMode = ").Append(smColumn.DateTimeMode).Append(";\r\n");
                     //tmp.Append("                _").Append(smColumn.Name).Append(".DefaultValue = ").Append(Toolkit.IngoreNull(smColumn.DefaultValue)).Append(";\r\n");

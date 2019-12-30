@@ -74,13 +74,60 @@ namespace com.yuzz.DbGenerator {
 
             return dbTypeString;
         }
+        public static string ParseRunTimeDbTypeString(SqlDbType getType) {
+            string dbTypeString = "";
 
+            switch(getType) {
+                case SqlDbType.UniqueIdentifier:
+                case SqlDbType.Char:
+                case SqlDbType.VarChar:
+                case SqlDbType.NVarChar:
+                case SqlDbType.Text:
+                case SqlDbType.NText:
+                    dbTypeString = "string";
+                    break;
+                case SqlDbType.Int:
+                    dbTypeString = "int?";
+                    break;
+                case SqlDbType.Float:
+                    dbTypeString = "double?";
+                    break;
+                case SqlDbType.Real:
+                case SqlDbType.Money:
+                    dbTypeString = "float?";
+                    break;
+                case SqlDbType.Date:
+                case SqlDbType.DateTime:
+                    dbTypeString = "DateTime?";
+                    break;
+                case SqlDbType.Bit:
+                    dbTypeString = "bool?";
+                    break;
+                case SqlDbType.Decimal:
+                    dbTypeString = "Decimal?";
+                    break;
+                case SqlDbType.BigInt:
+                    dbTypeString = "long?";
+                    break;
+            }
+
+            return dbTypeString;
+        }
         internal static SqlDbType ParseToSqlDbType(string typeName) {
             SqlDbType dbType = SqlDbType.Int;
-            switch(typeName) {
+            switch(typeName.ToLower()) {
+                case "uniqueidentifier":
+                    dbType = SqlDbType.UniqueIdentifier;
+                    break;
+                case "char":
+                    dbType = SqlDbType.Char;
+                    break;
                 case "varchar":
                 case "nvarchar":
                     dbType = SqlDbType.NVarChar;
+                    break;
+                case "date":
+                    dbType = SqlDbType.Date;
                     break;
                 case "datetime":
                     dbType = SqlDbType.DateTime;
@@ -92,8 +139,10 @@ namespace com.yuzz.DbGenerator {
                     dbType = SqlDbType.Int;
                     break;
                 case "real":
-                case "float":
                     dbType = SqlDbType.Real;
+                    break;
+                case "float":
+                    dbType = SqlDbType.Float;
                     break;
                 case "text":
                     dbType = SqlDbType.Text;
@@ -118,6 +167,25 @@ namespace com.yuzz.DbGenerator {
             int value;
             int.TryParse(IngoreNull(obj),out value);
             return value;
+        }
+
+        internal static bool ParseBool(object v) {
+            bool parseValue = false;
+
+            string text = IngoreNull(v);
+            switch(text.ToUpper()) {
+                case "YES":
+                case "TRUE":
+                    parseValue = true;
+                    break;
+                case "NO":
+                case "FALSE":
+                    parseValue = false;
+                    break;
+            }
+            
+
+            return parseValue;
         }
     }
 }

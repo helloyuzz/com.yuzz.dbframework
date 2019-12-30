@@ -22,7 +22,7 @@ namespace com.yuzz.dblibrary
             get;
             set;
         }
-        public bool AllowDBNull {
+        public bool Is_Nullable {
             get;
             set;
         }
@@ -33,5 +33,6 @@ namespace com.yuzz.dblibrary
         public bool ActiveUsing { get; set; }
         public SelectFunction Func { get; set; }
         public string FieldAs { get; set; }
+        public int KEY_SEQ { get; set; }
     }
 }
